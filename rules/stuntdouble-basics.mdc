@@ -1,0 +1,14 @@
+---
+description: Core guidelines for working with the Stunt Double MCP server
+alwaysApply: true
+---
+
+stuntdouble-basics:
+
+- Stunt Double deploys AI agents with realistic user personas to validate user journeys at scale.
+- Authentication is handled automatically via OAuth 2.1 with PKCE. No API keys or tokens are needed.
+- Always specify a workspace when creating or listing resources. Use `list_workspaces` to find available workspaces.
+- Actors represent AI user personas. Create actors with clear names, descriptions, and system prompts that define their behavior.
+- Use workflows for multi-step user journey validation and checklists for point-in-time quality checks.
+- Workflow and checklist runs are asynchronous. After triggering a run, poll `get_workflow_run` or `get_checklist_run` for results.
+- Review feedback items surfaced by Stunt Double and update their status as issues are triaged or resolved.
