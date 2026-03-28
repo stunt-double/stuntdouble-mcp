@@ -1,8 +1,7 @@
 {
   "mcpServers": {
     "stuntdouble": {
-      "url": "https://app.stuntdouble.io/api/mcp",
-      "type": "streamable-http"
+      "url": "https://app.stuntdouble.io/api/mcp"
     }
   }
 }

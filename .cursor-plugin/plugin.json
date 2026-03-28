@@ -1,6 +1,5 @@
 {
   "name": "stuntdouble",
-  "displayName": "Stunt Double",
   "version": "1.0.0",
   "description": "Deploy AI user personas to validate user journeys at scale. Find UX friction before real users do.",
   "author": {
