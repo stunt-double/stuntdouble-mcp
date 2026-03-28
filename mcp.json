@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "stuntdouble": {
+      "url": "https://app.stuntdouble.io/api/mcp"
+    }
+  }
+}
