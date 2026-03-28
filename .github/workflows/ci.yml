@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Validate JSON manifests
+        run: node scripts/validate-json.mjs
+
+      - name: Prettier (core manifests)
+        run: npx --yes prettier@3.4.2 --check README.md CONTRIBUTING.md SECURITY.md mcp.json server.json .cursor-plugin/plugin.json
