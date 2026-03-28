@@ -1,0 +1,13 @@
+---
+description: Checklist for validating UX changes with Stunt Double before shipping
+alwaysApply: false
+globs:
+  - "**/*"
+---
+
+review-checklist:
+
+- Run relevant Stunt Double checklists against staging before merging UX changes.
+- Verify that existing workflows still pass after modifying user-facing flows.
+- Check Stunt Double feedback for regressions related to the changed area.
+- Ensure new user journeys have corresponding workflows or checklist items for ongoing validation.
