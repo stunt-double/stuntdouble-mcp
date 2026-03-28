@@ -8,7 +8,20 @@ stuntdouble-basics:
 - Stunt Double deploys AI agents with realistic user personas to validate user journeys at scale.
 - Authentication is handled automatically via OAuth 2.1 with PKCE. No API keys or tokens are needed.
 - Always specify a workspace when creating or listing resources. Use `list_workspaces` to find available workspaces.
-- Actors represent AI user personas. Create actors with clear names, descriptions, and system prompts that define their behavior.
-- Use workflows for multi-step user journey validation and checklists for point-in-time quality checks.
+
+Actors:
+- Actors represent AI user personas. Create actors with clear names (format: "FirstName - Role"), descriptions, and system prompts.
+- Give actors knowledge via `add_actor_knowledge` so they understand your product context.
+- Use `create_conversation` to talk to actors for research, design reviews, or concept testing.
+- Create diverse actors covering different segments: new users, power users, enterprise, accessibility, mobile.
+
+Workflows and checklists:
+- Use workflows for multi-step user journey validation (signup, checkout, onboarding flows).
+- Use checklists for point-in-time quality checks (accessibility, performance, content).
 - Workflow and checklist runs are asynchronous. After triggering a run, poll `get_workflow_run` or `get_checklist_run` for results.
+- Use `create_workflow` with trigger_type "schedule" or "webhook" for automated continuous validation.
+
+Feedback:
 - Review feedback items surfaced by Stunt Double and update their status as issues are triaged or resolved.
+- Status lifecycle: new → reviewed → resolved (or dismissed for false positives).
+- Cross-reference feedback with actors and workflows to identify patterns and coverage gaps.
