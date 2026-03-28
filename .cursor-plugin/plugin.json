@@ -1,0 +1,12 @@
+{
+  "name": "stuntdouble",
+  "version": "1.0.0",
+  "description": "Deploy AI user personas to validate user journeys at scale.",
+  "author": {
+    "name": "Stunt Double"
+  },
+  "homepage": "https://www.stuntdouble.io",
+  "repository": "https://github.com/stunt-double/stuntdouble-mcp",
+  "license": "MIT",
+  "keywords": ["mcp", "stuntdouble", "testing", "ux", "agents"]
+}
