@@ -28,7 +28,8 @@ Add to your MCP configuration file:
 {
   "mcpServers": {
     "stuntdouble": {
-      "url": "https://app.stuntdouble.io/api/mcp"
+      "url": "https://app.stuntdouble.io/api/mcp",
+      "type": "streamable-http"
     }
   }
 }
