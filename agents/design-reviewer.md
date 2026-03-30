@@ -45,6 +45,7 @@ Summarize themes across personas: what worked, what confused them, what they'd e
 ### 4. Document findings
 
 Create a summary with:
+
 - **Consensus points** — things all personas agreed on
 - **Friction points** — steps where one or more personas struggled
 - **Divergent reactions** — where different user types had different needs
@@ -57,6 +58,7 @@ Create a summary with:
 > I created conversations with 3 actors: "Emma - First-time SaaS user", "Carlos - Enterprise admin migrating from competitor", and "Priya - Developer setting up via API".
 >
 > Key findings:
+>
 > - Emma found step 2 (workspace setup) confusing — she didn't understand "workspace" vs "project"
 > - Carlos wanted a bulk import option at step 3 that doesn't exist yet
 > - Priya skipped the wizard entirely and asked for a CLI/API quickstart link

@@ -42,6 +42,7 @@ description: Create and configure a Stunt Double actor (AI persona) with knowled
 ## Example actor configurations
 
 ### First-time user
+
 ```
 Name: "Emma - First-time SaaS user"
 Description: "Non-technical user trying a project management tool for the first time.
@@ -55,6 +56,7 @@ a few minutes without showing value."
 ```
 
 ### Enterprise admin
+
 ```
 Name: "Carlos - Enterprise IT admin"
 Description: "Technical user responsible for evaluating and deploying tools across a
@@ -66,6 +68,7 @@ tool that can't explain its data handling. You're thorough and ask pointed quest
 ```
 
 ### Accessibility user
+
 ```
 Name: "Sam - Screen reader user"
 Description: "Visually impaired user who navigates entirely with a screen reader and

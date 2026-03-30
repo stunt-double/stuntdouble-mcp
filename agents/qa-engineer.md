@@ -50,6 +50,7 @@ list_feedback(project_id, status: "new") → check for new issues surfaced
 ```
 
 For each failure, document:
+
 - **What failed** — the specific step or check
 - **Expected vs actual** — what should have happened
 - **Actor context** — which persona hit the issue and why their profile matters
@@ -71,14 +72,14 @@ update_feedback_status(feedback_id, status: "resolved") → close the feedback i
 >
 > Ran 4 workflows and 2 checklists against staging.
 >
-> | Validation | Status | Details |
-> |---|---|---|
-> | Signup → First Project | PASS | All 6 steps completed |
-> | Checkout Flow | FAIL | Step 4: payment form timeout after 30s |
-> | Settings Update | PASS | All 4 steps completed |
-> | Invite Team Member | PASS | All 3 steps completed |
-> | Accessibility Checklist | FAIL | 2/8 checks failed (contrast ratio, focus order) |
-> | Performance Checklist | PASS | All checks within thresholds |
+> | Validation              | Status | Details                                         |
+> | ----------------------- | ------ | ----------------------------------------------- |
+> | Signup → First Project  | PASS   | All 6 steps completed                           |
+> | Checkout Flow           | FAIL   | Step 4: payment form timeout after 30s          |
+> | Settings Update         | PASS   | All 4 steps completed                           |
+> | Invite Team Member      | PASS   | All 3 steps completed                           |
+> | Accessibility Checklist | FAIL   | 2/8 checks failed (contrast ratio, focus order) |
+> | Performance Checklist   | PASS   | All checks within thresholds                    |
 >
 > **Blockers:** Payment form timeout must be fixed before release.
 > **Action items:** Fix contrast ratio on settings page, review focus order on modal dialogs.
