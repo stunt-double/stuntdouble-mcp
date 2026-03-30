@@ -73,61 +73,67 @@ Adjust `scopes` to match what Stunt Double's authorisation server documents. Omi
 
 ### Workspaces
 
-| Tool                     | Description                                                    |
-| ------------------------ | -------------------------------------------------------------- |
-| `list_workspaces`        | List all workspaces you belong to, including your role in each |
-| `get_workspace`          | Get details of a specific workspace by ID or slug              |
-| `list_workspace_members` | List all members of a workspace with their roles and profiles  |
+| Tool                     | Description                         |
+| ------------------------ | ----------------------------------- |
+| `list_workspaces`        | List your workspaces                |
+| `get_workspace`          | Get workspace details by ID or slug |
+| `list_workspace_members` | List members of a workspace         |
 
 ### Actors
 
-| Tool           | Description                                                                           |
-| -------------- | ------------------------------------------------------------------------------------- |
-| `list_actors`  | List active actors in a workspace                                                     |
-| `get_actor`    | Get full details of an actor including system prompt and capabilities                 |
-| `create_actor` | Create a new actor in a workspace                                                     |
-| `update_actor` | Update an actor's name, description, system prompt, capabilities, or status (archive) |
+| Tool           | Description                                                                                                     |
+| -------------- | --------------------------------------------------------------------------------------------------------------- |
+| `list_actors`  | List active actors in a workspace                                                                               |
+| `get_actor`    | Get actor details including system prompt and capabilities                                                      |
+| `create_actor` | Create a new actor in a workspace                                                                               |
+| `update_actor` | Update actor name, description, system prompt, capabilities, or status. Set status to "archived" to soft-delete |
 
 ### Knowledge
 
-| Tool                     | Description                            |
-| ------------------------ | -------------------------------------- |
-| `list_actor_knowledge`   | List knowledge entries for an actor    |
-| `add_actor_knowledge`    | Add a knowledge entry to an actor      |
-| `remove_actor_knowledge` | Remove a knowledge entry from an actor |
+| Tool                     | Description                         |
+| ------------------------ | ----------------------------------- |
+| `list_actor_knowledge`   | List knowledge entries for an actor |
+| `add_actor_knowledge`    | Add a knowledge entry to an actor   |
+| `remove_actor_knowledge` | Remove a knowledge entry            |
 
 ### Conversations
 
-| Tool                 | Description                                                     |
-| -------------------- | --------------------------------------------------------------- |
-| `list_conversations` | List conversations in a workspace, optionally filtered by actor |
-| `get_conversation`   | Get a conversation with its messages                            |
+| Tool                 | Description                                      |
+| -------------------- | ------------------------------------------------ |
+| `list_conversations` | List conversations, optionally filtered by actor |
+| `get_conversation`   | Get a conversation with its messages             |
 
 ### Checklists
 
-| Tool                | Description                                             |
-| ------------------- | ------------------------------------------------------- |
-| `list_checklists`   | List checklists in a workspace                          |
-| `get_checklist`     | Get a checklist with its checks and recent runs         |
-| `get_checklist_run` | Get a checklist run with per-check results and evidence |
-| `run_checklist`     | Trigger a new checklist run (async, returns run ID)     |
+| Tool                | Description                                     |
+| ------------------- | ----------------------------------------------- |
+| `list_checklists`   | List checklists in a workspace                  |
+| `get_checklist`     | Get checklist details, checks, and recent runs  |
+| `get_checklist_run` | Get a checklist run with per-check results      |
+| `run_checklist`     | Trigger a checklist run (async). Returns run ID |
 
 ### Workflows
 
-| Tool               | Description                                        |
-| ------------------ | -------------------------------------------------- |
-| `list_workflows`   | List workflows in a workspace                      |
-| `get_workflow`     | Get a workflow with its steps and recent runs      |
-| `run_workflow`     | Trigger a new workflow run (async, returns run ID) |
-| `get_workflow_run` | Get a workflow run with step-level details         |
+| Tool               | Description                                     |
+| ------------------ | ----------------------------------------------- |
+| `list_workflows`   | List workflows in a workspace                   |
+| `get_workflow`     | Get workflow details with steps and recent runs |
+| `run_workflow`     | Trigger a workflow run (async). Returns run ID  |
+| `get_workflow_run` | Get a workflow run with step-level details      |
 
 ### Feedback
 
-| Tool                     | Description                                     |
-| ------------------------ | ----------------------------------------------- |
-| `list_feedback`          | List feedback for a project, newest first       |
-| `get_feedback`           | Get a specific feedback submission with details |
-| `update_feedback_status` | Update the status of a feedback submission      |
+| Tool                     | Description                                |
+| ------------------------ | ------------------------------------------ |
+| `list_feedback`          | List feedback for a project, newest first  |
+| `get_feedback`           | Get a feedback submission with its replies |
+| `update_feedback_status` | Update feedback status                     |
+
+### Prompts
+
+| Prompt              | Description                        |
+| ------------------- | ---------------------------------- |
+| `stuntdouble_guide` | Overview of Stunt Double MCP tools |
 
 > Admin operations (inviting/removing members, creating/updating/deleting workflows) are available in the [web dashboard](https://app.stuntdouble.io).
 
