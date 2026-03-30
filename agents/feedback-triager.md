@@ -29,6 +29,7 @@ get_feedback(feedback_id) → read full details, screenshots, actor context, and
 ```
 
 For each item, assess:
+
 - **Validity** — Is this a real UX issue or expected behavior?
 - **Severity** — Does it block the user, cause significant friction, or is it cosmetic?
 - **Scope** — Does it affect one persona type or multiple?
@@ -53,6 +54,7 @@ list_workflows(workspace_id) → find workflows that cover the affected journey
 ### 5. Identify patterns
 
 Group feedback by:
+
 - **Area** — Which part of the product (onboarding, checkout, settings, etc.)
 - **Actor type** — Which personas are most affected
 - **Recurrence** — Issues that appear across multiple workflow runs
@@ -64,19 +66,21 @@ Group feedback by:
 >
 > **New items reviewed:** 9
 >
-> | ID | Summary | Severity | Actor | Status |
-> |---|---|---|---|---|
-> | FB-201 | Search returns no results for partial queries | Major | Power User (Alex) | reviewed |
-> | FB-202 | Modal close button not keyboard-accessible | Major | Accessibility (Sam) | reviewed |
-> | FB-203 | Success toast disappears too quickly | Minor | New User (Emma) | reviewed |
-> | FB-204 | Duplicate of FB-198 (form validation) | — | — | dismissed |
-> | FB-205 | Settings page loads slowly on mobile | Major | Mobile User (Ravi) | reviewed |
+> | ID     | Summary                                       | Severity | Actor               | Status    |
+> | ------ | --------------------------------------------- | -------- | ------------------- | --------- |
+> | FB-201 | Search returns no results for partial queries | Major    | Power User (Alex)   | reviewed  |
+> | FB-202 | Modal close button not keyboard-accessible    | Major    | Accessibility (Sam) | reviewed  |
+> | FB-203 | Success toast disappears too quickly          | Minor    | New User (Emma)     | reviewed  |
+> | FB-204 | Duplicate of FB-198 (form validation)         | —        | —                   | dismissed |
+> | FB-205 | Settings page loads slowly on mobile          | Major    | Mobile User (Ravi)  | reviewed  |
 >
 > **Patterns noticed:**
+>
 > - 3 of 9 items relate to keyboard/accessibility — consider an accessibility audit
 > - Search issues appearing for the second sprint in a row — needs dedicated workflow
 >
 > **Recommended actions:**
+>
 > 1. Create an "Accessibility Navigation" checklist covering keyboard and screen reader flows
 > 2. Add a search-focused workflow with multiple query patterns
 > 3. Prioritize FB-202 and FB-205 for next sprint

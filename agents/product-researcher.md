@@ -40,6 +40,7 @@ get_feedback(feedback_id) → read full details and replies
 ```
 
 Categorize feedback by:
+
 - **Theme** (navigation, performance, comprehension, trust)
 - **Severity** (blocker, painful, annoying, cosmetic)
 - **User segment** (which actor types are affected)

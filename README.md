@@ -41,9 +41,9 @@ Add the `mcpServers` block below to an MCP config file:
 }
 ```
 
-Use only `url` for remote servers (Streamable HTTP is negotiated automatically). Extra keys such as `"type": "streamable-http"` are not part of [Cursor’s documented `mcp.json` shape](https://cursor.com/docs/mcp.md) and can break plugin validation.
+Use only `url` for remote servers (Streamable HTTP is negotiated automatically). Extra keys such as `"type": "streamable-http"` are not part of [Cursor's documented `mcp.json` shape](https://cursor.com/docs/mcp.md) and can break plugin validation.
 
-**Cursor marketplace (one-click install)** expects a [plugin layout](https://cursor.com/docs/reference/plugins.md): `.cursor-plugin/plugin.json` plus root `mcp.json`. Those files are in this repo. The plugin `logo` path is `assets/logo.png` (bundled in this repository). The `server.json` file is the separate [MCP registry](https://modelcontextprotocol.io/registry/about) manifest for `mcp-publisher` and directory listings; Cursor’s installer does not use it.
+**Cursor marketplace (one-click install)** expects a [plugin layout](https://cursor.com/docs/reference/plugins.md): `.cursor-plugin/plugin.json` plus root `mcp.json`. Those files are in this repo. The plugin `logo` path is `assets/logo.png` (bundled in this repository). The `server.json` file is the separate [MCP registry](https://modelcontextprotocol.io/registry/about) manifest for `mcp-publisher` and directory listings; Cursor's installer does not use it.
 
 ## Authentication
 
@@ -67,7 +67,7 @@ If your IdP does **not** support dynamic client registration, add a static OAuth
 }
 ```
 
-Adjust `scopes` to match what Stunt Double’s authorisation server documents. Omit `CLIENT_SECRET` for public (PKCE-only) clients.
+Adjust `scopes` to match what Stunt Double's authorisation server documents. Omit `CLIENT_SECRET` for public (PKCE-only) clients.
 
 ## Available Tools
 
@@ -78,18 +78,15 @@ Adjust `scopes` to match what Stunt Double’s authorisation server documents. O
 | `list_workspaces`        | List all workspaces you belong to, including your role in each |
 | `get_workspace`          | Get details of a specific workspace by ID or slug              |
 | `list_workspace_members` | List all members of a workspace with their roles and profiles  |
-| `invite_member`          | Invite a new member to a workspace                             |
-| `remove_member`          | Remove a member from a workspace                               |
 
 ### Actors
 
-| Tool            | Description                                                           |
-| --------------- | --------------------------------------------------------------------- |
-| `list_actors`   | List active actors in a workspace                                     |
-| `get_actor`     | Get full details of an actor including system prompt and capabilities |
-| `create_actor`  | Create a new actor in a workspace                                     |
-| `update_actor`  | Update an actor's name, description, system prompt, or capabilities   |
-| `archive_actor` | Archive an actor (soft delete)                                        |
+| Tool           | Description                                                                           |
+| -------------- | ------------------------------------------------------------------------------------- |
+| `list_actors`  | List active actors in a workspace                                                     |
+| `get_actor`    | Get full details of an actor including system prompt and capabilities                 |
+| `create_actor` | Create a new actor in a workspace                                                     |
+| `update_actor` | Update an actor's name, description, system prompt, capabilities, or status (archive) |
 
 ### Knowledge
 
@@ -101,12 +98,10 @@ Adjust `scopes` to match what Stunt Double’s authorisation server documents. O
 
 ### Conversations
 
-| Tool                  | Description                                                     |
-| --------------------- | --------------------------------------------------------------- |
-| `list_conversations`  | List conversations in a workspace, optionally filtered by actor |
-| `get_conversation`    | Get a conversation with its messages                            |
-| `create_conversation` | Create a new conversation with an actor                         |
-| `delete_conversation` | Delete a conversation and all its messages                      |
+| Tool                 | Description                                                     |
+| -------------------- | --------------------------------------------------------------- |
+| `list_conversations` | List conversations in a workspace, optionally filtered by actor |
+| `get_conversation`   | Get a conversation with its messages                            |
 
 ### Checklists
 
@@ -119,16 +114,12 @@ Adjust `scopes` to match what Stunt Double’s authorisation server documents. O
 
 ### Workflows
 
-| Tool                 | Description                                                   |
-| -------------------- | ------------------------------------------------------------- |
-| `list_workflows`     | List workflows in a workspace                                 |
-| `get_workflow`       | Get a workflow with its steps and recent runs                 |
-| `create_workflow`    | Create a new workflow in a workspace                          |
-| `update_workflow`    | Update a workflow name, description, or trigger configuration |
-| `delete_workflow`    | Delete a workflow and all its steps and runs                  |
-| `run_workflow`       | Trigger a new workflow run (async, returns run ID)            |
-| `list_workflow_runs` | List runs for a workflow                                      |
-| `get_workflow_run`   | Get a workflow run with step-level details                    |
+| Tool               | Description                                        |
+| ------------------ | -------------------------------------------------- |
+| `list_workflows`   | List workflows in a workspace                      |
+| `get_workflow`     | Get a workflow with its steps and recent runs      |
+| `run_workflow`     | Trigger a new workflow run (async, returns run ID) |
+| `get_workflow_run` | Get a workflow run with step-level details         |
 
 ### Feedback
 
@@ -137,6 +128,8 @@ Adjust `scopes` to match what Stunt Double’s authorisation server documents. O
 | `list_feedback`          | List feedback for a project, newest first       |
 | `get_feedback`           | Get a specific feedback submission with details |
 | `update_feedback_status` | Update the status of a feedback submission      |
+
+> Admin operations (inviting/removing members, creating/updating/deleting workflows) are available in the [web dashboard](https://app.stuntdouble.io).
 
 ## Transport
 
