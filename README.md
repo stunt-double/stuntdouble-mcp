@@ -49,7 +49,7 @@ Use only `url` for remote servers (Streamable HTTP is negotiated automatically).
 
 Authentication is handled automatically via OAuth 2.1 with PKCE. The first time your AI client connects, a browser window will open for you to sign in and authorise access to your Stunt Double account. No API keys or tokens required.
 
-For **Cursor**, the OAuth redirect URI is fixed to `cursor://anysphere.cursor-mcp/oauth/callback` ([docs](https://cursor.com/docs/mcp.md)); the Stunt Double OAuth app must allow that redirect or sign-in from Cursor will fail after install.
+For **Cursor**, the OAuth redirect URI is fixed to `cursor://anysphere.cursor-mcp/oauth/callback` ([docs](https://cursor.com/docs/mcp.md)).
 
 ## Available Tools
 
