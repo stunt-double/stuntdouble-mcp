@@ -49,25 +49,7 @@ Use only `url` for remote servers (Streamable HTTP is negotiated automatically).
 
 Authentication is handled automatically via OAuth 2.1 with PKCE. The first time your AI client connects, a browser window will open for you to sign in and authorise access to your Stunt Double account. No API keys or tokens required.
 
-For **Cursor**, the OAuth redirect URI is fixed to `cursor://anysphere.cursor-mcp/oauth/callback` ([docs](https://cursor.com/docs/mcp.md)); the Stunt Double OAuth app must allow that redirect or sign-in from Cursor will fail after install.
-
-If your IdP does **not** support dynamic client registration, add a static OAuth block to `mcp.json` (or set these via environment interpolation) as described in [Cursor MCP — Static OAuth for remote servers](https://cursor.com/docs/mcp.md). The environment variable names below are **examples** — use the client ID and secret (if any) issued for your OAuth client and the variable names your team standardises on.
-
-```json
-{
-  "mcpServers": {
-    "stuntdouble": {
-      "url": "https://app.stuntdouble.io/api/mcp",
-      "auth": {
-        "CLIENT_ID": "${env:STUNTDOUBLE_MCP_CLIENT_ID}",
-        "CLIENT_SECRET": "${env:STUNTDOUBLE_MCP_CLIENT_SECRET}"
-      }
-    }
-  }
-}
-```
-
-Adjust `scopes` to match what Stunt Double's authorisation server documents. Omit `CLIENT_SECRET` for public (PKCE-only) clients.
+For **Cursor**, the OAuth redirect URI is fixed to `cursor://anysphere.cursor-mcp/oauth/callback` ([docs](https://cursor.com/docs/mcp.md)).
 
 ## Available Tools
 
