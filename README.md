@@ -61,6 +61,12 @@ For **Cursor**, the OAuth redirect URI is fixed to `cursor://anysphere.cursor-mc
 | `get_workspace`          | Get workspace details by ID or slug |
 | `list_workspace_members` | List members of a workspace         |
 
+### Projects
+
+| Tool            | Description                  |
+| --------------- | ---------------------------- |
+| `list_projects` | List projects in a workspace |
+
 ### Actors
 
 | Tool           | Description                                                                                                     |
