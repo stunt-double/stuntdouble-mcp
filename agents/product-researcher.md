@@ -68,6 +68,21 @@ create_conversation(workspace_id, actor_id, title: "Concept test: Option A vs B"
 
 Describe two or more options. Ask the actor to evaluate each one and explain their preference. Look for patterns across actor types.
 
+### Structured interviews — "Run a small panel through a discussion guide"
+
+When you need a repeatable, comparable research round (rather than one-off conversations), use the **Interviews** tools. A panel of 3–5 participants runs through the same sections + questions/tasks against a live URL, and Stunt Double synthesises themes and recommendations for you:
+
+```
+create_interview(workspace_id, project_id, name, target_url, research_brief)
+add_interview_section(interview_id, title)            # one section per topic
+add_interview_item(section_id, type, prompt_text)     # questions or browser tasks
+add_interview_participant(interview_id, actor_id=…)   # or persona_spec={…}
+launch_interview(interview_id)                        # async run
+get_interview_report(interview_id)                    # summary, themes, recs
+```
+
+Use this when you want side-by-side comparison across personas — e.g. evaluating a new pricing page, an onboarding flow, or a redesigned dashboard.
+
 ## Example research summary
 
 > **Research: Should we add a team dashboard?**
