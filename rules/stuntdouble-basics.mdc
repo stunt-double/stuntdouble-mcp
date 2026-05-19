@@ -25,3 +25,10 @@ Feedback:
 - Review feedback items surfaced by Stunt Double and update their status as issues are triaged or resolved.
 - Status lifecycle: new → reviewed → resolved (or dismissed for false positives).
 - Cross-reference feedback with actors and workflows to identify patterns and coverage gaps.
+
+Interviews:
+- Interviews are structured user research rounds: a discussion guide (sections of questions and tasks) is run against a target URL by AI participants (existing actors or ad-hoc personas).
+- Build the guide with `add_interview_section` and `add_interview_item` before launching. Each section should focus on one topic and contain ordered `question` or `task` items.
+- Add participants with `add_interview_participant` — pass `actor_id` to reuse an existing actor, or `persona_spec` (`name`, `bio`, `traits`) for an ad-hoc persona.
+- `launch_interview` is async — it returns a trigger run ID and flips the interview to `running`. Participants update independently; use `get_interview` and `get_interview_participant` to follow progress.
+- Once participants complete, the synthesis task produces a report (summary, themes, recommendations, per-question rollup). Fetch it with `get_interview_report`, or call `regenerate_interview_report` after editing transcripts or re-running participants.

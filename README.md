@@ -117,6 +117,24 @@ For **Cursor**, the OAuth redirect URI is fixed to `cursor://anysphere.cursor-mc
 | `get_feedback`           | Get a feedback submission with its replies |
 | `update_feedback_status` | Update feedback status                     |
 
+### Interviews
+
+Structured user interviews — actors or generated personas run through a discussion guide (sections + questions/tasks) against a target URL, then Stunt Double synthesises themes and recommendations.
+
+| Tool                          | Description                                                                                |
+| ----------------------------- | ------------------------------------------------------------------------------------------ |
+| `list_interviews`             | List interviews in a workspace, optionally filtered by project                             |
+| `get_interview`               | Get an interview with its discussion guide (sections + items) and participants             |
+| `create_interview`            | Create a new interview in a project (name, target URL, research brief)                     |
+| `update_interview`            | Update an interview's name, target URL, research brief, or status                          |
+| `add_interview_section`       | Add a section to the discussion guide                                                      |
+| `add_interview_item`          | Add a question or task to a section                                                        |
+| `add_interview_participant`   | Attach a participant — either an existing actor or an ad-hoc `persona_spec`                |
+| `get_interview_participant`   | Get a participant including their full transcript from the run                             |
+| `get_interview_report`        | Get the current synthesised report (summary, themes, recommendations, per-question rollup) |
+| `launch_interview`            | Launch the interview round (async). Returns the trigger run ID                             |
+| `regenerate_interview_report` | Re-run synthesis on existing transcripts (async). Returns the trigger run ID               |
+
 ### Prompts
 
 | Prompt              | Description                        |
