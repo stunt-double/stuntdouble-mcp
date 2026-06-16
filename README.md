@@ -63,9 +63,11 @@ For **Cursor**, the OAuth redirect URI is fixed to `cursor://anysphere.cursor-mc
 
 ### Projects
 
-| Tool            | Description                  |
-| --------------- | ---------------------------- |
-| `list_projects` | List projects in a workspace |
+| Tool             | Description                                                                |
+| ---------------- | -------------------------------------------------------------------------- |
+| `list_projects`  | List projects in a workspace                                               |
+| `get_project`    | Get a project (the product tracked by checklists, workflows, feedback)     |
+| `create_project` | Create a project (a product to track with checklists, workflows, feedback) |
 
 ### Actors
 
@@ -93,21 +95,31 @@ For **Cursor**, the OAuth redirect URI is fixed to `cursor://anysphere.cursor-mc
 
 ### Checklists
 
-| Tool                | Description                                     |
-| ------------------- | ----------------------------------------------- |
-| `list_checklists`   | List checklists in a workspace                  |
-| `get_checklist`     | Get checklist details, checks, and recent runs  |
-| `get_checklist_run` | Get a checklist run with per-check results      |
-| `run_checklist`     | Trigger a checklist run (async). Returns run ID |
+| Tool                | Description                                                                                |
+| ------------------- | ------------------------------------------------------------------------------------------ |
+| `list_checklists`   | List checklists in a workspace                                                             |
+| `get_checklist`     | Get checklist details, checks, and recent runs                                             |
+| `get_checklist_run` | Get a checklist run with per-check results                                                 |
+| `run_checklist`     | Trigger a checklist run (async). Returns run ID                                            |
+| `create_checklist`  | Create a browser-based QA checklist (host via project or URL, actor, instructions, checks) |
+| `update_checklist`  | Update a checklist (pass `checks` to replace the full set)                                 |
+| `delete_checklist`  | Delete a checklist and its checks and runs                                                 |
 
 ### Workflows
 
-| Tool               | Description                                     |
-| ------------------ | ----------------------------------------------- |
-| `list_workflows`   | List workflows in a workspace                   |
-| `get_workflow`     | Get workflow details with steps and recent runs |
-| `run_workflow`     | Trigger a workflow run (async). Returns run ID  |
-| `get_workflow_run` | Get a workflow run with step-level details      |
+| Tool                   | Description                                        |
+| ---------------------- | -------------------------------------------------- |
+| `list_workflows`       | List workflows in a workspace                      |
+| `get_workflow`         | Get workflow details with steps and recent runs    |
+| `run_workflow`         | Trigger a workflow run (async). Returns run ID     |
+| `get_workflow_run`     | Get a workflow run with step-level details         |
+| `create_workflow`      | Create a workflow (multi-step automation)          |
+| `update_workflow`      | Update a workflow's name, description, or trigger  |
+| `toggle_workflow`      | Activate or pause a workflow                       |
+| `delete_workflow`      | Delete a workflow and its steps and runs           |
+| `add_workflow_step`    | Append a step to a workflow                        |
+| `update_workflow_step` | Update a workflow step type, config, or sort order |
+| `remove_workflow_step` | Remove a step from a workflow                      |
 
 ### Feedback
 
@@ -116,6 +128,14 @@ For **Cursor**, the OAuth redirect URI is fixed to `cursor://anysphere.cursor-mc
 | `list_feedback`          | List feedback for a project, newest first  |
 | `get_feedback`           | Get a feedback submission with its replies |
 | `update_feedback_status` | Update feedback status                     |
+
+### GitHub
+
+| Tool                 | Description                                                            |
+| -------------------- | ---------------------------------------------------------------------- |
+| `list_pull_requests` | List pull requests for a GitHub repository                             |
+| `get_pull_request`   | Get details for a GitHub pull request (title, author, branches, stats) |
+| `comment_on_pr`      | Post a comment on a GitHub pull request                                |
 
 ### Interviews
 
@@ -141,7 +161,7 @@ Structured user interviews — actors or generated personas run through a discus
 | ------------------- | ---------------------------------- |
 | `stuntdouble_guide` | Overview of Stunt Double MCP tools |
 
-> Admin operations (inviting/removing members, creating/updating/deleting workflows) are available in the [web dashboard](https://app.stuntdouble.io).
+> Workspace member administration (inviting/removing members) is available in the [web dashboard](https://app.stuntdouble.io).
 
 ## Transport
 
