@@ -157,9 +157,20 @@ Structured user interviews — actors or generated personas run through a discus
 
 ### Prompts
 
-| Prompt              | Description                        |
-| ------------------- | ---------------------------------- |
-| `stuntdouble_guide` | Overview of Stunt Double MCP tools |
+Most MCP clients (Claude, Claude Code, Cursor) surface these as slash commands. Each is a self-contained recipe: which tools to call, in what order, and how to report back.
+
+| Prompt                | Description                                                                                                               |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `validate_design`     | Validate a live design, prototype, or preview URL (Figma Make, Claude artifact, v0, staging) with AI personas             |
+| `verify_change`       | Verify a shipped or previewed code change by running an actor through the affected flows, optionally commenting on the PR |
+| `run_user_research`   | Run a structured multi-persona interview study and synthesise themes and recommendations                                  |
+| `triage_feedback`     | Triage user feedback on a project: cluster it, reproduce issues with an actor, and update statuses                        |
+| `setup_guardrails`    | Stand up checklists for critical flows plus a workflow that re-runs them on a schedule or on deploy/PR events             |
+| `check_brand`         | Audit a product against brand and tone-of-voice guidelines, flagging deviations with evidence                             |
+| `check_design_system` | Audit a live product against its design system (typography, colour, spacing, components) on rendered pages                |
+| `check_compliance`    | Check a product against legal and compliance requirements and collect evidence for counsel to review                      |
+| `check_continuity`    | Check continuity across surfaces (pricing, terminology, promises) between marketing, product, docs, and emails            |
+| `stuntdouble_guide`   | Orientation for Stunt Double: what it does, when to reach for it, and the full tool catalogue                             |
 
 > Workspace member administration (inviting/removing members) is available in the [web dashboard](https://app.stuntdouble.io).
 
