@@ -32,3 +32,12 @@ Interviews:
 - Add participants with `add_interview_participant` — pass `actor_id` to reuse an existing actor, or `persona_spec` (`name`, `bio`, `traits`) for an ad-hoc persona.
 - `launch_interview` is async — it returns a trigger run ID and flips the interview to `running`. Participants update independently; use `get_interview` and `get_interview_participant` to follow progress.
 - Once participants complete, the synthesis task produces a report (summary, themes, recommendations, per-question rollup). Fetch it with `get_interview_report`, or call `regenerate_interview_report` after editing transcripts or re-running participants.
+
+Standards and guardrails:
+- The same checklist and workflow machinery enforces standards, not just flows: brand and tone of voice, design-system adherence, legal and compliance requirements, and cross-surface continuity (pricing, terminology, promises).
+- The pattern is always the same: codify the standard as actor knowledge with `add_actor_knowledge`, assert it with observable checklist checks (phrased as things a user could verify on the rendered page), then re-run on a schedule or on deploy and design events with `create_workflow`.
+- Anything with a reachable URL can be tested: production, staging, Vercel/Netlify previews, Figma Make published prototypes, Claude design artifacts, v0 links.
+
+Prompts (slash-command recipes):
+- The server ships self-contained prompt recipes; most clients surface them as slash commands. Reach for them instead of assembling tool calls by hand.
+- `validate_design`, `verify_change`, `run_user_research`, `triage_feedback`, `setup_guardrails`, `check_brand`, `check_design_system`, `check_compliance`, `check_continuity`, and `stuntdouble_guide` (orientation + full tool catalogue).

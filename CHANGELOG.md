@@ -4,6 +4,18 @@ All notable changes to the Stunt Double MCP server configuration are documented 
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.0] - 2026-07-12
+
+### Added
+
+- Documented the full prompt suite now served by the hosted MCP service in the README "Prompts" table: `validate_design`, `verify_change`, `run_user_research`, `triage_feedback`, `setup_guardrails`, `check_brand`, `check_design_system`, `check_compliance`, `check_continuity` (previously only `stuntdouble_guide` was listed).
+- Added skills mirroring the new standards and guardrails recipes: `verify-change`, `setup-guardrails`, `check-brand`, `check-design-system`, `check-compliance`, and `check-continuity`.
+- Added "Standards and guardrails" and "Prompts" sections to the `stuntdouble-basics` rule so clients know the checklist and workflow machinery also enforces brand, design-system, compliance, and continuity standards, and which prompt recipes exist.
+
+### Changed
+
+- Bumped `.cursor-plugin/plugin.json` and `server.json` to 1.7.0.
+
 ## [1.6.0] - 2026-06-16
 
 ### Added
