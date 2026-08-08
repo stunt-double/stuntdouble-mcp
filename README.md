@@ -61,6 +61,19 @@ For **Cursor**, the OAuth redirect URI is fixed to `cursor://anysphere.cursor-mc
 | `get_workspace`          | Get workspace details by ID or slug |
 | `list_workspace_members` | List members of a workspace         |
 
+### Search
+
+| Tool     | Description                                                                                                                                                                                       |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `search` | Search a workspace across projects, actors, checklists, interviews, automations, issues, goals, feedback, actor knowledge, insights, design reviews and conversations. Ranked, with optional filters |
+
+`search` takes a `workspace_id` plus an optional `query`, `types` filter, `project_id`
+filter and `limit` (max 50). Terms are matched as prefixes, so a partial word is enough.
+Omit `query` to browse the most recently updated items. Results carry the `id` you need
+for the matching getter, so it is usually cheaper than listing an entity type and
+filtering the list yourself. Reach for it before creating anything, to find the actor or
+checklist that already covers the job.
+
 ### Projects
 
 | Tool             | Description                                                                |

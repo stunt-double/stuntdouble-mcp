@@ -9,6 +9,12 @@ stuntdouble-basics:
 - Authentication is handled automatically via OAuth 2.1 with PKCE. No API keys or tokens are needed.
 - Always specify a workspace when creating or listing resources. Use `list_workspaces` to find available workspaces.
 
+Finding things:
+- `search` is the fastest way to locate anything in a workspace: projects, actors, checklists, interviews, automations, issues, goals, feedback, actor knowledge, insights, design reviews and conversations, all in one ranked call.
+- Prefer it over listing an entity type and filtering the list yourself. Narrow with `types` and `project_id` when you already know the shape of what you want.
+- Search before you create. It is how you find the actor, checklist, or workflow that already covers the job instead of adding a near-duplicate.
+- Search only ever returns entities from workspaces you are a member of; the boundary is enforced server-side, not by the filters you pass.
+
 Actors:
 - Actors represent AI user personas. Create actors with clear names (format: "FirstName - Role"), descriptions, and system prompts.
 - Give actors knowledge via `add_actor_knowledge` so they understand your product context.

@@ -3,7 +3,7 @@
   "name": "io.stuntdouble/mcp-server",
   "title": "Stunt Double",
   "description": "Deploy AI user personas to validate user journeys at scale. Find UX friction before real users do.",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "websiteUrl": "https://www.stuntdouble.io",
   "repository": {
     "url": "https://github.com/stunt-double/stuntdouble-mcp",
