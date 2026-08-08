@@ -63,9 +63,9 @@ For **Cursor**, the OAuth redirect URI is fixed to `cursor://anysphere.cursor-mc
 
 ### Search
 
-| Tool     | Description                                                                                                                                                                                          |
-| -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `search` | Search a workspace across projects, actors, checklists, interviews, automations, issues, goals, feedback, actor knowledge, insights, design reviews and conversations. Ranked, with optional filters |
+| Tool     | Description                                                                                                                                                                                                             |
+| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `search` | Search a workspace across projects, actors, checklists, interviews, automations, issues, goals, feedback, actor knowledge, insights, design reviews, project resources and conversations. Ranked, with optional filters |
 
 `search` takes a `workspace_id` plus an optional `query`, `types` filter, `project_id`
 filter and `limit` (max 50). Terms are matched as prefixes, so a partial word is enough.

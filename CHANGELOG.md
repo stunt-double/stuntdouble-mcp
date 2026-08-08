@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
-- Documented the new `search` tool served by the hosted MCP service: one ranked search across projects, actors, checklists, interviews, automations, issues, goals, feedback, actor knowledge, insights, design reviews and conversations, with optional `types`, `project_id` and `limit` filters.
+- Documented the new `search` tool served by the hosted MCP service: one ranked search across projects, actors, checklists, interviews, automations, issues, goals, feedback, actor knowledge, insights, design reviews, project resources and conversations, with optional `types`, `project_id` and `limit` filters.
 - Added a "Finding things" section to the `stuntdouble-basics` rule so clients reach for `search` instead of listing an entity type and filtering it themselves, and search before creating near-duplicates.
 
 ### Changed
