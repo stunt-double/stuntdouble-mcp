@@ -4,6 +4,17 @@ All notable changes to the Stunt Double MCP server configuration are documented 
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.0] - 2026-08-08
+
+### Added
+
+- Documented the new `search` tool served by the hosted MCP service: one ranked search across projects, actors, checklists, interviews, automations, issues, goals, feedback, actor knowledge, insights, design reviews, project resources and conversations, with optional `types`, `project_id` and `limit` filters.
+- Added a "Finding things" section to the `stuntdouble-basics` rule so clients reach for `search` instead of listing an entity type and filtering it themselves, and search before creating near-duplicates.
+
+### Changed
+
+- Bumped `.cursor-plugin/plugin.json` and `server.json` to 1.8.0.
+
 ## [1.7.0] - 2026-07-12
 
 ### Added
