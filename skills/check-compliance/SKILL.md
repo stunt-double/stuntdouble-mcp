@@ -24,9 +24,9 @@ This produces **evidence for the team and their counsel to review**. It is not l
 2. **Confirm the requirements in scope:**
    - If none were supplied, ask which regimes apply (e.g. GDPR cookie consent, AU Consumer Law pricing, financial-services disclaimers) before running
 
-3. **Set up a compliance-reviewer actor:**
+3. **Set up a compliance-reviewer actor and record the requirements:**
    - `list_actors(workspace_id)`, else `create_actor(...)`
-   - `add_actor_knowledge(actor_id, ...)` — store the requirement list
+   - `add_project_guideline(project_id, category: "compliance", content, title)`, one obligation per guideline so a finding can name the requirement it breaks. Check `list_workspace_guidelines(workspace_id)` first: an obligation that applies to several products is one rule attached to each with `set_project_guideline`
 
 4. **Create a checklist that exercises behaviour, not just presence:**
    - "A cookie banner appears before any non-essential tracking and the reject option works"

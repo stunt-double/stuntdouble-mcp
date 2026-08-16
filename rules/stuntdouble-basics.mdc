@@ -39,10 +39,24 @@ Interviews:
 - `launch_interview` is async — it returns a trigger run ID and flips the interview to `running`. Participants update independently; use `get_interview` and `get_interview_participant` to follow progress.
 - Once participants complete, the synthesis task produces a report (summary, themes, recommendations, per-question rollup). Fetch it with `get_interview_report`, or call `regenerate_interview_report` after editing transcripts or re-running participants.
 
+Guidelines (the standards a workspace holds itself to):
+- A guideline is a standing rule (design system, tone of voice, brand, content, accessibility, compliance, security, performance, shared knowledge). It is owned by the **workspace** and attached to the projects it applies to, so one rule holds for several projects without being retyped or edited in several places.
+- Whatever is in force for a project is rendered into every checklist run, design review, interview and triage for it. Read `list_project_guidelines` before writing checks, interview questions or design feedback, and assert the rules rather than restating or contradicting them.
+- Two switches decide whether a rule is in force: the library's and the project attachment's. `list_project_guidelines` folds them into one `enabled`.
+- Write a rule once with `add_project_guideline` (library plus this project) or `add_workspace_guideline` (library only), then hold other projects to the same rule with `set_project_guideline` rather than adding a near-duplicate. Check `list_workspace_guidelines` first.
+- `update_workspace_guideline` with `apply_to_design_reviews` carries a rule to every design review in the workspace, including the Slack and Linear reviews that have no project to attach it through.
+- Guidelines are project-wide standards; `add_actor_knowledge` is for what one actor needs to remember.
+
 Standards and guardrails:
 - The same checklist and workflow machinery enforces standards, not just flows: brand and tone of voice, design-system adherence, legal and compliance requirements, and cross-surface continuity (pricing, terminology, promises).
-- The pattern is always the same: codify the standard as actor knowledge with `add_actor_knowledge`, assert it with observable checklist checks (phrased as things a user could verify on the rendered page), then re-run on a schedule or on deploy and design events with `create_workflow`.
+- The pattern is always the same: codify the standard as a guideline, assert it with observable checklist checks (phrased as things a user could verify on the rendered page), then re-run on a schedule or on deploy and design events with `create_workflow`.
+- Schedules store a timezone alongside the cron. Pass `{ cron, timezone }` in `trigger_config` using the timezone from `get_me`, or the run lands at that hour in UTC.
 - Anything with a reachable URL can be tested: production, staging, Vercel/Netlify previews, Figma Make published prototypes, Claude design artifacts, v0 links.
+
+Workspace and project scope:
+- `get_workspace` reports the admin-set security controls under `settings` (public sharing, feedback widget, self-hosted workers, network policy). They are ceilings: a feature switched off there cannot be switched back on for one project, so check before promising a shared report link or a widget install.
+- A project is archived, never deleted. An archived project (and every checklist, interview and feedback item under it) reads as missing from these tools; restoring one is a dashboard action.
+- `list_project_mcp_servers` shows which MCP servers a project's runs can reach. A tool that is not listed is not available to the run. Registering and attaching servers are workspace-admin actions in the dashboard.
 
 Prompts (slash-command recipes):
 - The server ships self-contained prompt recipes; most clients surface them as slash commands. Reach for them instead of assembling tool calls by hand.

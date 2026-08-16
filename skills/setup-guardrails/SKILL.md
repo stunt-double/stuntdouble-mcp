@@ -24,18 +24,22 @@ description: Stand up continuous guardrails on Stunt Double — checklists for c
    - `create_checklist(...)` per critical flow, each with focused instructions and 3–6 crisp pass/fail checks
    - Small, focused checklists give clearer failure signals than one giant checklist
 
-4. **Confirm a green baseline before automating:**
+4. **Record any standard the flows are held to:**
+   - `list_project_guidelines(project_id)` to read what the project is already held to, then `add_project_guideline(...)` for anything missing
+   - A guideline reaches every run, review and interview for the project, so the checks can assert it instead of restating it in each checklist
+
+5. **Confirm a green baseline before automating:**
    - `run_checklist(checklist_id)` for each, poll `get_checklist_run(run_id)` until terminal
    - Fix flaky checks now — a noisy guardrail gets ignored
 
-5. **Automate re-runs with a workflow:**
+6. **Automate re-runs with a workflow:**
    - `create_workflow(...)` with a trigger:
-     - `schedule` with a cron (daily is a good default), or
+     - `schedule` with a cron (daily is a good default), passing `{ cron, timezone }` in `trigger_config` using the timezone from `get_me` so the hour means the user's hour, or
      - event triggers (`vercel_event`, `github_event`) to run on deploys and pull requests when those connections are configured in the workspace
    - `add_workflow_step(...)` — one `run_checklist` step per checklist, plus a `notification` step so failures reach the team
    - `toggle_workflow(workflow_id)` to activate
 
-6. **Confirm coverage to the user:**
+7. **Confirm coverage to the user:**
    - What is covered, when it runs, where failures are reported, and how to extend it (add a checklist, then add a step)
    - Manage everything later at app.stuntdouble.io
 
