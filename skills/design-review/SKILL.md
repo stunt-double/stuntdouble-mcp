@@ -23,13 +23,16 @@ description: Run a design review session by gathering feedback from multiple Stu
    - `add_actor_knowledge(actor_id, title, content)` → share design context, screenshots, feature descriptions, or prototype links with each actor
    - This ensures actors have the right context to give informed feedback
 
-3. **Create review conversations:**
-   - `create_conversation(workspace_id, actor_id, title: "Design review: <feature>")` → one per actor
-   - Describe the proposed design clearly: what it does, how the user would interact with it, and what the key decision points are
-   - Ask specific questions: "Would you understand what this button does?", "What would you expect to happen next?", "Is anything confusing or missing?"
+3. **Run the review as an interview:**
+   - `create_interview(workspace_id, project_id, name: "Design review: <feature>", target_url, research_brief)` → describe the proposed design clearly in the brief: what it does, how the user would interact with it, and what the key decision points are
+   - `add_interview_section(interview_id, title)` then `add_interview_item(section_id, type, prompt_text)` → mix `task` items ("Find the annual price and start checkout") with specific questions ("Would you understand what this button does?", "What would you expect to happen next?", "Is anything confusing or missing?")
+   - `add_interview_participant(interview_id, actor_id)` → one per selected actor, or `persona_spec` for an ad-hoc persona
+   - `launch_interview(interview_id)` → async, poll `get_interview(interview_id)` until terminal
 
 4. **Collect and read responses:**
-   - `get_conversation(conversation_id)` → read each actor's feedback
+   - `get_interview_report(interview_id)` → summary, themes, recommendations, per-question rollup
+   - `get_interview_participant(participant_id)` → verbatim transcript evidence for a finding
+   - Conversations are read-only over MCP: `list_conversations` / `get_conversation` read chats started in the dashboard
 
 5. **Cross-reference with existing data:**
    - `list_feedback(project_id)` → check if the design addresses known issues
@@ -80,7 +83,7 @@ Recommendations:
 
 ## Tips
 
-- Ask actors both open-ended ("What stands out to you?") and specific ("Would you click this button?") questions
+- Ask participants both open-ended ("What stands out to you?") and specific ("Would you click this button?") questions
 - Include at least one accessibility-focused actor in every design review
-- Use conversation responses as quotable evidence in design documents and stakeholder presentations
-- After the review, clean up with `delete_conversation` if conversations were one-off
+- Use transcript quotes as evidence in design documents and stakeholder presentations
+- Keep the interview. Re-running it after the design changes gives a like-for-like comparison, which a one-off review cannot

@@ -20,4 +20,4 @@ Coverage:
 After merging:
 - Re-run affected workflows against the deployed environment to confirm the fix.
 - Update feedback status to "resolved" for any issues addressed by the change.
-- Review workflow run history (`list_workflow_runs`) to confirm no regressions.
+- Review workflow run history (`get_workflow`, which returns `recent_runs`) to confirm no regressions.

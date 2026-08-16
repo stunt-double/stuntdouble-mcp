@@ -4,6 +4,18 @@ All notable changes to the Stunt Double MCP server configuration are documented 
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.9.1] - 2026-08-16
+
+### Fixed
+
+- The agents, skills and rules told clients to call three tools the hosted service does not serve: `create_conversation`, `delete_conversation` and `list_workflow_runs`. Conversations are read-only over MCP (`list_conversations`, `get_conversation`), and a workflow's run history comes back on `get_workflow` as `recent_runs`.
+- `design-review`, `design-reviewer` and `product-researcher` now run a panel through an interview rather than opening a conversation per actor. Every participant answers the same guide, so the report synthesises themes across personas instead of leaving a pile of transcripts to compare by hand.
+- `create-actor-panel` verifies a new persona with a small checklist run rather than a conversation it cannot start.
+
+### Changed
+
+- Bumped `.cursor-plugin/plugin.json` and `server.json` to 1.9.1.
+
 ## [1.9.0] - 2026-08-16
 
 ### Added

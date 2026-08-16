@@ -37,7 +37,7 @@ description: Create and configure a Stunt Double actor (AI persona) with knowled
 6. **Verify the setup:**
    - `get_actor(actor_id)` → confirm system prompt and capabilities
    - `list_actor_knowledge(actor_id)` → confirm knowledge entries
-   - `create_conversation(workspace_id, actor_id, title: "Setup verification")` → test with a quick conversation
+   - Exercise one actor for real before relying on the panel: a small `create_checklist` plus `run_checklist` against the product shows whether the persona behaves as written
 
 ## Example actor configurations
 

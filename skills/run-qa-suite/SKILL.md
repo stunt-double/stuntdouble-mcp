@@ -32,7 +32,7 @@ description: Run the full Stunt Double QA suite — all workflows and checklists
 4. **Compile the QA report:**
    - List every workflow and checklist with pass/fail
    - For failures: include step name, actor, and what went wrong
-   - Compare against previous runs if available: `list_workflow_runs(workflow_id)`
+   - Compare against previous runs if available: `get_workflow(workflow_id)` returns `recent_runs`
 
 5. **Check for new feedback generated:**
    - `list_feedback(project_id, status: "new")` → see if runs surfaced new issues

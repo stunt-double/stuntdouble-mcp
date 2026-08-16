@@ -87,5 +87,5 @@ update_feedback_status(feedback_id, status: "resolved") → close the feedback i
 ## Tips
 
 - Run workflows with different actors to test the same journey from multiple user perspectives
-- Use `list_workflow_runs(workflow_id)` to compare current results against previous runs and spot regressions
+- Use `get_workflow(workflow_id)`, which returns `recent_runs`, to compare current results against previous runs and spot regressions
 - Schedule workflows on a regular cadence using `create_workflow` with `trigger_type: "schedule"` for continuous validation
