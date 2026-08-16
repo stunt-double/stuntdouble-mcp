@@ -18,7 +18,7 @@ Finding things:
 Actors:
 - Actors represent AI user personas. Create actors with clear names (format: "FirstName - Role"), descriptions, and system prompts.
 - Give actors knowledge via `add_actor_knowledge` so they understand your product context.
-- Use `create_conversation` to talk to actors for research, design reviews, or concept testing.
+- Conversations are read-only over MCP (`list_conversations`, `get_conversation`); an actor chat is started from the dashboard. To probe actors for research, design reviews or concept testing, run an interview: it puts every persona through the same guide and synthesises the answers, which one-off chats cannot do.
 - Create diverse actors covering different segments: new users, power users, enterprise, accessibility, mobile.
 
 Workflows and checklists:

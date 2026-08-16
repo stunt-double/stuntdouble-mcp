@@ -25,20 +25,28 @@ list_actors(workspace_id) → see which personas are available
 
 Pick 2-4 actors representing different user segments (e.g., power user, first-time visitor, accessibility-dependent user).
 
-### 2. Create conversations for each persona
+### 2. Put the design in front of each persona
 
 ```
-create_conversation(workspace_id, actor_id, title: "Design review: <feature name>")
+create_interview(workspace_id, project_id, name: "Design review: <feature name>",
+                 target_url: <prototype or preview URL>, research_brief: …)
+add_interview_section(interview_id, title) → one per topic
+add_interview_item(section_id, type: "task" | "question", prompt_text: …)
+add_interview_participant(interview_id, actor_id=…) → one per selected actor
+launch_interview(interview_id) → async
 ```
 
-Start a conversation with each selected actor. Describe the proposed design, flow, or change. Ask the actor to walk through the experience and share reactions.
+Describe the proposed design in the research brief, then ask each participant to walk the experience and react. Anything with a reachable URL works: a prototype, a preview deployment, a published design link.
 
 ### 3. Gather and synthesize feedback
 
 ```
-get_conversation(conversation_id) → read each persona's reactions
+get_interview_report(interview_id) → summary, themes, recommendations
+get_interview_participant(participant_id) → verbatim transcript evidence
 list_feedback(project_id) → check for related historical feedback
 ```
+
+Actor chats started in the dashboard are readable with `list_conversations` and `get_conversation`; MCP cannot open a new one.
 
 Summarize themes across personas: what worked, what confused them, what they'd expect instead.
 
@@ -67,6 +75,6 @@ Create a summary with:
 
 ## Tips
 
-- Use `add_actor_knowledge` to give actors context about your product before the review (feature docs, current screenshots, user research)
+- Use `add_actor_knowledge` to give actors context about your product before the review (feature docs, current screenshots, user research), and record the design standards themselves as guidelines (`add_project_guideline`) so every review and run is held to them
 - Create a dedicated actor for edge-case users (low bandwidth, screen reader, non-English speaker) to catch accessibility gaps
-- Compare conversation responses across actors to find universal vs segment-specific issues
+- Compare responses across participants to find universal vs segment-specific issues

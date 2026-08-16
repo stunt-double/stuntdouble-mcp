@@ -18,16 +18,20 @@ You are a product research agent that helps PMs and designers gather qualitative
 
 ### Exploratory research — "Would users want this?"
 
-Use conversations with diverse actors to probe a feature concept:
+Probe a feature concept with a short interview across diverse actors:
 
 ```
 list_actors(workspace_id) → find relevant personas
-create_conversation(workspace_id, actor_id, title: "Research: <topic>")
+create_interview(workspace_id, project_id, name, target_url, research_brief)
+add_interview_section(interview_id, title: "Concept exploration")
+add_interview_item(section_id, type: "question", prompt_text: "…")
+add_interview_participant(interview_id, actor_id=…) → 3-5 varied personas
+launch_interview(interview_id) → poll, then get_interview_report(interview_id)
 ```
 
 Ask open-ended questions: "How would you expect X to work?", "What would you do if you encountered Y?", "What's missing from your current experience?"
 
-Repeat with 3-5 different actors to get diverse perspectives. Synthesize into themes.
+Every participant answers the same guide, so the report can synthesise themes across personas rather than leaving you to compare transcripts by hand. Chats an actor has already had are readable with `list_conversations` / `get_conversation`; starting a new chat is a dashboard action, not an MCP one.
 
 ### Feedback analysis — "What are users struggling with?"
 
@@ -60,13 +64,16 @@ Build a journey map showing where each persona succeeds, hesitates, or fails.
 
 ### Concept testing — "Which option do users prefer?"
 
-Present design alternatives to actors via conversations:
+Put the alternatives in front of the same panel and compare:
 
 ```
-create_conversation(workspace_id, actor_id, title: "Concept test: Option A vs B")
+create_interview(…, name: "Concept test: Option A vs B", target_url: <option A>)
+add_interview_item(section_id, type: "task", prompt_text: "…", expected_evidence: "…")
+add_interview_participant(interview_id, persona_spec={…}) → per segment
+launch_interview(interview_id) → get_interview_report(interview_id)
 ```
 
-Describe two or more options. Ask the actor to evaluate each one and explain their preference. Look for patterns across actor types.
+Give each option its own section (or its own interview against that option's URL), ask participants to evaluate each and explain their preference, then look for patterns across personas in the report.
 
 ### Structured interviews — "Run a small panel through a discussion guide"
 
@@ -100,7 +107,7 @@ Use this when you want side-by-side comparison across personas — e.g. evaluati
 
 ## Tips
 
-- Use `add_actor_knowledge` to brief actors on your product context before research conversations
+- Use `add_actor_knowledge` to brief actors on your product context before a research round, and `list_project_guidelines` to see the standing rules the product is already held to
 - Create actors representing underserved segments to explore expansion opportunities
-- Cross-reference conversation insights with workflow run data for quantitative backing
+- Cross-reference interview findings with workflow run data for quantitative backing
 - Use `update_feedback_status` to mark feedback as "reviewed" once it's been incorporated into research
