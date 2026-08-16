@@ -4,6 +4,21 @@ All notable changes to the Stunt Double MCP server configuration are documented 
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.9.0] - 2026-08-16
+
+### Added
+
+- Documented the guideline tools now served by the hosted MCP service: `list_workspace_guidelines`, `add_workspace_guideline`, `update_workspace_guideline`, `remove_workspace_guideline` and `set_project_guideline`, alongside the existing `list_project_guidelines` and `add_project_guideline`. Guidelines are owned by the workspace and attached to the projects they apply to, so one rule can hold for several products without being retyped.
+- Documented `get_me` (the account a connection acts as, with the timezone a scheduled workflow should be created in and where notifications reach that person) and `list_project_mcp_servers` (which MCP servers a project's runs can reach).
+- Documented the `settings` block `get_workspace` now returns: the admin-set ceilings for public sharing, the feedback widget, self-hosted workers and the network policy.
+- Added "Guidelines" and "Workspace and project scope" sections to the `stuntdouble-basics` rule, covering the two switches that decide whether a rule is in force, the `apply_to_design_reviews` flag for reviews with no project, and the fact that a project is archived rather than deleted.
+
+### Changed
+
+- The standards skills (`check-brand`, `check-design-system`, `check-compliance`) and `setup-guardrails` now codify a standard as a guideline rather than as actor knowledge, and check the workspace library before writing a near-duplicate rule. Actor knowledge remains for what one actor needs to remember.
+- `setup-guardrails` passes the account's timezone when creating a scheduled workflow, so a daily run happens at the user's hour rather than in UTC.
+- Bumped `.cursor-plugin/plugin.json` and `server.json` to 1.9.0.
+
 ## [1.8.0] - 2026-08-08
 
 ### Added

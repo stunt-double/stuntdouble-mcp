@@ -53,13 +53,28 @@ For **Cursor**, the OAuth redirect URI is fixed to `cursor://anysphere.cursor-mc
 
 ## Available Tools
 
+### Account
+
+| Tool     | Description                                                                          |
+| -------- | ------------------------------------------------------------------------------------ |
+| `get_me` | The account this connection acts as: id, email, name, timezone, notification channel |
+
+Notification channel and timezone are account settings rather than workspace ones, so
+they are the same answer in every workspace. Pass the `timezone` when creating a
+scheduled workflow, or "every weekday at 9" becomes nine in UTC.
+
 ### Workspaces
 
-| Tool                     | Description                         |
-| ------------------------ | ----------------------------------- |
-| `list_workspaces`        | List your workspaces                |
-| `get_workspace`          | Get workspace details by ID or slug |
-| `list_workspace_members` | List members of a workspace         |
+| Tool                     | Description                                                                        |
+| ------------------------ | ---------------------------------------------------------------------------------- |
+| `list_workspaces`        | List your workspaces                                                               |
+| `get_workspace`          | Get workspace details by ID or slug, including its admin-set controls (`settings`) |
+| `list_workspace_members` | List members of a workspace                                                        |
+
+`get_workspace` reports the workspace security controls under `settings`: public
+sharing, the feedback widget, self-hosted workers, and the network policy. They are
+ceilings set by an admin, so a feature switched off there cannot be switched back on for
+a single project.
 
 ### Search
 
@@ -76,11 +91,44 @@ checklist that already covers the job.
 
 ### Projects
 
-| Tool             | Description                                                                |
-| ---------------- | -------------------------------------------------------------------------- |
-| `list_projects`  | List projects in a workspace                                               |
-| `get_project`    | Get a project (the product tracked by checklists, workflows, feedback)     |
-| `create_project` | Create a project (a product to track with checklists, workflows, feedback) |
+| Tool                       | Description                                                                |
+| -------------------------- | -------------------------------------------------------------------------- |
+| `list_projects`            | List projects in a workspace                                               |
+| `get_project`              | Get a project (the product tracked by checklists, workflows, feedback)     |
+| `create_project`           | Create a project (a product to track with checklists, workflows, feedback) |
+| `list_project_mcp_servers` | The MCP servers this project's runs can reach                              |
+
+A project is archived, never deleted, and an archived project reads as missing from
+every tool here. Registering an MCP server and attaching it to a project are
+workspace-admin actions in the dashboard; `list_project_mcp_servers` is how you check
+what tools a run will actually have before writing a checklist that depends on one.
+
+### Guidelines
+
+Standing rules the team holds the product to: design system, tone of voice, brand,
+content, accessibility, compliance, security, performance, or shared knowledge. A
+guideline is owned by the **workspace** and attached to the projects it applies to, so
+one rule can hold for every project without being retyped. Whatever is in force is
+rendered into every checklist run, design review, interview and triage for that project.
+
+| Tool                         | Description                                                                     |
+| ---------------------------- | ------------------------------------------------------------------------------- |
+| `list_workspace_guidelines`  | The workspace library, with how many projects hold each rule                    |
+| `add_workspace_guideline`    | Add a rule to the library, optionally attaching it to projects                  |
+| `update_workspace_guideline` | Edit a rule, switch it off, or apply it to every design review in the workspace |
+| `remove_workspace_guideline` | Remove a rule from the library, detaching it from every project                 |
+| `list_project_guidelines`    | The rules this project is held to                                               |
+| `add_project_guideline`      | Record a rule and hold this project to it                                       |
+| `set_project_guideline`      | Attach a library rule to a project, detach it, or switch it off there           |
+
+Two switches decide whether a rule is in force for a project: the library's `enabled`
+and the attachment's. `list_project_guidelines` folds them into one `enabled` so you
+never have to reason about both. A rule with `apply_to_design_reviews` set also holds for
+design reviews raised from Slack or Linear, which carry no project to attach it through.
+
+Codify a standard as a guideline rather than repeating it in each checklist, and search
+the library before writing a new rule: attaching the one that already exists keeps the
+team's standard in a single place to edit.
 
 ### Actors
 

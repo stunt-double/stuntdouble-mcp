@@ -17,9 +17,11 @@ description: Audit a product or site against brand and tone-of-voice guidelines 
    - `list_workspaces()` → pick the workspace
    - `list_projects(workspace_id)` → match the URL to a project, or let `create_checklist` find/create it
 
-2. **Set up a brand-guardian actor:**
+2. **Set up a brand-guardian actor and record the rules:**
    - `list_actors(workspace_id)`, else `create_actor(...)` described as a meticulous brand and copy reviewer
-   - `add_actor_knowledge(actor_id, ...)` — store the rule set on the actor (title it clearly, e.g. "Brand and tone-of-voice guidelines") so every future run enforces the same standard
+   - `list_workspace_guidelines(workspace_id)` — the standard may already be written down; attach it with `set_project_guideline(project_id, guideline_id)` rather than typing a second copy
+   - Otherwise `add_project_guideline(project_id, category: "tone_of_voice" | "brand", content, title)`, one rule per guideline so a finding can name the rule it breaks. Guidelines are workspace-owned and reach every checklist run, design review, interview and triage for the project
+   - Use `add_actor_knowledge(actor_id, ...)` for what only this reviewer needs to remember, not for the standard itself
    - If no guidelines were supplied, ask for them, or draft a short rule set from the strongest existing pages and confirm it before auditing
 
 3. **Create a checklist per surface in scope:**

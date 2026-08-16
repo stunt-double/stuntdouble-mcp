@@ -17,9 +17,10 @@ description: Audit a live product against its design system on Stunt Double — 
    - `list_workspaces()` → pick the workspace
    - `list_projects(workspace_id)` → match the URL to a project, or let `create_checklist` find/create it
 
-2. **Set up a design-guardian actor:**
+2. **Set up a design-guardian actor and record the rules:**
    - `list_actors(workspace_id)`, else `create_actor(...)` described as a design-system reviewer
-   - `add_actor_knowledge(actor_id, ...)` — store the token values and component dos and don'ts
+   - `list_workspace_guidelines(workspace_id)` first, then either attach an existing rule with `set_project_guideline(project_id, guideline_id)` or write one with `add_project_guideline(project_id, category: "design_system", content, title)`. Token values and component dos and don'ts belong here: guidelines reach every run and design review for the project
+   - `update_workspace_guideline(workspace_id, guideline_id, apply_to_design_reviews: true)` when the standard should also hold for design reviews raised from Slack or Linear, which carry no project
    - If no rules were supplied, ask for the key tokens and component rules, or derive a draft from the most polished screens and confirm it
 
 3. **Create a checklist per surface:**
