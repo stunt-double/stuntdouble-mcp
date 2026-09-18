@@ -36,7 +36,8 @@ description: Stand up continuous guardrails on Stunt Double — checklists for c
    - `create_workflow(...)` with a trigger:
      - `schedule` with a cron (daily is a good default), passing `{ cron, timezone }` in `trigger_config` using the timezone from `get_me` so the hour means the user's hour, or
      - event triggers (`vercel_event`, `github_event`) to run on deploys and pull requests when those connections are configured in the workspace
-   - `add_workflow_step(...)` — one `run_checklist` step per checklist, plus a `notification` step so failures reach the team
+   - `add_workflow_step(workflow_id, step_type, config)` — one `run_checklist` step per checklist, plus a `notification` step so failures reach the team. Each call appends and connects, so call them in the order the steps should run
+   - `get_workflow(workflow_id)` to check `execution_order` before activating: anything in `unreachable_step_ids` is a step no run will reach
    - `toggle_workflow(workflow_id)` to activate
 
 7. **Confirm coverage to the user:**
@@ -59,9 +60,10 @@ run_checklist(checkout_id); get_checklist_run(run_id)
 
 # Automate
 create_workflow(name="Critical flows", trigger_type="schedule", cron="0 8 * * *")
-add_workflow_step(workflow_id, type="run_checklist", config={ checklist_id: signup_id })
-add_workflow_step(workflow_id, type="run_checklist", config={ checklist_id: checkout_id })
-add_workflow_step(workflow_id, type="notification", config={ … })
+add_workflow_step(workflow_id, step_type="run_checklist", config={ checklist_id: signup_id })
+add_workflow_step(workflow_id, step_type="run_checklist", config={ checklist_id: checkout_id })
+add_workflow_step(workflow_id, step_type="notification", config={ channel: "email", recipients: { type: "all_members" }, template: "failed" })
+get_workflow(workflow_id)      # execution_order covers every step, nothing unreachable
 toggle_workflow(workflow_id)   # activate
 ```
 

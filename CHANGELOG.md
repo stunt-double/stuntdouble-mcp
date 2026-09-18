@@ -4,6 +4,22 @@ All notable changes to the Stunt Double MCP server configuration are documented 
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.10.0] - 2026-09-18
+
+### Added
+
+- Documented `reorder_workflow_steps` (set the order a workflow's steps run in) and `connect_workflow_steps` (wire one step to another, which is what a condition's True and False paths take).
+
+### Changed
+
+- The workflow docs now say that a workflow is a graph rather than a list: its steps run by following the connections between them, and `get_workflow` returns `execution_order` plus `unreachable_step_ids` so a step nothing reaches is visible before the automation is activated. `add_workflow_step` and `remove_workflow_step` maintain those connections themselves, so building an automation is still one call per step, in order.
+- `update_workflow_step` no longer takes `sort_order`: it changes a step in place, and moving one is `reorder_workflow_steps`.
+
+### Fixed
+
+- `setup-guardrails` called `add_workflow_step` with a `type` argument. The parameter is `step_type`, and the example's `notification` config is now a real one.
+- Bumped `.cursor-plugin/plugin.json` and `server.json` to 1.10.0.
+
 ## [1.9.1] - 2026-08-16
 
 ### Fixed
