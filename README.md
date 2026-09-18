@@ -168,19 +168,23 @@ team's standard in a single place to edit.
 
 ### Workflows
 
-| Tool                   | Description                                        |
-| ---------------------- | -------------------------------------------------- |
-| `list_workflows`       | List workflows in a workspace                      |
-| `get_workflow`         | Get workflow details with steps and recent runs    |
-| `run_workflow`         | Trigger a workflow run (async). Returns run ID     |
-| `get_workflow_run`     | Get a workflow run with step-level details         |
-| `create_workflow`      | Create a workflow (multi-step automation)          |
-| `update_workflow`      | Update a workflow's name, description, or trigger  |
-| `toggle_workflow`      | Activate or pause a workflow                       |
-| `delete_workflow`      | Delete a workflow and its steps and runs           |
-| `add_workflow_step`    | Append a step to a workflow                        |
-| `update_workflow_step` | Update a workflow step type, config, or sort order |
-| `remove_workflow_step` | Remove a step from a workflow                      |
+A workflow is a graph, not a list: its steps run by following the connections between them. The step tools maintain those connections, so adding, removing and reordering steps is enough to build one. `connect_workflow_steps` is only needed to branch.
+
+| Tool                     | Description                                                                  |
+| ------------------------ | ---------------------------------------------------------------------------- |
+| `list_workflows`         | List workflows in a workspace                                                |
+| `get_workflow`           | Get a workflow with its steps, edges, the order a run takes, and recent runs |
+| `run_workflow`           | Trigger a workflow run (async). Returns run ID                               |
+| `get_workflow_run`       | Get a workflow run with step-level details                                   |
+| `create_workflow`        | Create a workflow (multi-step automation)                                    |
+| `update_workflow`        | Update a workflow's name, description, or trigger                            |
+| `toggle_workflow`        | Activate or pause a workflow                                                 |
+| `delete_workflow`        | Delete a workflow and its steps and runs                                     |
+| `add_workflow_step`      | Add a step and connect it into the run                                       |
+| `update_workflow_step`   | Change a step's type or config in place                                      |
+| `remove_workflow_step`   | Remove a step and close the gap it leaves                                    |
+| `reorder_workflow_steps` | Set the order the steps run in                                               |
+| `connect_workflow_steps` | Wire one step to another, for a condition's True and False paths             |
 
 ### Feedback
 
