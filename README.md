@@ -70,10 +70,10 @@ connection asked for, and a token granted `mcp:read` is not shown the write or
 run tools at all: they are absent from `tools/list` rather than present and
 failing.
 
-| Scope       | What it allows                                                            |
-| ----------- | ------------------------------------------------------------------------- |
-| `mcp:read`  | Read your workspaces and their contents                                   |
-| `mcp:write` | Create and edit content in your workspaces                                |
+| Scope       | What it allows                                                                                  |
+| ----------- | ----------------------------------------------------------------------------------------------- |
+| `mcp:read`  | Read your workspaces and their contents                                                         |
+| `mcp:write` | Create and edit content in your workspaces                                                      |
 | `mcp:run`   | Start checklist runs, automation runs and interviews, which consume the workspace run allowance |
 
 ## Available Tools
