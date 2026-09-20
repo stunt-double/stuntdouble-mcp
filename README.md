@@ -51,6 +51,31 @@ Authentication is handled automatically via OAuth 2.1 with PKCE. The first time 
 
 For **Cursor**, the OAuth redirect URI is fixed to `cursor://anysphere.cursor-mcp/oauth/callback` ([docs](https://cursor.com/docs/mcp.md)).
 
+### What a connection can reach
+
+The server acts as you, never more. Every tool resolves the workspace it is
+being asked about and checks your membership of it before doing anything, so a
+connection reaches exactly the workspaces `list_workspaces` returns for you, and
+an archived workspace reaches nothing. A workspace you are not a member of
+answers the same way one that does not exist does: "not found".
+
+That holds for ids too, not just the `workspace_id` you pass. A tool that takes
+another object's id (a checklist for an automation step, an actor for an
+interview participant) checks that object belongs to the same workspace before
+storing or running it, and refuses with "not found in this workspace" otherwise.
+Refusals never say which workspace an id does belong to.
+
+Scopes narrow this further, never widen it. The consent screen names what the
+connection asked for, and a token granted `mcp:read` is not shown the write or
+run tools at all: they are absent from `tools/list` rather than present and
+failing.
+
+| Scope       | What it allows                                                            |
+| ----------- | ------------------------------------------------------------------------- |
+| `mcp:read`  | Read your workspaces and their contents                                   |
+| `mcp:write` | Create and edit content in your workspaces                                |
+| `mcp:run`   | Start checklist runs, automation runs and interviews, which consume the workspace run allowance |
+
 ## Available Tools
 
 ### Account
