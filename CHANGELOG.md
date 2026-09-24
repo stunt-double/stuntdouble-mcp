@@ -4,6 +4,16 @@ All notable changes to the Stunt Double MCP server configuration are documented 
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.11.0] - 2026-09-24
+
+### Added
+
+- Documented the resources now served by the hosted MCP service: `stuntdouble://guide` (the orientation and tool catalogue, also available as the `stuntdouble_guide` prompt), `stuntdouble://connection` (the account, granted scopes and the tools each unlocks), and, with `mcp:read`, `stuntdouble://workspaces` and the `stuntdouble://workspaces/{workspace_id}/projects` template.
+
+### Changed
+
+- Bumped `.cursor-plugin/plugin.json` and `server.json` to 1.11.0.
+
 ## [1.10.0] - 2026-09-18
 
 ### Added
