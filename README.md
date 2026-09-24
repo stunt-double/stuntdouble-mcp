@@ -262,6 +262,19 @@ Most MCP clients (Claude, Claude Code, Cursor) surface these as slash commands. 
 | `check_continuity`    | Check continuity across surfaces (pricing, terminology, promises) between marketing, product, docs, and emails            |
 | `stuntdouble_guide`   | Orientation for Stunt Double: what it does, when to reach for it, and the full tool catalogue                             |
 
+### Resources
+
+Read-only context a client can attach without calling a tool. The guide and the connection are always listed; the workspace resources need `mcp:read`, the same as the tools that return that data.
+
+| URI                                                | MIME type          | Description                                                                                   |
+| -------------------------------------------------- | ------------------ | --------------------------------------------------------------------------------------------- |
+| `stuntdouble://guide`                              | `text/markdown`    | What Stunt Double does, when to reach for it, the full tool catalogue and how to poll a run   |
+| `stuntdouble://connection`                         | `application/json` | Who the connection acts as, the scopes it holds, the tools each unlocks and any it lacks      |
+| `stuntdouble://workspaces`                         | `application/json` | The workspaces the connection can reach, with your role (same data as `list_workspaces`)      |
+| `stuntdouble://workspaces/{workspace_id}/projects` | `application/json` | The live projects in one workspace, most recently opened first (same data as `list_projects`) |
+
+`resources/list` includes one projects entry per workspace, so a client can browse them without expanding the template.
+
 > Workspace member administration (inviting/removing members) is available in the [web dashboard](https://app.stuntdouble.io).
 
 ## Transport
