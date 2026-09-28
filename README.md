@@ -6,7 +6,7 @@ Deploy AI user personas to validate user journeys at scale. Find UX friction bef
 
 ## This repository
 
-This repo holds **plugin and MCP configuration** (`.cursor-plugin/plugin.json`, root `mcp.json`, `server.json`), plus skills, agents, and Cursor rules. There is **no `package.json`** and **no runnable server** here — the MCP endpoint is hosted at `https://app.stuntdouble.io/api/mcp` from the main Stunt Double codebase. See [CONTRIBUTING.md](./CONTRIBUTING.md) for how to validate edits and avoid confusing this folder with a Node package.
+This repo holds **plugin and MCP configuration** (`.claude-plugin/plugin.json` and `.mcp.json` for Claude, `.cursor-plugin/plugin.json` and root `mcp.json` for Cursor, `server.json` for the MCP registry), plus skills, agents, and Cursor rules. There is **no `package.json`** and **no runnable server** here: the MCP endpoint is hosted at `https://app.stuntdouble.io/api/mcp` from the main Stunt Double codebase. See [CONTRIBUTING.md](./CONTRIBUTING.md) for how to validate edits and avoid confusing this folder with a Node package.
 
 ## Quick Start
 
@@ -16,9 +16,18 @@ This repo holds **plugin and MCP configuration** (`.cursor-plugin/plugin.json`, 
 claude mcp add --transport http stuntdouble https://app.stuntdouble.io/api/mcp
 ```
 
-### Claude Desktop
+### Claude Code plugin
 
-Go to **Settings → Connectors → Add** and paste:
+The repository is also a Claude plugin: it bundles the hosted MCP server (`.mcp.json`) with the skills in `skills/` and the agents in `agents/`.
+
+```bash
+claude plugin marketplace add stunt-double/stuntdouble-mcp
+claude plugin install stuntdouble@stuntdouble
+```
+
+### Claude (web, Desktop, mobile)
+
+Go to **Settings → Connectors → Add custom connector** and paste:
 
 ```
 https://app.stuntdouble.io/api/mcp
@@ -229,7 +238,7 @@ A workflow is a graph, not a list: its steps run by following the connections be
 
 ### Interviews
 
-Structured user interviews — actors or generated personas run through a discussion guide (sections + questions/tasks) against a target URL, then Stunt Double synthesises themes and recommendations.
+Structured user interviews: actors or generated personas run through a discussion guide (sections + questions/tasks) against a target URL, then Stunt Double synthesises themes and recommendations.
 
 | Tool                          | Description                                                                                |
 | ----------------------------- | ------------------------------------------------------------------------------------------ |
@@ -239,7 +248,7 @@ Structured user interviews — actors or generated personas run through a discus
 | `update_interview`            | Update an interview's name, target URL, research brief, or status                          |
 | `add_interview_section`       | Add a section to the discussion guide                                                      |
 | `add_interview_item`          | Add a question or task to a section                                                        |
-| `add_interview_participant`   | Attach a participant — either an existing actor or an ad-hoc `persona_spec`                |
+| `add_interview_participant`   | Attach a participant, either an existing actor or an ad-hoc `persona_spec`                 |
 | `get_interview_participant`   | Get a participant including their full transcript from the run                             |
 | `get_interview_report`        | Get the current synthesised report (summary, themes, recommendations, per-question rollup) |
 | `launch_interview`            | Launch the interview round (async). Returns the trigger run ID                             |
@@ -277,6 +286,27 @@ Read-only context a client can attach without calling a tool. The guide and the 
 
 > Workspace member administration (inviting/removing members) is available in the [web dashboard](https://app.stuntdouble.io).
 
+## Example prompts
+
+Three prompts that exercise the core of the server once it is connected:
+
+1. **Verify a flow:** "Create a checklist that signs up for a new account on https://demo-checkout-stunt-double.vercel.app, adds an item to the basket and reaches payment, then run it and tell me which checks failed."
+2. **Run a user interview:** "Set up an interview with three personas (a first-time shopper, a returning customer and a screen reader user) about our pricing page, launch it, and summarise the report."
+3. **Triage feedback:** "Summarise the open feedback on my main project, group it into themes, and mark anything already fixed as resolved."
+
+## Privacy Policy
+
+The server is hosted by Stunt Double and acts as the signed-in user. It reads and writes only the workspaces that user belongs to, within the OAuth scopes they grant (`mcp:read`, `mcp:write`, `mcp:run`). It does not read your conversation with the AI client beyond the arguments passed to each tool call, and it does not access the client's memory, chat history or files.
+
+Data created through the server (projects, actors, checklists, runs, interviews, feedback) is stored in your Stunt Double workspace and handled under the [Stunt Double Privacy Policy](https://www.stuntdouble.io/privacy), which covers collection, use, storage, sub-processors, retention and your rights. Revoke a connection at any time by disconnecting it in your AI client.
+
+## Support
+
+- Email: [support@stuntdouble.io](mailto:support@stuntdouble.io)
+- Help centre and docs: [stuntdouble.io/support](https://www.stuntdouble.io/support)
+- MCP reference: [stuntdouble.io/support/docs/api/mcp](https://www.stuntdouble.io/support/docs/api/mcp)
+- Security reports: see [SECURITY.md](./SECURITY.md)
+
 ## Transport
 
 This server uses [Streamable HTTP](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports#streamable-http) transport. The endpoint is:
@@ -288,7 +318,9 @@ https://app.stuntdouble.io/api/mcp
 ## Links
 
 - [Website](https://stuntdouble.io)
-- [Documentation](https://stuntdouble.io/docs)
+- [Documentation](https://www.stuntdouble.io/support/docs)
+- [Privacy Policy](https://www.stuntdouble.io/privacy)
+- [Terms of Service](https://www.stuntdouble.io/terms)
 - [llms.txt](https://www.stuntdouble.io/llms.txt)
 
 ## Verifying changes
@@ -297,7 +329,7 @@ From the repo root:
 
 ```bash
 node scripts/validate-json.mjs
-npx --yes prettier@3.4.2 --check README.md mcp.json server.json .cursor-plugin/plugin.json
+npx --yes prettier@3.4.2 --check README.md CONTRIBUTING.md SECURITY.md CHANGELOG.md mcp.json .mcp.json server.json .cursor-plugin/plugin.json .claude-plugin/plugin.json .claude-plugin/marketplace.json
 ```
 
 More context in [CONTRIBUTING.md](./CONTRIBUTING.md). GitHub Actions runs the same checks on push and pull requests.

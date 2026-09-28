@@ -24,4 +24,4 @@ jobs:
         run: node scripts/validate-json.mjs
 
       - name: Prettier (core manifests)
-        run: npx --yes prettier@3.4.2 --check README.md CONTRIBUTING.md SECURITY.md mcp.json server.json .cursor-plugin/plugin.json
+        run: npx --yes prettier@3.4.2 --check README.md CONTRIBUTING.md SECURITY.md CHANGELOG.md mcp.json .mcp.json server.json .cursor-plugin/plugin.json .claude-plugin/plugin.json .claude-plugin/marketplace.json

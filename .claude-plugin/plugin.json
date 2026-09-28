@@ -1,23 +1,23 @@
 {
   "name": "stuntdouble",
+  "displayName": "Stunt Double",
   "version": "1.12.0",
   "description": "Deploy AI user personas to validate user journeys at scale. Find UX friction before real users do.",
   "author": {
     "name": "Stunt Double",
-    "email": "support@stuntdouble.io"
+    "email": "support@stuntdouble.io",
+    "url": "https://www.stuntdouble.io"
   },
-  "homepage": "https://www.stuntdouble.io",
+  "homepage": "https://www.stuntdouble.io/support/docs/api/mcp",
   "repository": "https://github.com/stunt-double/stuntdouble-mcp",
   "license": "MIT",
   "keywords": [
     "stuntdouble",
     "ux-testing",
     "ai-personas",
-    "mcp",
     "user-journeys",
     "qa",
     "testing",
     "agents"
-  ],
-  "logo": "assets/logo.png"
+  ]
 }

@@ -2,7 +2,14 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
-const files = ['mcp.json', 'server.json', '.cursor-plugin/plugin.json'];
+const files = [
+  'mcp.json',
+  '.mcp.json',
+  'server.json',
+  '.cursor-plugin/plugin.json',
+  '.claude-plugin/plugin.json',
+  '.claude-plugin/marketplace.json',
+];
 
 let failed = false;
 for (const rel of files) {
