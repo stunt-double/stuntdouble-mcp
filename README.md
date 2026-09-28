@@ -79,11 +79,11 @@ connection asked for, and a token granted `mcp:read` is not shown the write or
 run tools at all: they are absent from `tools/list` rather than present and
 failing.
 
-| Scope       | What it allows                                                                                  |
-| ----------- | ----------------------------------------------------------------------------------------------- |
-| `mcp:read`  | Read your workspaces and their contents                                                         |
-| `mcp:write` | Create and edit content in your workspaces                                                      |
-| `mcp:run`   | Start checklist runs, automation runs and interviews, which consume the workspace run allowance |
+| Scope       | What it allows                                                                                                                                            |
+| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `mcp:read`  | Read your workspaces and their contents                                                                                                                   |
+| `mcp:write` | Create and edit content in your workspaces                                                                                                                |
+| `mcp:run`   | Start checklist runs, automation runs and interviews, which consume the workspace run allowance, and re-run Stunt Double Index scores for domains you own |
 
 ## Available Tools
 
@@ -284,15 +284,28 @@ Read-only context a client can attach without calling a tool. The guide and the 
 
 `resources/list` includes one projects entry per workspace, so a client can browse them without expanding the template.
 
-> Workspace member administration (inviting/removing members) is available in the [web dashboard](https://app.stuntdouble.io).
+### Stunt Double Index
+
+The [Stunt Double Index](https://index.stuntdouble.io) is a public ranking of how AI agents experience websites: each tracked domain is scored out of 100 from HTTP probes plus live agent sessions, one per AI provider and benchmark task. Index data is public rather than workspace data, so the read tools reach any tracked site.
+
+| Tool                   | Description                                                                                                                                      |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `get_index_report`     | A site's score, band, rank, category and provider scores, frictions, failing probe checks and when it was last scored                            |
+| `list_index_sessions`  | The agent sessions behind a score (newest run by default), with status, score, evidence, a summary and frictions. Filter by provider or category |
+| `search_index_domains` | Find a site by domain or name, or browse the leaderboard, optionally by sector                                                                   |
+| `request_index_rerun`  | Re-score a domain you own (`mcp:run`). Fresh probes now, about 24 agent sessions over a few minutes. Once every 10 minutes                       |
+
+`get_index_report`, `list_index_sessions` and `request_index_rerun` take a `domain`, or a `project_id` to use the Index domain linked to that project (which checks your membership like any project read). Only the domain's owner can re-run it: a platform admin, the person who claimed it, or, while it is unclaimed, someone signed in with a work email on that exact domain. After a re-run, poll `list_index_sessions` with the returned `run_id` until the sessions finish, then read `get_index_report`.
+(inviting/removing members) is available in the [web dashboard](https://app.stuntdouble.io).
 
 ## Example prompts
 
-Three prompts that exercise the core of the server once it is connected:
+Four prompts that exercise the core of the server once it is connected:
 
 1. **Verify a flow:** "Create a checklist that signs up for a new account on https://demo-checkout-stunt-double.vercel.app, adds an item to the basket and reaches payment, then run it and tell me which checks failed."
 2. **Run a user interview:** "Set up an interview with three personas (a first-time shopper, a returning customer and a screen reader user) about our pricing page, launch it, and summarise the report."
-3. **Triage feedback:** "Summarise the open feedback on my main project, group it into themes, and mark anything already fixed as resolved."
+3. **Check agent readiness:** "How well can AI agents use stripe.com according to the Stunt Double Index, and which categories are dragging its score down?"
+4. **Triage feedback:** "Summarise the open feedback on my main project, group it into themes, and mark anything already fixed as resolved."
 
 ## Privacy Policy
 

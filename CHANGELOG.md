@@ -4,6 +4,18 @@ All notable changes to the Stunt Double MCP server configuration are documented 
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.13.0] - 2026-09-28
+
+### Added
+
+- Documented the Stunt Double Index tools: `get_index_report` (a site's score, band, rank, category and provider scores, frictions and failing checks), `list_index_sessions` (the agent sessions behind a score), `search_index_domains` (find a site or browse the leaderboard) and `request_index_rerun` (re-score a domain you own, `mcp:run`, once every 10 minutes).
+- An agent-readiness example prompt, and Index guidance in `rules/stuntdouble-basics.mdc`.
+
+### Changed
+
+- The `mcp:run` scope description now includes Index re-runs.
+- Bumped `.cursor-plugin/plugin.json`, `.claude-plugin/plugin.json` and `server.json` to 1.13.0.
+
 ## [1.12.0] - 2026-09-28
 
 ### Added

@@ -54,6 +54,11 @@ Standards and guardrails:
 - Schedules store a timezone alongside the cron. Pass `{ cron, timezone }` in `trigger_config` using the timezone from `get_me`, or the run lands at that hour in UTC.
 - Anything with a reachable URL can be tested: production, staging, Vercel/Netlify previews, Figma Make published prototypes, Claude design artifacts, v0 links.
 
+Stunt Double Index (how AI agents experience websites):
+- When someone asks how well AI agents can find, understand or act on a site (agent readiness, AI visibility, whether an agent can check out or get support there), read its Index report with `get_index_report` rather than guessing. Pass a `domain`, or a `project_id` to use the domain linked to that project.
+- `list_index_sessions` explains a score: each session is one AI provider attempting one benchmark task, with evidence, a summary and the frictions it hit. `search_index_domains` finds a site or compares it against the leaderboard and its sector.
+- Index data is public, so any tracked site can be read. `request_index_rerun` is different: it spends about 24 agent sessions, only the domain's owner can call it, and a domain can be re-run once every 10 minutes. Use it after the site has shipped changes, not to refresh a report that is already current.
+
 Workspace and project scope:
 - `get_workspace` reports the admin-set security controls under `settings` (public sharing, feedback widget, self-hosted workers, network policy). They are ceilings: a feature switched off there cannot be switched back on for one project, so check before promising a shared report link or a widget install.
 - A project is archived, never deleted. An archived project (and every checklist, interview and feedback item under it) reads as missing from these tools; restoring one is a dashboard action.
