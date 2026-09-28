@@ -4,6 +4,19 @@ All notable changes to the Stunt Double MCP server configuration are documented 
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.12.0] - 2026-09-28
+
+### Added
+
+- Claude plugin layout: `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json` and `.mcp.json` (the hosted server as a `type: http` remote), so the repository can be installed with `claude plugin install` and submitted to the Claude directory as a plugin alongside the connector listing.
+- README sections the Claude directory asks for: example prompts, a Privacy Policy section and Support contacts.
+
+### Changed
+
+- Removed `assets/claude_mcp.mov`. Nothing referenced it, and at 7 MB it is over the directory's 5 MiB per-file limit, which stops plugin validation.
+- `scripts/validate-json.mjs` and CI now check the Claude manifests too.
+- Bumped `.cursor-plugin/plugin.json` and `server.json` to 1.12.0.
+
 ## [1.11.0] - 2026-09-24
 
 ### Added

@@ -16,7 +16,7 @@ From the repository root:
 
 ```bash
 node scripts/validate-json.mjs
-npx --yes prettier@3.4.2 --check README.md mcp.json server.json .cursor-plugin/plugin.json
+npx --yes prettier@3.4.2 --check README.md CONTRIBUTING.md SECURITY.md CHANGELOG.md mcp.json .mcp.json server.json .cursor-plugin/plugin.json .claude-plugin/plugin.json .claude-plugin/marketplace.json
 ```
 
 Optional: format Markdown and JSON in `agents/`, `skills/`, and `rules/` with Prettier if you have it installed (some `.mdc` files may need a project-level Prettier override).
