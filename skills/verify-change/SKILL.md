@@ -16,6 +16,7 @@ description: Verify a shipped or previewed code change by running a Stunt Double
 1. **Resolve context:**
    - `list_workspaces()` → pick the workspace (use it silently if there is only one)
    - `list_projects(workspace_id)` → match the preview URL or product name against an existing project. Tools that take a `url` (like `create_checklist`) will find or create the project for you.
+   - If you start from a pull request rather than a diff, `list_pull_requests(workspace_id, owner, repo, state="open")` finds it and `get_pull_request(workspace_id, owner, repo, pr_number)` gives its title, branches and change stats, which tell you which flows to exercise. These need the workspace's GitHub connection. The preview URL usually comes from the user or the deploy, since the PR details do not include it.
 
 2. **Pick an actor:**
    - `list_actors(workspace_id)` → reuse a QA-style actor if one exists
