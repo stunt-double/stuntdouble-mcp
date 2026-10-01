@@ -354,10 +354,21 @@ This server uses [Streamable HTTP](https://modelcontextprotocol.io/specification
 https://app.stuntdouble.io/api/mcp
 ```
 
+## MCP Registry
+
+The server is listed in the official [MCP Registry](https://registry.modelcontextprotocol.io) as `io.stuntdouble/mcp-server`, so registry-backed clients and directories can find it by name:
+
+```bash
+curl "https://registry.modelcontextprotocol.io/v0.1/servers?search=io.stuntdouble/mcp-server"
+```
+
+Each version merged to `main` is published there automatically (see [CONTRIBUTING.md](./CONTRIBUTING.md#releasing)).
+
 ## Links
 
 - [Website](https://stuntdouble.io)
 - [Documentation](https://www.stuntdouble.io/support/docs)
+- [MCP server reference](https://www.stuntdouble.io/support/docs/api/mcp)
 - [Privacy Policy](https://www.stuntdouble.io/privacy)
 - [Terms of Service](https://www.stuntdouble.io/terms)
 - [llms.txt](https://www.stuntdouble.io/llms.txt)
