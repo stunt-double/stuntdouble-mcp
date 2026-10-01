@@ -1,0 +1,118 @@
+name: Publish
+
+# Publishes server.json to the official MCP Registry
+# (https://registry.modelcontextprotocol.io) and cuts a GitHub release when a
+# new version lands on main. Bumping "version" in server.json is the release
+# signal: a push that leaves it at a version the registry already has is a
+# no-op, so re-runs and unrelated server.json edits are safe.
+#
+# The io.stuntdouble/* namespace is proved with DNS auth: the stuntdouble.io
+# TXT record `v=MCPv1; k=ed25519; p=<public key>` must match the private key
+# in the MCP_REGISTRY_PRIVATE_KEY secret (hex-encoded ed25519 seed). To rotate,
+# generate a new pair, replace the TXT record, then replace the secret:
+#
+#   openssl genpkey -algorithm Ed25519 -out key.pem   # OpenSSL 3, not LibreSSL
+#   openssl pkey -in key.pem -pubout -outform DER | tail -c 32 | base64        # TXT p=
+#   openssl pkey -in key.pem -noout -text | grep -A3 "priv:" | tail -n +2 | tr -d ' :\n'  # secret
+
+on:
+  push:
+    branches: [main]
+    paths: [server.json]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+env:
+  MCP_PUBLISHER_VERSION: v1.8.1
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Read server.json
+        id: server
+        run: |
+          echo "name=$(jq -r .name server.json)" >> "$GITHUB_OUTPUT"
+          echo "version=$(jq -r .version server.json)" >> "$GITHUB_OUTPUT"
+
+      # The plugin manifests ship the same version; refuse to publish a
+      # half-bumped release.
+      - name: Check versions agree
+        env:
+          VERSION: ${{ steps.server.outputs.version }}
+        run: |
+          for f in .cursor-plugin/plugin.json .claude-plugin/plugin.json; do
+            v=$(jq -r .version "$f")
+            if [ "$v" != "$VERSION" ]; then
+              echo "::error file=$f::$f is $v but server.json is $VERSION. Bump them together."
+              exit 1
+            fi
+          done
+          if ! grep -q "^## \[$VERSION\]" CHANGELOG.md; then
+            echo "::error file=CHANGELOG.md::No CHANGELOG.md entry for $VERSION."
+            exit 1
+          fi
+
+      - name: Check registry
+        id: registry
+        env:
+          NAME: ${{ steps.server.outputs.name }}
+          VERSION: ${{ steps.server.outputs.version }}
+        run: |
+          status=$(curl -s -o /dev/null -w '%{http_code}' \
+            "https://registry.modelcontextprotocol.io/v0.1/servers/${NAME//\//%2F}/versions/$VERSION")
+          case "$status" in
+            200) echo "published=true" >> "$GITHUB_OUTPUT"; echo "$NAME $VERSION is already in the registry." ;;
+            404) echo "published=false" >> "$GITHUB_OUTPUT" ;;
+            *) echo "::error::Registry lookup returned HTTP $status"; exit 1 ;;
+          esac
+
+      - name: Install mcp-publisher
+        if: steps.registry.outputs.published == 'false'
+        run: |
+          curl -fsSL "https://github.com/modelcontextprotocol/registry/releases/download/$MCP_PUBLISHER_VERSION/mcp-publisher_linux_amd64.tar.gz" \
+            | tar xz mcp-publisher
+          ./mcp-publisher --version
+
+      - name: Validate
+        if: steps.registry.outputs.published == 'false'
+        run: ./mcp-publisher validate
+
+      - name: Publish to the MCP Registry
+        if: steps.registry.outputs.published == 'false'
+        env:
+          MCP_REGISTRY_PRIVATE_KEY: ${{ secrets.MCP_REGISTRY_PRIVATE_KEY }}
+        run: |
+          if [ -z "$MCP_REGISTRY_PRIVATE_KEY" ]; then
+            echo "::error::MCP_REGISTRY_PRIVATE_KEY is not set."
+            exit 1
+          fi
+          ./mcp-publisher login dns --domain stuntdouble.io --private-key "$MCP_REGISTRY_PRIVATE_KEY"
+          ./mcp-publisher publish
+
+      # Independent of the registry step, so a version published by hand
+      # still gets its release on the next run.
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.server.outputs.version }}
+        run: |
+          if gh release view "v$VERSION" > /dev/null 2>&1; then
+            echo "Release v$VERSION already exists."
+            exit 0
+          fi
+          awk -v v="$VERSION" '
+            $0 ~ "^## \\[" v "\\]" { found = 1; next }
+            found && /^## \[/ { exit }
+            found { print }
+          ' CHANGELOG.md > release-notes.md
+          gh release create "v$VERSION" --target "$GITHUB_SHA" --title "v$VERSION" --notes-file release-notes.md

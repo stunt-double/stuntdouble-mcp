@@ -22,3 +22,11 @@ npx --yes prettier@3.4.2 --check README.md CONTRIBUTING.md SECURITY.md CHANGELOG
 Optional: format Markdown and JSON in `agents/`, `skills/`, and `rules/` with Prettier if you have it installed (some `.mdc` files may need a project-level Prettier override).
 
 CI runs the same JSON validation and Prettier check on the core manifests.
+
+## Releasing
+
+Bump `version` in `server.json`, `.cursor-plugin/plugin.json` and `.claude-plugin/plugin.json` together and add a matching `CHANGELOG.md` entry. When that merges to `main`, `.github/workflows/publish.yml` publishes `server.json` to the [MCP Registry](https://registry.modelcontextprotocol.io) as `io.stuntdouble/mcp-server` and creates a `v<version>` GitHub release from the changelog entry. A version the registry already has is skipped.
+
+Publishing signs in with DNS auth for `stuntdouble.io`, using the `MCP_REGISTRY_PRIVATE_KEY` repository secret. The workflow file explains how to rotate it.
+
+When the tools, prompts or resources change in the main Stunt Double repository, its `mcp-docs-sync` workflow opens a pull request here that updates the docs and bumps the version, so merging that pull request is the release.
