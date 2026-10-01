@@ -4,14 +4,6 @@ All notable changes to the Stunt Double MCP server configuration are documented 
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
-
-### Added
-
-- `.github/workflows/publish.yml`: publishes `server.json` to the MCP Registry and creates a GitHub release whenever a new version lands on `main`, after checking that the plugin manifests and `CHANGELOG.md` agree with it.
-- A Releasing section in `CONTRIBUTING.md`.
-- `CLAUDE.md`: what this repository is, where the source of truth lives, and how versioning, the docs sync and registry publishing fit together.
-
 ## [1.14.0] - 2026-10-01
 
 ### Added
@@ -20,6 +12,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - `maintain-automations` skill: change existing automations and checklists without losing run history, covering trigger changes, step edits, reordering, condition branches, in-place check updates, and pausing rather than deleting.
 - A Skills section in the README with `npx skills add stunt-double/stuntdouble-mcp` install steps and a table of every skill.
 - An MCP Registry section in the README, and a link to the MCP server reference on stuntdouble.io.
+- `.github/workflows/publish.yml`: publishes `server.json` to the MCP Registry and creates a GitHub release whenever a new version lands on `main`, after checking that the plugin manifests and `CHANGELOG.md` agree with it.
+- A Releasing section in `CONTRIBUTING.md`.
+- `CLAUDE.md`: what this repository is, where the source of truth lives, and how versioning, the docs sync and registry publishing fit together.
 
 ### Changed
 
