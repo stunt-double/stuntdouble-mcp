@@ -2,7 +2,7 @@
 
 ## What this repository is
 
-`stuntdouble-mcp` is a **metadata and documentation** repository: Cursor plugin manifest (`.cursor-plugin/`), root `mcp.json`, MCP registry `server.json`, skills, agents, and rules. There is **no `package.json`** and **no local MCP server** in this tree — the live Streamable HTTP endpoint is implemented in the main [Stunt Double](https://github.com/stunt-double/stuntdouble) application (`https://app.stuntdouble.io/api/mcp`).
+`stuntdouble-mcp` is a **metadata and documentation** repository: Cursor plugin manifest (`.cursor-plugin/`), root `mcp.json`, MCP registry `server.json`, skills, agents, and rules. There is **no `package.json`** and **no local MCP server** in this tree: the live Streamable HTTP endpoint is implemented in the main [Stunt Double](https://github.com/stunt-double/stuntdouble) application (`https://app.stuntdouble.io/api/mcp`).
 
 Do **not** run `pnpm install` or `npm install` inside this directory expecting a Node app; if this folder sits inside a larger monorepo, package managers may attach to the parent workspace and behave confusingly.
 
@@ -16,12 +16,15 @@ From the repository root:
 
 ```bash
 node scripts/validate-json.mjs
+node scripts/validate-skills.mjs
 npx --yes prettier@3.4.2 --check README.md CONTRIBUTING.md SECURITY.md CHANGELOG.md mcp.json .mcp.json server.json .cursor-plugin/plugin.json .claude-plugin/plugin.json .claude-plugin/marketplace.json
 ```
 
 Optional: format Markdown and JSON in `agents/`, `skills/`, and `rules/` with Prettier if you have it installed (some `.mdc` files may need a project-level Prettier override).
 
-CI runs the same JSON validation and Prettier check on the core manifests.
+`validate-skills.mjs` checks every `skills/*/SKILL.md` and `agents/*.md`: frontmatter `name` (lowercase, hyphenated, matching the skill's directory) and `description` (at most 1024 characters, no XML tags, and a "Use when" clause), a body under 500 lines, no em dashes anywhere in `skills/`, `agents/` or `rules/`, and that every tool named in code is a real Stunt Double MCP tool. When a tool is added, renamed or removed in the main repository, update `KNOWN_TOOLS` in the script to match `TOOL_SCOPES` in `apps/web/lib/mcp/scopes.ts`.
+
+CI runs the same JSON, skills and Prettier checks.
 
 ## Releasing
 

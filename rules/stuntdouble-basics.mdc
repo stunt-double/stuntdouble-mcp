@@ -5,7 +5,9 @@ alwaysApply: true
 
 stuntdouble-basics:
 
-- Stunt Double deploys AI agents with realistic user personas to validate user journeys at scale.
+- Stunt Double runs actors (AI user personas with their own browser, inbox and memory) through real products: checklists, interviews, automations (workflows in the tools), feedback triage and the Index.
+- The tools are on the `stuntdouble` MCP server: `list_workspaces` is `stuntdouble:list_workspaces`, or `mcp__stuntdouble__list_workspaces` in Claude Code.
+- Every tool returns a structured object. List tools return their items under a plural key (for example the workspaces in the `list_workspaces` result), not a bare array.
 - Authentication is handled automatically via OAuth 2.1 with PKCE. No API keys or tokens are needed.
 - Always specify a workspace when creating or listing resources. Use `list_workspaces` to find available workspaces.
 
@@ -16,29 +18,29 @@ Finding things:
 - Search only ever returns entities from workspaces you are a member of; the boundary is enforced server-side, not by the filters you pass.
 
 Actors:
-- Actors represent AI user personas. Create actors with clear names (format: "FirstName - Role"), descriptions, and system prompts.
+- Name an actor by its role ("First-time visitor", "Busy finance manager"), never a human name, and describe a person in `description`: background, goals, tech comfort. `update_actor` adds a `system_prompt` on top.
 - Give actors knowledge via `add_actor_knowledge` so they understand your product context.
 - Conversations are read-only over MCP (`list_conversations`, `get_conversation`); an actor chat is started from the dashboard. To probe actors for research, design reviews or concept testing, run an interview: it puts every persona through the same guide and synthesises the answers, which one-off chats cannot do.
 - Create diverse actors covering different segments: new users, power users, enterprise, accessibility, mobile.
 
 Workflows and checklists:
-- Use workflows for multi-step user journey validation (signup, checkout, onboarding flows).
-- Use checklists for point-in-time quality checks (accessibility, performance, content).
-- Workflow and checklist runs are asynchronous. After triggering a run, poll `get_workflow_run` or `get_checklist_run` for results.
-- Use `create_workflow` with trigger_type "schedule" or "webhook" for automated continuous validation, then `add_workflow_step` once per step, in the order they should run: a workflow with no steps does nothing when it fires.
+- A checklist is one actor exercising one flow at a URL and judging a list of checks. A workflow runs checklists (and conditions, notifications, delays) on a trigger: manual, schedule, webhook, or Vercel, GitHub, Linear, Slack and Figma events.
+- Runs are asynchronous. Poll `get_checklist_run` every 30 to 60 seconds until `status` is `completed` or `failed`, and judge it by `outcome` (`passed`, `failed`, `inconclusive`); `waiting_for_input` means the actor needs a person to answer in the run's live view. Poll `get_workflow_run` until `completed`, `failed` or `cancelled`.
+- A completed checklist run's `comparison.changes` says what got better or worse since the previous run: usually the answer worth reporting.
+- After `create_workflow`, call `add_workflow_step` once per step in run order (a workflow with no steps does nothing), then `toggle_workflow(workflow_id, is_active=true)` to activate it.
+- A notification step always sends when reached; put a condition before it (`previous_step.failed` `gt` 0) to notify only on failure. A condition only sees the step directly before it.
 - A workflow's steps run by following the connections between them, which the step tools maintain. `get_workflow` returns `execution_order` and `unreachable_step_ids`: check them before activating, because a step nothing reaches is a step that never runs.
 
 Feedback:
-- Review feedback items surfaced by Stunt Double and update their status as issues are triaged or resolved.
-- Status lifecycle: new → reviewed → resolved (or dismissed for false positives).
-- Cross-reference feedback with actors and workflows to identify patterns and coverage gaps.
+- Feedback is the comments people leave through the feedback widget, pinned to a page position. Start with `summarise_feedback` (themes, open questions and an implementation brief) rather than reasoning over the raw `list_feedback` output.
+- Status lifecycle: `new`, then `reviewed`, then `resolved` once a run proves the fix (or `dismissed` for duplicates and expected behaviour).
 
 Interviews:
 - Interviews are structured user research rounds: a discussion guide (sections of questions and tasks) is run against a target URL by AI participants (existing actors or ad-hoc personas).
 - Build the guide with `add_interview_section` and `add_interview_item` before launching. Each section should focus on one topic and contain ordered `question` or `task` items.
-- Add participants with `add_interview_participant` — pass `actor_id` to reuse an existing actor, or `persona_spec` (`name`, `bio`, `traits`) for an ad-hoc persona.
-- `launch_interview` is async — it returns a trigger run ID and flips the interview to `running`. Participants update independently; use `get_interview` and `get_interview_participant` to follow progress.
-- Once participants complete, the synthesis task produces a report (summary, themes, recommendations, per-question rollup). Fetch it with `get_interview_report`, or call `regenerate_interview_report` after editing transcripts or re-running participants.
+- Add participants with `add_interview_participant`: pass `actor_id` to reuse an existing actor, or `persona_spec` (`name`, `bio`, `traits`) for an ad-hoc persona.
+- `launch_interview` is async and moves the interview to `running`. Poll `get_interview_report` every 60 seconds until `report_status` is `completed` or `failed`; `get_interview` shows each participant's status.
+- The report has a summary, themes, recommendations and a per-question rollup. `get_interview_participant` gives the transcript behind a finding. Call `regenerate_interview_report` after adding or re-running participants.
 
 Guidelines (the standards a workspace holds itself to):
 - A guideline is a standing rule (design system, tone of voice, brand, content, accessibility, compliance, security, performance, shared knowledge). It is owned by the **workspace** and attached to the projects it applies to, so one rule holds for several projects without being retyped or edited in several places.

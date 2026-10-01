@@ -1,5 +1,5 @@
 ---
-description: Checklist for validating UX changes with Stunt Double before shipping
+description: Checklist for validating user-facing changes with Stunt Double checklists, workflows and feedback before and after merging. Use when changing user-facing flows, UI copy, forms or error handling.
 alwaysApply: false
 globs:
   - "**/*"
@@ -8,16 +8,16 @@ globs:
 review-checklist:
 
 Before merging:
-- Run relevant Stunt Double checklists against staging before merging UX changes.
+- Run the Stunt Double checklists that cover the changed flow (`search` with `types: ["checklist"]`) against staging or the preview before merging.
 - Verify that existing workflows still pass after modifying user-facing flows.
-- Check Stunt Double feedback (`list_feedback`) for regressions related to the changed area.
+- Check feedback widget comments on the changed pages (`list_feedback` with `page_path`) for known issues in the area.
 
 Coverage:
-- Ensure new user journeys have corresponding workflows or checklist items for ongoing validation.
-- If a new user-facing feature is added, check that at least one actor persona covers the target user type.
+- Ensure new user journeys have a checklist, and business-critical ones a guardrail workflow, for ongoing validation.
+- If a new user-facing feature is added, check that at least one actor covers the target user segment.
 - If no actor exists for the affected user segment, recommend creating one via `create_actor`.
 
 After merging:
 - Re-run affected workflows against the deployed environment to confirm the fix.
-- Update feedback status to "resolved" for any issues addressed by the change.
-- Review workflow run history (`get_workflow`, which returns `recent_runs`) to confirm no regressions.
+- Set feedback comments addressed by the change to `resolved` with `update_feedback_status`, once a run proves the fix.
+- Confirm no regressions from run history: `comparison.changes` on the latest `get_checklist_run`, and `recent_runs` from `get_workflow`.

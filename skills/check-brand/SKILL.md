@@ -1,68 +1,68 @@
 ---
 name: check-brand
-description: Audit a product or site against brand and tone-of-voice guidelines — a Stunt Double actor reads every in-scope page like a customer and flags copy, voice, and presentation that break the rules, with evidence.
+description: Audits a live product or website against brand and tone-of-voice guidelines with Stunt Double, recording the rules as project guidelines, having an actor read each page like a customer and reporting every deviation with the offending copy and a rewrite. Use when the user asks whether copy is on brand or on voice, wants a brand voice, tone of voice, copy consistency or style guide audit, mentions copy drift across pages, or wants brand adherence checked on every deploy or on a schedule.
 ---
 
 # Check brand
 
-## When to use
+Tools are on the `stuntdouble` MCP server and are named bare below: `create_checklist` is `stuntdouble:create_checklist` (in Claude Code, `mcp__stuntdouble__create_checklist`). Every tool returns an object; list results sit under a plural key.
 
-- You have brand and tone-of-voice guidelines and want to know where the live product breaks them
-- Copy has drifted as pages shipped independently and you want a consistent voice again
-- You want brand adherence enforced continuously, not audited once
-
-## Instructions
-
-1. **Resolve context:**
-   - `list_workspaces()` → pick the workspace
-   - `list_projects(workspace_id)` → match the URL to a project, or let `create_checklist` find/create it
-
-2. **Set up a brand-guardian actor and record the rules:**
-   - `list_actors(workspace_id)`, else `create_actor(...)` described as a meticulous brand and copy reviewer
-   - `list_workspace_guidelines(workspace_id)` — the standard may already be written down; attach it with `set_project_guideline(project_id, guideline_id)` rather than typing a second copy
-   - Otherwise `add_project_guideline(project_id, category: "tone_of_voice" | "brand", content, title)`, one rule per guideline so a finding can name the rule it breaks. Guidelines are workspace-owned and reach every checklist run, design review, interview and triage for the project
-   - Use `add_actor_knowledge(actor_id, ...)` for what only this reviewer needs to remember, not for the standard itself
-   - If no guidelines were supplied, ask for them, or draft a short rule set from the strongest existing pages and confirm it before auditing
-
-3. **Create a checklist per surface in scope:**
-   - `create_checklist(...)` for each page or flow (default scope: homepage, one core product flow, one high-traffic marketing page)
-   - Phrase each check as an observable assertion a reader could verify on the rendered page:
-     - "Headlines use sentence case"
-     - "Copy addresses the reader as you, never the user"
-     - "Error messages state what happened and offer a next step"
-     - "No unexplained jargon on pricing"
-   - 4–8 checks per checklist
-
-4. **Run and collect evidence:**
-   - `run_checklist(checklist_id)` → poll `get_checklist_run(run_id)` until terminal; read the evidence per check
-
-5. **Report deviations grouped by page:**
-   - Each with the broken rule, the offending copy or element as evidence, and a suggested rewrite in the correct voice
-
-6. **Make it standing:**
-   - Offer `create_workflow` on a schedule or deploy trigger so the brand stays on-voice as pages change (see `setup-guardrails`)
-
-## Example output
+## Workflow
 
 ```
-Brand & voice audit — acme.com
+Task progress:
+- [ ] Step 1: Resolve workspace and project
+- [ ] Step 2: Record the rules as guidelines
+- [ ] Step 3: Pick or create the reviewing actor
+- [ ] Step 4: Create one checklist per surface
+- [ ] Step 5: Run and poll to a terminal status
+- [ ] Step 6: Report deviations by page
+- [ ] Step 7: Offer a standing workflow
+```
 
-Pricing page:
-  [FAIL] "The User can upgrade at any time" — addresses reader in third person.
+1. **Resolve context.** `list_workspaces` (use the only one silently). `list_projects(workspace_id)` and match the URL to a project. No project? `create_checklist` with a `url` finds or creates one.
+
+2. **Record the rules as guidelines.**
+   - `list_workspace_guidelines(workspace_id)` first: if the standard is already written down, attach it with `set_project_guideline(project_id, guideline_id)` rather than typing a second copy.
+   - Otherwise `add_project_guideline(project_id, category, title, content)` with `category` `tone_of_voice` or `brand`, one rule per guideline so a finding can name the rule it breaks. Guidelines reach every run, design review, interview and triage for the project.
+   - No guidelines supplied? Ask for them, or draft a short rule set from the strongest existing pages and confirm it with the user before auditing.
+
+3. **Pick the actor.** `search(workspace_id, query="brand")` or `list_actors(workspace_id)` and reuse a reviewer. Otherwise `create_actor(workspace_id, name="Brand and copy reviewer", description=…)`. Use `add_actor_knowledge` only for what this actor alone needs, never for the standard itself.
+
+4. **Create one checklist per surface.** Default scope: homepage, one core product flow, one high-traffic marketing page. `create_checklist(workspace_id, name, actor_id, instructions, checks, url)` with 4 to 8 checks, each an observable assertion about the rendered page:
+   - "Headlines use sentence case"
+   - "Copy addresses the reader as you, never the user"
+   - "Error messages state what happened and offer a next step"
+   - "No unexplained jargon on pricing"
+
+5. **Run and poll.** `run_checklist(checklist_id)`, then poll `get_checklist_run(run_id)` every 30 to 60 seconds until `status` is `completed` or `failed`. Judge by `outcome`, and read each result's `evidence`. `waiting_for_input` means the actor needs a person: tell the user to answer it in the run's live view. After 15 minutes without a terminal status, stop and give the user the run id.
+
+6. **Report deviations by page** using the template below: the broken rule, the offending copy as evidence, and a rewrite in the correct voice.
+
+7. **Make it standing.** Offer a workflow on a schedule or deploy trigger (see `setup-guardrails`).
+
+## Report template
+
+```
+Brand and voice audit: acme.com
+Verdict: 3 deviations across 2 pages
+
+Pricing page
+  [FAIL] "The User can upgrade at any time": third person. Rule: address the reader as you.
          Rewrite: "You can upgrade any time."
-  [FAIL] Headline "GET STARTED NOW!!!" — all caps + exclamation, breaks sentence-case + no-exclamation rules.
+  [FAIL] Headline "GET STARTED NOW!!!": breaks sentence case and no-exclamation rules.
          Rewrite: "Get started"
 
-Onboarding:
+Onboarding
   [PASS] Sentence-case headlines throughout
-  [FAIL] Error "Invalid input" — states no cause and no next step.
+  [FAIL] Error "Invalid input": no cause, no next step.
          Rewrite: "That email is already in use. Try signing in instead."
 
-3 deviations across 2 pages. Offer: schedule this checklist weekly to hold the voice.
+Next: schedule these checklists weekly to hold the voice.
 ```
 
-## Tips
+## Gotchas
 
-- **Store the rules on the actor, not just in the checklist.** Actor knowledge makes every future run enforce the same standard automatically.
-- **Checks must be reader-observable.** Actors see the rendered page, so phrase rules by what a customer would read, not by CSS or component names.
-- **One checklist per surface** keeps failures attributable to a page.
+- **Guidelines, not actor knowledge, hold the standard.** A guideline reaches every run for the project; actor knowledge only reaches that actor.
+- **Checks must be reader-observable.** Actors see the rendered page, so phrase rules by what a customer reads, not by CSS or component names.
+- **One checklist per surface** keeps each failure attributable to a page.

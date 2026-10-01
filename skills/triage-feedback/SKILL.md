@@ -1,68 +1,55 @@
 ---
 name: triage-feedback
-description: Review, categorize, and manage Stunt Double feedback submissions across projects.
+description: Triages the comments stakeholders and users leave on a product through the Stunt Double feedback widget, summarising them into severity-ranked themes and an implementation brief, assessing and updating each comment's status, reproducing issues with a checklist and closing them once a run proves the fix. Use when the user asks to review, triage, prioritise or summarise feedback, comments or widget submissions, turn stakeholder comments into tasks or a brief for a coding agent, or close the loop on fixed issues.
 ---
 
 # Triage feedback
 
-## When to use
+Tools are on the `stuntdouble` MCP server and are named bare below: `summarise_feedback` is `stuntdouble:summarise_feedback` (in Claude Code, `mcp__stuntdouble__summarise_feedback`). Every tool returns an object; list results sit under a plural key.
 
-- During weekly feedback review sessions
-- After a deployment to check for new issues surfaced by actors
-- When prioritizing UX improvements for the next sprint
-- When closing the loop on fixed issues
+Feedback here means comments people leave through the feedback widget, each pinned to a page position (often a named element) with device details and an optional screenshot. Statuses: `new` (nobody has looked), `reviewed` (assessed, still open), `resolved` (confirmed fixed), `dismissed` (will not act).
 
-## Instructions
-
-1. **Pull untriaged feedback:**
-   - `list_feedback(project_id, status: "new")` → get all new feedback items
-
-2. **Review each item in detail:**
-   - `get_feedback(feedback_id)` → read full details including actor context, screenshots, and evidence
-
-3. **Assess each item:**
-   - **Is it valid?** — Real UX issue vs expected behavior or test artifact
-   - **How severe?** — Blocker (can't proceed), Major (significant friction), Minor (annoyance), Cosmetic (polish)
-   - **Who's affected?** — One persona type or multiple
-   - **Is it new?** — First occurrence or repeat of a known issue
-
-4. **Update status:**
-   - `update_feedback_status(feedback_id, status: "reviewed")` → triaged and needs action
-   - `update_feedback_status(feedback_id, status: "resolved")` → issue has been fixed
-   - `update_feedback_status(feedback_id, status: "dismissed")` → false positive or not actionable
-
-5. **Cross-reference for patterns:**
-   - `list_actors(workspace_id)` → check which personas are most affected
-   - `list_workflows(workspace_id)` → identify workflows that cover the affected areas
-   - Look for clusters: multiple feedback items about the same flow, same actor type, or same area
-
-6. **Summarize findings:**
-   - Total items reviewed, by status
-   - Top patterns or clusters
-   - Recommended actions (new workflows, actor updates, code fixes)
-
-## Example output
+## Workflow
 
 ```
-Feedback Triage — March 28, 2026
+Task progress:
+- [ ] Step 1: Find the project
+- [ ] Step 2: Summarise the open comments
+- [ ] Step 3: Read the comments behind each theme
+- [ ] Step 4: Assess and update statuses
+- [ ] Step 5: Reproduce what is unclear
+- [ ] Step 6: Report themes, decisions and open questions
+```
 
-Reviewed: 7 new items
+1. **Find the project.** `list_workspaces`, then `list_projects(workspace_id)`.
 
-Triaged:
-  [reviewed] FB-301: Search returns empty for partial queries (Major, Power User)
-  [reviewed] FB-302: Modal not keyboard-dismissable (Major, Accessibility User)
-  [reviewed] FB-303: Onboarding tooltip overlaps CTA button (Minor, New User)
-  [dismissed] FB-304: Duplicate of FB-298
-  [reviewed] FB-305: Slow load on settings page (Major, Mobile User)
-  [dismissed] FB-306: Expected behavior — empty state on fresh account
-  [reviewed] FB-307: Confusing label on export button (Minor, Enterprise Admin)
+2. **Summarise first.** `summarise_feedback(project_id)` covers open comments (`new` plus `reviewed`) by default and returns a headline, themes ranked by severity, open questions and an implementation brief written for a coding agent. Read it before reasoning over raw comments. If `coverage.included` is below `coverage.total`, say only the most recent were read. Leave `force` unset: an unchanged comment set returns the saved digest at no cost.
 
-Patterns:
-  - 2 accessibility items this week (up from 0 last week) — consider an a11y checklist
-  - Search issues recurring — needs a dedicated search workflow
+3. **Read the comments.** `list_feedback(project_id, status="new")` (narrow with `page_path` or `since`), then `get_feedback(feedback_id)` for replies, the page version and the screenshot.
 
-Actions:
-  1. Fix FB-302 keyboard trap before next release
-  2. Create "Keyboard Navigation" checklist
-  3. Add search-specific workflow with varied query patterns
+4. **Assess and update** each comment:
+   - Valid issue or expected behaviour? Severity: blocker (cannot proceed), major (significant friction), minor (annoyance), cosmetic (polish). Duplicate of another comment?
+   - `update_feedback_status(feedback_id, status)`: `reviewed` once assessed, `dismissed` for duplicates and expected behaviour (sparingly), `resolved` only after a run proves the fix.
+
+5. **Reproduce what is unclear.** For a reported bug, create a checklist on the comment's `page_url` (see `verify-change`), run it and poll `get_checklist_run(run_id)` until `completed` or `failed`. Reproduced: keep it `reviewed` and attach the evidence. Fixed later: re-run, then mark `resolved`.
+
+6. **Report** with the template. Ask the user the brief's unanswered open questions rather than guessing: the brief leaves out work those questions hold up.
+
+## Report template
+
+```
+Feedback triage: Acme web app
+Headline: <summarise_feedback headline>
+Reviewed 7 new comments: 5 reviewed, 2 dismissed
+
+| Comment (page)                            | Severity | Status    | Note                      |
+| ----------------------------------------- | -------- | --------- | ------------------------- |
+| Modal cannot be closed by keyboard (/app) | Major    | reviewed  | Reproduced by checklist   |
+| Search empty for partial words (/search)  | Major    | reviewed  |                           |
+| Tooltip covers the Continue button (/onboarding) | Minor | reviewed |                    |
+| Same as the export label comment          | n/a      | dismissed | Duplicate                 |
+| Empty state on a fresh account            | n/a      | dismissed | Expected behaviour        |
+
+Open questions for you: <from the digest>
+Next: fix the keyboard trap before release; add a keyboard navigation checklist.
 ```

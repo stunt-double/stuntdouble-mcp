@@ -1,89 +1,66 @@
 ---
 name: design-review
-description: Run a design review session by gathering feedback from multiple Stunt Double actors on a proposed design or flow.
+description: Runs a persona-based design review with Stunt Double by putting a prototype, preview or live design in front of three to five actors as an interview, then synthesising consensus, friction and split opinions with transcript quotes. Use when the user wants feedback on a design, mockup, prototype, Figma Make or v0 link, Vercel preview or redesign before handoff, wants to compare design options (A/B), or asks how different user segments would react to a proposed flow.
 ---
 
 # Design review
 
-## When to use
+Tools are on the `stuntdouble` MCP server and are named bare below: `create_interview` is `stuntdouble:create_interview` (in Claude Code, `mcp__stuntdouble__create_interview`). Every tool returns an object; list results sit under a plural key.
 
-- When evaluating a new design, flow, or prototype before implementation
-- When comparing two or more design options
-- Before engineering handoff to validate the proposed UX
-- When a PM or designer wants diverse user perspectives on a concept
+The review runs as an interview: every actor walks the same guide against the design's URL, and Stunt Double synthesises a report. Anything with a reachable URL works.
 
-## Instructions
-
-1. **Set up the workspace and select actors:**
-   - `list_workspaces()` → find the workspace
-   - `list_actors(workspace_id)` → review available personas
-   - Pick 3-5 actors representing different user segments (new user, power user, enterprise, accessibility, mobile, etc.)
-
-2. **Brief the actors (if needed):**
-   - `add_actor_knowledge(actor_id, title, content)` → share design context, screenshots, feature descriptions, or prototype links with each actor
-   - This ensures actors have the right context to give informed feedback
-
-3. **Run the review as an interview:**
-   - `create_interview(workspace_id, project_id, name: "Design review: <feature>", target_url, research_brief)` → describe the proposed design clearly in the brief: what it does, how the user would interact with it, and what the key decision points are
-   - `add_interview_section(interview_id, title)` then `add_interview_item(section_id, type, prompt_text)` → mix `task` items ("Find the annual price and start checkout") with specific questions ("Would you understand what this button does?", "What would you expect to happen next?", "Is anything confusing or missing?")
-   - `add_interview_participant(interview_id, actor_id)` → one per selected actor, or `persona_spec` for an ad-hoc persona
-   - `launch_interview(interview_id)` → async, poll `get_interview(interview_id)` until terminal
-
-4. **Collect and read responses:**
-   - `get_interview_report(interview_id)` → summary, themes, recommendations, per-question rollup
-   - `get_interview_participant(participant_id)` → verbatim transcript evidence for a finding
-   - Conversations are read-only over MCP: `list_conversations` / `get_conversation` read chats started in the dashboard
-
-5. **Cross-reference with existing data:**
-   - `list_feedback(project_id)` → check if the design addresses known issues
-   - `list_workflows(workspace_id)` → verify that existing workflows cover the new flow
-
-6. **Synthesize findings:**
-   - Group feedback into themes
-   - Note where actors agree (strong signal) vs disagree (segment-specific)
-   - Identify friction points, confusion, and missing affordances
-   - Recommend specific design changes with supporting quotes from actors
-
-## Example output
+## Workflow
 
 ```
-Design Review: New Dashboard Layout
-
-Actors consulted:
-  - Emma (first-time user)
-  - Carlos (enterprise admin)
-  - Priya (developer/API user)
-  - Sam (screen reader user)
-
-Findings:
-
-  Strong consensus:
-  - All actors found the left sidebar navigation intuitive
-  - All actors liked the quick-action buttons at the top
-
-  Friction points:
-  - Emma: "I don't know what 'Workflows' means. Can it say 'Automations' or have a subtitle?"
-  - Sam: "The dashboard cards don't have heading levels. I can't navigate by headings."
-  - Carlos: "I need to see team activity, not just my own. Add a team toggle."
-
-  Split opinions:
-  - Priya preferred a data-dense layout; Emma preferred the card-based layout
-  - Recommendation: offer a "compact view" toggle for power users
-
-  Existing feedback addressed:
-  - FB-145 ("can't find settings") — new sidebar placement resolves this
-  - FB-162 ("too many clicks to create project") — quick-action button addresses this
-
-Recommendations:
-  1. Add descriptive subtitles to sidebar items for new users
-  2. Add proper heading structure (h2/h3) to dashboard cards for screen readers
-  3. Add team/personal toggle for enterprise users
-  4. Consider compact view option for power users
+Task progress:
+- [ ] Step 1: Resolve workspace, project and actors
+- [ ] Step 2: Create the interview with a design brief
+- [ ] Step 3: Build the guide (tasks plus questions)
+- [ ] Step 4: Add participants and launch
+- [ ] Step 5: Poll the report to a terminal status
+- [ ] Step 6: Cross-reference known feedback
+- [ ] Step 7: Synthesise and recommend
 ```
 
-## Tips
+1. **Resolve context.** `list_workspaces`, `list_projects(workspace_id)`, then `list_actors(workspace_id)`. Pick three to five actors from different segments, always including one accessibility-dependent actor. Missing segments? See `create-actor-panel`, or use `persona_spec` in step 4.
 
-- Ask participants both open-ended ("What stands out to you?") and specific ("Would you click this button?") questions
-- Include at least one accessibility-focused actor in every design review
-- Use transcript quotes as evidence in design documents and stakeholder presentations
-- Keep the interview. Re-running it after the design changes gives a like-for-like comparison, which a one-off review cannot
+2. **Create the interview.** `list_project_guidelines(project_id)` first so questions do not contradict the standards the project already holds. Then `create_interview(workspace_id, project_id, name="Design review: <feature>", target_url, research_brief)`. The brief describes the proposed design: what it does, how a user interacts with it, and the decisions the review should inform.
+
+3. **Build the guide.** `add_interview_section(interview_id, title)`, then `add_interview_item(section_id, type, prompt_text)`. Lead with `task` items ("Find the annual price and start checkout"), follow with `question` items ("What did you expect to happen next?", "Was anything confusing or missing?"). Keep it to 3 to 8 items. Comparing options? One section per option, or one interview per option URL with the same guide.
+
+4. **Add participants and launch.** `add_interview_participant(interview_id, actor_id)` per actor (or `persona_spec={ name, bio, traits }` for an ad-hoc persona), then `launch_interview(interview_id)`.
+
+5. **Poll.** `get_interview_report(interview_id)` every 60 seconds until `report_status` is `completed` or `failed` (usually several minutes). `get_interview(interview_id)` shows each participant's status if it stalls. After 30 minutes, stop and tell the user where to find it in the dashboard. On `failed`, read `report_error`; if participants finished, `regenerate_interview_report(interview_id)` once.
+
+6. **Cross-reference.** `list_feedback(project_id)` for comments the design should resolve; `get_interview_participant(participant_id)` for verbatim quotes behind a finding.
+
+7. **Synthesise** using the template: agreement across actors is a strong signal; disagreement is segment-specific.
+
+## Report template
+
+```
+Design review: new dashboard layout
+Actors: first-time user, enterprise admin, developer, screen reader user
+
+Consensus
+- All four found the left sidebar navigation clear
+
+Friction
+- First-time user: "I don't know what 'Workflows' means." (no subtitle or help)
+- Screen reader user: dashboard cards have no headings, so heading navigation fails
+
+Split
+- Developer wanted a dense table; first-time user preferred cards. Offer a compact view.
+
+Known feedback addressed: "can't find settings" (resolved by the sidebar)
+
+Recommendations
+1. Add subtitles to sidebar items
+2. Give each card a heading (h2/h3)
+3. Add a compact view toggle
+```
+
+## Gotchas
+
+- **Conversations are read-only over MCP.** `list_conversations` and `get_conversation` read chats started in the dashboard; an interview is how to ask actors new questions.
+- **Keep the interview.** Re-running it after the design changes gives a like-for-like comparison.

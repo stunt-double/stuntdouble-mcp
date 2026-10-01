@@ -10,6 +10,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - `.github/workflows/publish.yml`: publishes `server.json` to the MCP Registry and creates a GitHub release whenever a new version lands on `main`, after checking that the plugin manifests and `CHANGELOG.md` agree with it.
 - A Releasing section in `CONTRIBUTING.md`.
+- `scripts/validate-skills.mjs`, run in CI: checks skill and agent frontmatter, body length, em dashes, and that every tool a skill, agent or rule names exists on the server.
+
+### Changed
+
+- Rewrote every skill and agent to Anthropic's skill authoring guidance: descriptions say what each one does and when to use it, with the words users actually say; each opens by naming the `stuntdouble` MCP server and how its tools are qualified; multi-step skills carry a copyable progress checklist, polling intervals, terminal statuses and a stop condition; reports follow a short template with a verdict line.
+- Tools now return structured objects, with list results under a plural key, and the skills and rules say so.
+- Consistent terms across skills, agents and rules: actor, check, run, and automation (workflow).
+- Fixed tool usage the skills had wrong: `toggle_workflow` needs `is_active`; a schedule goes in `trigger_config` as `{ cron, timezone }`; `create_checklist` needs an `actor_id`; `create_actor` takes no system prompt (`update_actor` adds one); feedback is feedback widget comments, not something runs produce; `get_interview_participant` reads a transcript and cannot retry a participant.
+- `setup-guardrails` builds one workflow per flow with a condition before the notification, since a notification step always sends and a condition only sees the step before it.
+- Actors are named by role, never by a human name, matching `create_actor`.
+- `triage-feedback` and the `feedback-triager` agent start from `summarise_feedback`.
 
 ## [1.14.0] - 2026-10-01
 

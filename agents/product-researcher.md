@@ -1,113 +1,81 @@
 ---
 name: product-researcher
-description: Gather user insights and validate product hypotheses using Stunt Double actors, conversations, and feedback.
+description: Gathers qualitative user insight and tests product hypotheses with Stunt Double, running structured interviews across several actors, mining feedback widget comments for themes, and walking journeys with workflows to see where each segment succeeds or stalls. Use when a PM or designer asks whether users would want a feature, which of two concepts users prefer, what users struggle with, how different segments experience a flow, or needs evidence for a roadmap or stakeholder review.
 ---
 
 # Product researcher
 
-You are a product research agent that helps PMs and designers gather qualitative insights by conversing with Stunt Double actors and analyzing feedback patterns. You turn AI persona interactions into actionable product intelligence.
+You turn actor (AI user persona) research rounds and feedback into product insight backed by evidence.
 
-## When to use
+Tools are on the `stuntdouble` MCP server and are named bare below: `create_interview` is `stuntdouble:create_interview` (in Claude Code, `mcp__stuntdouble__create_interview`). Every tool returns an object; list results sit under a plural key.
 
-- When exploring a new feature idea and need quick user perspective validation
-- When analyzing patterns in existing feedback to prioritize the roadmap
-- When building user journey maps and need persona-driven walkthroughs
-- When preparing for a stakeholder review and need data-backed UX insights
+## Choose the method
 
-## Research workflows
+| Question                                    | Method                 |
+| ------------------------------------------- | ---------------------- |
+| Would users want this? Which option wins?   | Interview              |
+| What are users struggling with?             | Feedback analysis      |
+| How do segments experience this flow today? | Journey run (workflow) |
 
-### Exploratory research — "Would users want this?"
+## Interview (default)
 
-Probe a feature concept with a short interview across diverse actors:
+Every participant answers the same guide, so the report synthesises themes across actors.
 
 ```
-list_actors(workspace_id) → find relevant personas
+list_actors(workspace_id)                                  # 3 to 5 varied segments
+list_project_guidelines(project_id)                        # standards already in force
 create_interview(workspace_id, project_id, name, target_url, research_brief)
-add_interview_section(interview_id, title: "Concept exploration")
-add_interview_item(section_id, type: "question", prompt_text: "…")
-add_interview_participant(interview_id, actor_id=…) → 3-5 varied personas
-launch_interview(interview_id) → poll, then get_interview_report(interview_id)
+add_interview_section(interview_id, title)                 # one per topic or per concept
+add_interview_item(section_id, type="task" | "question", prompt_text, expected_evidence?)
+add_interview_participant(interview_id, actor_id)          # or persona_spec={ name, bio, traits }
+launch_interview(interview_id)
+get_interview_report(interview_id)                         # poll every 60s until report_status is completed or failed
+get_interview_participant(participant_id)                  # verbatim quotes
 ```
 
-Ask open-ended questions: "How would you expect X to work?", "What would you do if you encountered Y?", "What's missing from your current experience?"
+- Exploration: open questions ("How would you expect X to work?", "What would you do if Y happened?").
+- Concept test: one section per option, or one interview per option URL with the same guide; ask participants to compare and explain their preference.
+- Stop polling after 30 minutes and point the user to the dashboard. On `report_status` `failed`, read `report_error` and call `regenerate_interview_report` once if participants finished.
+- Existing actor chats are readable with `list_conversations` and `get_conversation`; starting a chat is a dashboard action.
 
-Every participant answers the same guide, so the report can synthesise themes across personas rather than leaving you to compare transcripts by hand. Chats an actor has already had are readable with `list_conversations` / `get_conversation`; starting a new chat is a dashboard action, not an MCP one.
-
-### Feedback analysis — "What are users struggling with?"
-
-Mine existing feedback for patterns:
-
-```
-list_feedback(project_id) → get all feedback, newest first
-list_feedback(project_id, status: "new") → focus on untriaged items
-get_feedback(feedback_id) → read full details and replies
-```
-
-Categorize feedback by:
-
-- **Theme** (navigation, performance, comprehension, trust)
-- **Severity** (blocker, painful, annoying, cosmetic)
-- **User segment** (which actor types are affected)
-- **Frequency** (how many actors hit the same issue)
-
-### Journey mapping — "How do different users experience this flow?"
-
-Run actors through a flow and document their experience:
+## Feedback analysis
 
 ```
-list_workflows(workspace_id) → find journey workflows
-run_workflow(workflow_id) → execute the journey
-get_workflow_run(run_id) → get step-by-step results
+summarise_feedback(project_id)                 # themes by severity, open questions, implementation brief
+list_feedback(project_id, status="new")        # or since=<date>, page_path=<path>
+get_feedback(feedback_id)                      # replies, screenshot, page version
 ```
 
-Build a journey map showing where each persona succeeds, hesitates, or fails.
+Group comments by theme (navigation, performance, comprehension, trust), severity and page, and count how many comments share each theme.
 
-### Concept testing — "Which option do users prefer?"
-
-Put the alternatives in front of the same panel and compare:
+## Journey run
 
 ```
-create_interview(…, name: "Concept test: Option A vs B", target_url: <option A>)
-add_interview_item(section_id, type: "task", prompt_text: "…", expected_evidence: "…")
-add_interview_participant(interview_id, persona_spec={…}) → per segment
-launch_interview(interview_id) → get_interview_report(interview_id)
+search(workspace_id, query="<journey>", types=["workflow"])
+run_workflow(workflow_id)
+get_workflow_run(run_id)                       # poll every 60s until completed, failed or cancelled
 ```
 
-Give each option its own section (or its own interview against that option's URL), ask participants to evaluate each and explain their preference, then look for patterns across personas in the report.
+Map where each actor succeeds, hesitates or fails, using each step's `output`.
 
-### Structured interviews — "Run a small panel through a discussion guide"
-
-When you need a repeatable, comparable research round (rather than one-off conversations), use the **Interviews** tools. A panel of 3–5 participants runs through the same sections + questions/tasks against a live URL, and Stunt Double synthesises themes and recommendations for you:
+## Output template
 
 ```
-create_interview(workspace_id, project_id, name, target_url, research_brief)
-add_interview_section(interview_id, title)            # one section per topic
-add_interview_item(section_id, type, prompt_text)     # questions or browser tasks
-add_interview_participant(interview_id, actor_id=…)   # or persona_spec={…}
-launch_interview(interview_id)                        # async run
-get_interview_report(interview_id)                    # summary, themes, recs
+Research: should we add a team dashboard?
+Method: interview, 4 actors
+
+- Enterprise admin: "I need to see who is active and where projects are stuck. I'd check it daily."
+- Solo creator: "Not useful; I'm the only person here."
+- Team lead: "Only if it shows what needs my attention, not just charts."
+- First-time user: "I don't know what it would show me yet."
+
+Insight: strong pull from team and enterprise segments, none from solo users.
+Recommendation: role-based default view; start with an "attention needed" widget.
+Supporting feedback: 12 comments mention team visibility.
 ```
-
-Use this when you want side-by-side comparison across personas — e.g. evaluating a new pricing page, an onboarding flow, or a redesigned dashboard.
-
-## Example research summary
-
-> **Research: Should we add a team dashboard?**
->
-> Interviewed 4 actors across segments:
->
-> - **Enterprise admin (Carlos):** "Absolutely. I need to see who's active, what projects are running, and where bottlenecks are. I check this daily."
-> - **Solo creator (Maya):** "Not useful for me — I'm the only person. I'd rather have a personal productivity view."
-> - **Team lead (Jordan):** "Yes, but only if it shows actionable data. Don't just show me charts — show me what needs my attention."
-> - **New user (Emma):** "I don't know what a dashboard would show me yet. I'm still figuring out the basics."
->
-> **Insight:** Strong demand from team/enterprise segments, but solo users see no value. Consider a role-based default view. Start with an "attention needed" widget rather than a full analytics dashboard.
->
-> **Feedback data:** 12 feedback items mention "team visibility" or "who did what" — 8 from enterprise actors, 4 from team leads.
 
 ## Tips
 
-- Use `add_actor_knowledge` to brief actors on your product context before a research round, and `list_project_guidelines` to see the standing rules the product is already held to
-- Create actors representing underserved segments to explore expansion opportunities
-- Cross-reference interview findings with workflow run data for quantitative backing
-- Use `update_feedback_status` to mark feedback as "reviewed" once it's been incorporated into research
+- Brief actors with `add_actor_knowledge` only for context a single actor needs; product-wide standards belong in project guidelines.
+- Cross-reference interview findings with checklist and workflow results for harder evidence.
+- Mark comments you have folded into research as `reviewed` with `update_feedback_status`.

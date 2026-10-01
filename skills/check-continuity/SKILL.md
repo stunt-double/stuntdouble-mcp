@@ -1,65 +1,63 @@
 ---
 name: check-continuity
-description: Check continuity across surfaces on Stunt Double — pricing, terminology, feature names, and promises should match between marketing site, product, docs, and emails. Actors walk each surface and the mismatches surface with evidence.
+description: Checks that pricing, plan names, feature terminology and promises match across a marketing site, product, docs and emails with Stunt Double, by having actors record the same facts on each surface and reporting a discrepancy table with evidence, billing mismatches first. Use when the user suspects drift between marketing and product, a pricing or naming change shipped on one surface only, asks whether the checkout price matches the pricing page, whether docs use old feature names, or whether a marketing promise (such as "set up in two minutes") holds.
 ---
 
 # Check continuity
 
-## When to use
+Tools are on the `stuntdouble` MCP server and are named bare below: `create_checklist` is `stuntdouble:create_checklist` (in Claude Code, `mcp__stuntdouble__create_checklist`). Every tool returns an object; list results sit under a plural key.
 
-- Marketing, product, docs, and emails may have drifted out of sync (pricing, plan names, feature terminology, promises)
-- A pricing or naming change shipped on one surface but maybe not the others
-- You want cross-surface drift caught as content ships, not by customers
-
-## Instructions
-
-1. **Resolve context:**
-   - `list_workspaces()` → pick the workspace
-   - `list_projects(workspace_id)` → match the surfaces to a project, or let `create_checklist` find/create it
-
-2. **Ensure a reviewer actor exists:**
-   - `list_actors(workspace_id)`, else `create_actor(...)`
-
-3. **Create a checklist per surface with mirrored extraction checks:**
-   - Record the same facts on each surface so they can be compared:
-     - "Record the price, billing period, and plan names shown"
-     - "Record what the main feature is called on this page"
-   - Plus cross-surface assertions on the primary surface:
-     - "The price at checkout matches the price on the pricing page"
-     - "The feature is named consistently; it is never called by an old name"
-
-4. **For promise-versus-product continuity, use an interview:**
-   - `create_interview(...)` with a task that walks from the marketing claim to using the feature ("The homepage says setup takes two minutes; sign up and see if that holds"), a persona participant, and `launch_interview`
-   - Poll and read `get_interview_report`
-
-5. **Run everything and compare recorded values across surfaces:**
-   - `run_checklist` per surface → poll `get_checklist_run` until terminal
-
-6. **Report a discrepancy table:**
-   - Each item, what every surface shows, which surfaces disagree, with evidence
-   - Rank by customer impact (billing mismatches first)
-
-7. **Offer standing coverage:**
-   - A scheduled `create_workflow` so drift is caught as content ships (see `setup-guardrails`)
-
-## Example output
+## Workflow
 
 ```
-Continuity check — marketing site vs app vs docs
-
-| Item              | Marketing        | App (checkout)   | Docs             | Disagree?     |
-| ----------------- | ---------------- | ---------------- | ---------------- | ------------- |
-| Pro price / month | $29              | $39              | $29              | App ≠ others  |
-| Plan names        | Starter/Pro/Team | Starter/Pro/Team | Starter/Pro/Biz  | Docs: "Biz"   |
-| Core feature name | "Flows"          | "Flows"          | "Workflows"      | Docs: old name|
-| Setup promise     | "2-minute setup" | ~6 min in interview transcript |    | Promise > reality |
-
-Ranked: billing mismatch first (App charges $39 vs $29 advertised). Then docs plan-name + feature-name drift.
-Offer: schedule this so drift is caught as content ships.
+Task progress:
+- [ ] Step 1: Resolve workspace and project
+- [ ] Step 2: Pick or create the reviewing actor
+- [ ] Step 3: Create one checklist per surface with mirrored checks
+- [ ] Step 4: Interview for promises (if any are in scope)
+- [ ] Step 5: Run everything and poll to terminal
+- [ ] Step 6: Report a discrepancy table
+- [ ] Step 7: Offer a standing workflow
 ```
 
-## Tips
+1. **Resolve context.** `list_workspaces` (use the only one silently). `list_projects(workspace_id)` and match the surfaces to a project. No project? `create_checklist` with a `url` finds or creates one.
 
-- **Mirror the extraction checks** across surfaces so the recorded values line up cleanly for comparison.
-- **Billing mismatches rank first** — a price that disagrees between the pricing page and checkout is the highest-impact discrepancy.
-- **Interviews beat checklists for promises.** A task that walks from the marketing claim to the real experience captures whether the promise holds.
+2. **Pick the actor.** Reuse a reviewer from `list_actors(workspace_id)`, else `create_actor(workspace_id, name="Continuity reviewer", description=…)`.
+
+3. **Create one checklist per surface** with `create_checklist(workspace_id, name, actor_id, instructions, checks, url)`. Use the same recording checks on every surface so the values line up, and send them as informational checks (`{ description, type: "informational" }`) so the actor records what it saw rather than passing or failing:
+   - "Record the price, billing period and plan names shown"
+   - "Record what the main feature is called on this page"
+
+   Add cross-surface assertions to the primary surface only:
+   - "The price at checkout matches the price on the pricing page"
+   - "The feature is never called by its old name"
+
+4. **Promises need an interview, not a checklist.** `create_interview(workspace_id, project_id, name, target_url, research_brief)`, one section with a `task` item that walks from the claim to the feature ("The homepage says setup takes two minutes; sign up and see if that holds"), one participant, then `launch_interview(interview_id)`. Poll `get_interview_report(interview_id)` every 60 seconds until `report_status` is `completed` or `failed`.
+
+5. **Run every checklist.** `run_checklist(checklist_id)` per surface, in parallel, then poll each `get_checklist_run(run_id)` every 30 to 60 seconds until `status` is `completed` or `failed`. Compare the recorded `evidence` across surfaces. After 15 minutes without a terminal status (30 for the interview), stop and give the user the run ids.
+
+6. **Report a discrepancy table**: each item, what every surface shows, which disagree, with evidence. Rank by customer impact, billing first.
+
+7. **Offer standing coverage.** A scheduled workflow catches drift as content ships (see `setup-guardrails`).
+
+## Report template
+
+```
+Continuity check: marketing site vs app vs docs
+Verdict: 4 discrepancies, 1 billing
+
+| Item              | Marketing        | App (checkout)   | Docs            | Disagreement       |
+| ----------------- | ---------------- | ---------------- | --------------- | ------------------ |
+| Pro price / month | $29              | $39              | $29             | App differs        |
+| Plan names        | Starter/Pro/Team | Starter/Pro/Team | Starter/Pro/Biz | Docs: "Biz"        |
+| Core feature name | "Flows"          | "Flows"          | "Workflows"     | Docs: old name     |
+| Setup promise     | "2-minute setup" | about 6 minutes in the interview transcript | | Promise exceeds reality |
+
+Fix first: checkout charges $39 against $29 advertised.
+Next: schedule these checklists so drift is caught as content ships.
+```
+
+## Gotchas
+
+- **Mirror the recording checks** word for word across surfaces, or the values will not line up.
+- **Billing mismatches rank first.** A price that differs between the pricing page and checkout is the highest-impact finding.

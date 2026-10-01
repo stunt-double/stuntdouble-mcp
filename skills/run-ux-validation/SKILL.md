@@ -1,64 +1,53 @@
 ---
 name: run-ux-validation
-description: Validate a user journey by running Stunt Double workflows or checklists and reporting the results.
+description: Validates one user journey or area with the Stunt Double workflows and checklists that already cover it, runs them, polls to completion and reports pass or fail per step and check with the actor's evidence. Use when the user asks whether a flow still works (signup, checkout, onboarding), wants a smoke test after a staging deploy, wants to reproduce reported UX friction or a bug with an actor, or wants a quick quality gate on one area before merging.
 ---
 
 # Run UX validation
 
-## When to use
+Tools are on the `stuntdouble` MCP server and are named bare below: `run_workflow` is `stuntdouble:run_workflow` (in Claude Code, `mcp__stuntdouble__run_workflow`). Every tool returns an object; list results sit under a plural key.
 
-- Before merging changes that affect user-facing flows
-- After deploying to a staging environment
-- When investigating reported UX friction
-- As a pre-release quality gate
+This runs existing coverage. No checklist covers the flow yet? Use `verify-change` to create one. Need everything at once? Use `run-qa-suite`.
 
-## Instructions
-
-1. **Find the workspace and available validations:**
-   - `list_workspaces()` → identify the target workspace
-   - `list_workflows(workspace_id)` → find journey-level workflow tests
-   - `list_checklists(workspace_id)` → find point-in-time quality checks
-
-2. **Choose what to run:**
-   - Workflows for end-to-end journeys (signup, checkout, onboarding)
-   - Checklists for quality gates (accessibility, performance, content)
-   - Run both if doing a full pre-release validation
-
-3. **Trigger runs:**
-   - `run_workflow(workflow_id)` → returns a run ID (async)
-   - `run_checklist(checklist_id)` → returns a run ID (async)
-   - You can trigger multiple runs in parallel
-
-4. **Poll for results:**
-   - `get_workflow_run(run_id)` → check status and step-level results
-   - `get_checklist_run(run_id)` → check status and per-check results
-   - Poll every few seconds until status shows complete
-
-5. **Report results:**
-   - List each workflow/checklist with pass/fail status
-   - For failures, include the specific step that failed and what happened
-   - Note which actor (persona) encountered the issue
-
-6. **Follow up on failures:**
-   - `list_feedback(project_id)` → check for related feedback
-   - `get_feedback(feedback_id)` → read full context on issues
-   - `update_feedback_status(feedback_id, status: "reviewed")` → mark triaged items
-   - Suggest code changes or flag for the team
-
-## Example output
+## Workflow
 
 ```
-UX Validation Results — staging (2026-03-28)
+Task progress:
+- [ ] Step 1: Find the coverage for the journey
+- [ ] Step 2: Trigger the runs
+- [ ] Step 3: Poll each run to a terminal status
+- [ ] Step 4: Report per step and check
+- [ ] Step 5: Follow up on failures
+```
 
-Workflows:
-  [PASS] Signup → First Project (6/6 steps)
-  [FAIL] Checkout Flow (failed at step 4: payment form timeout)
-  [PASS] Team Invite (3/3 steps)
+1. **Find the coverage.** `list_workspaces`, then `search(workspace_id, query="<journey>", types=["workflow", "checklist"])`. Fall back to `list_workflows(workspace_id)` and `list_checklists(workspace_id)`. Workflows cover end-to-end journeys; checklists cover one flow or a quality gate (accessibility, content). Nothing matches? Say so and offer `verify-change`.
 
-Checklists:
-  [PASS] Performance (5/5 checks)
-  [FAIL] Accessibility (6/8 checks — contrast ratio, focus order failed)
+2. **Trigger.** `run_workflow(workflow_id)` and `run_checklist(checklist_id)`, in parallel, keeping each `run_id`.
 
-Summary: 2 failures found. Payment form timeout is a blocker.
-Recommend fixing before release.
+3. **Poll to terminal.**
+   - `get_workflow_run(run_id)` every 60 seconds until `status` is `completed`, `failed` or `cancelled`.
+   - `get_checklist_run(run_id)` every 30 to 60 seconds until `status` is `completed` or `failed`; judge by `outcome`. `waiting_for_input` means the actor needs a person: tell the user to answer it in the run's live view.
+   - After 15 minutes without a terminal status, stop and report the run ids as still running.
+
+4. **Report** with the template below: pass or fail per workflow and checklist, and for each failure the step or check, what the actor saw (`evidence`), and which actor ran it. A completed checklist run's `comparison.changes` says whether a failure is new since the last run.
+
+5. **Follow up on failures.**
+   - `list_feedback(project_id, page_path=…)` for comments already left on the failing page; `get_feedback(feedback_id)` for the details and screenshot.
+   - Once a fix is verified by a passing run, `update_feedback_status(feedback_id, status="resolved")`.
+   - Can you edit the code? Offer to fix and re-run the same checklist.
+
+## Report template
+
+```
+UX validation: checkout on staging
+Verdict: 1 blocker
+
+Workflows
+  [PASS] Signup to first project (6/6 steps)
+  [FAIL] Checkout (step 4: payment form timed out after submit; new since last run)
+
+Checklists
+  [FAIL] Accessibility (6/8: contrast on Pay button, focus order in card modal)
+
+Blocker: payment form timeout. Fix before release.
 ```

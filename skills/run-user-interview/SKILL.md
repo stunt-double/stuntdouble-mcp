@@ -1,102 +1,86 @@
 ---
 name: run-user-interview
-description: Plan, configure, and launch a structured user interview with AI participants on Stunt Double, then read back the synthesised report.
+description: Plans, builds and launches a structured Stunt Double user interview in which three to five actors work through a discussion guide of browser tasks and questions against a live URL, then reads back the synthesised report of themes, recommendations and per-question rollup. Use when the user wants qualitative user research, usability testing, a concept or pricing page test, to know why users struggle with a flow, persona reactions to a prototype or preview, or a repeatable research round to compare over time.
 ---
 
 # Run user interview
 
-## When to use
+Tools are on the `stuntdouble` MCP server and are named bare below: `create_interview` is `stuntdouble:create_interview` (in Claude Code, `mcp__stuntdouble__create_interview`). Every tool returns an object; list results sit under a plural key.
 
-- When you want qualitative research on a specific user journey or concept before shipping
-- When you need a discussion guide run against a live URL by several realistic participants
-- When a checklist or workflow surfaces something that needs deeper "why" exploration
-- When you want a one-pass report — summary, themes, recommendations, per-question rollup — from a small panel
+## Workflow
 
-## Instructions
+```
+Task progress:
+- [ ] Step 1: Find the workspace and project
+- [ ] Step 2: Create the interview
+- [ ] Step 3: Build the discussion guide
+- [ ] Step 4: Add participants
+- [ ] Step 5: Launch
+- [ ] Step 6: Poll the report to a terminal status
+- [ ] Step 7: Read and report
+```
 
-1. **Find the workspace and project:**
-   - `list_workspaces()` → pick the workspace
-   - `list_projects(workspace_id)` → pick the project the interview is about
+1. **Find the workspace and project.** `list_workspaces`, then `list_projects(workspace_id)`. `search(workspace_id, query, types=["interview"])` first: re-running an existing interview gives a comparison over time.
 
-2. **Create the interview:**
-   - `create_interview(workspace_id, project_id, name, target_url, research_brief?)`
-   - `name` — short, descriptive (e.g. "Onboarding clarity — week 1")
-   - `target_url` — the live page participants should land on
-   - `research_brief` — 1–3 paragraphs of context (what you're trying to learn, decisions it will inform)
+2. **Create the interview.** `create_interview(workspace_id, project_id, name, target_url, research_brief)`.
+   - `name`: short and specific, for example "Pricing page comprehension".
+   - `target_url`: the full URL participants start from (production, staging, a preview or a prototype link).
+   - `research_brief`: one to three paragraphs on what the team wants to learn and which decision it informs. It steers both the interviewer and the report.
 
-3. **Build the discussion guide:**
-   - For each topic, `add_interview_section(interview_id, title, intro_script?)`
-   - For each section, add 2–5 items with `add_interview_item(section_id, type, prompt_text, expected_evidence?)`
-     - `type: "question"` — open-ended prompt the participant answers in their own words
-     - `type: "task"` — instruction the participant performs in the browser ("Sign up for a free account")
-     - `expected_evidence` — optional note about what a successful answer looks like
-   - Aim for 1–3 sections, 3–8 items total — interviews longer than ~15 items get expensive and noisy
+3. **Build the guide.** One to three sections, three to eight items in total; longer guides cost more and produce noisier reports.
+   - `add_interview_section(interview_id, title, intro_script?)`
+   - `add_interview_item(section_id, type, prompt_text, expected_evidence?)`. `type="task"` puts the participant in the browser ("Sign up for a free account"); `type="question"` asks for a reaction or a reason. Lead with a task, then ask why.
 
-4. **Recruit participants:**
-   - For each participant, `add_interview_participant(interview_id, …)`:
-     - Existing actor: pass `actor_id` (use `list_actors` to find one — useful when you've already shaped the persona via `create-actor-panel`)
-     - Ad-hoc persona: pass `persona_spec` with `name`, `bio`, and 3–5 `traits`
-   - 3–5 participants is the sweet spot. Vary segment, device, and locale for coverage.
+4. **Add participants.** Three to five, varied by segment, device and locale. `add_interview_participant(interview_id, …)` once each with either:
+   - `actor_id` for an existing actor (from `list_actors`; see `create-actor-panel`), which keeps the persona consistent across rounds, or
+   - `persona_spec={ name, bio, traits }` for an ad-hoc persona (three to five traits).
+   - Optional `device` (`desktop`, `tablet`, `mobile`) and `locale`.
 
-5. **Launch the round:**
-   - `launch_interview(interview_id)` → returns a trigger run ID; interview flips to `running`
-   - This is async. Participants run in parallel and update independently.
+5. **Launch.** `launch_interview(interview_id)`. It needs at least one section with items and one participant. The interview moves to `running` and participants run in parallel.
 
-6. **Watch progress:**
-   - `get_interview(interview_id)` → shows status of every participant (`pending` / `running` / `completed` / `failed`)
-   - For any participant you want to inspect, `get_interview_participant(participant_id)` → full transcript with interviewer turns, participant turns, and tool actions (clicks, navigations, screenshots)
+6. **Poll.** `get_interview_report(interview_id)` every 60 seconds until `report_status` is `completed` or `failed` (usually several minutes). `get_interview(interview_id)` shows each participant's status if progress stalls. After 30 minutes, stop and tell the user the interview is still running.
+   - `report_status` `failed`: read `report_error`. If participants finished, call `regenerate_interview_report(interview_id)` once and poll again.
+   - A participant `failed`: retry it from the dashboard, then `regenerate_interview_report` so the report includes it.
 
-7. **Read the report:**
-   - Once all participants land, the synthesis task produces a report automatically
-   - `get_interview_report(interview_id)` → `{ summary, themes, recommendations, per_question_rollup }`
-   - If you change participants or fix a flaky run with `get_interview_participant`, call `regenerate_interview_report(interview_id)` to re-synthesise from the latest transcripts
+7. **Read and report.** The report has `summary`, `themes`, `recommendations` and a per-question rollup. Back each theme with a quote from `get_interview_participant(participant_id)`, whose transcript includes the participant's clicks and navigations.
 
 ## Example flow
 
 ```
-# 1. Set up
 list_workspaces()
 list_projects(workspace_id="…")
 
-# 2. Create
-create_interview(
-  workspace_id="…",
-  project_id="…",
+create_interview(workspace_id="…", project_id="…",
   name="Pricing page comprehension",
   target_url="https://acme.com/pricing",
-  research_brief="Validate the new tiered pricing page. Looking for confusion between Pro and Team tiers, and whether the value props land for first-time visitors."
-)
-# → returns { id: "interview-…" }
+  research_brief="Validate the new tiered pricing page. Looking for confusion between Pro and Team, and whether the value props land for first-time visitors.")
 
-# 3. Guide
 add_interview_section(interview_id, title="First impressions")
-add_interview_item(section_id, type="task", prompt_text="Open the pricing page and tell me what you think this product does.")
-add_interview_item(section_id, type="question", prompt_text="Which plan would you pick and why?")
+add_interview_item(section_id, type="task", prompt_text="Open the pricing page and say what you think this product does.")
+add_interview_item(section_id, type="question", prompt_text="Which plan would you pick, and why?")
 
-add_interview_section(interview_id, title="Tier comparison")
-add_interview_item(section_id, type="task", prompt_text="Find the difference between Pro and Team and describe it in your own words.")
-
-# 4. Participants
-add_interview_participant(interview_id, actor_id="emma-first-time-saas-user")
+add_interview_participant(interview_id, actor_id="…")
 add_interview_participant(interview_id, persona_spec={
-  name: "Priya Shah",
-  bio: "Engineering manager at a 40-person startup evaluating tools for her team.",
-  traits: ["budget-conscious", "values team features", "compares 3 tools before deciding"]
+  name: "Budget-conscious engineering manager",
+  bio: "Runs a team of eight at a 40-person startup and is comparing three tools.",
+  traits: ["budget-conscious", "values team features", "compares before deciding"]
 })
 
-# 5. Launch
 launch_interview(interview_id)
-
-# 6. Read
-get_interview(interview_id)          # progress
-get_interview_participant(p_id)      # individual transcripts
-get_interview_report(interview_id)   # synthesised themes + recommendations
+get_interview_report(interview_id)   # poll until report_status is completed or failed
 ```
 
-## Tips
+## Report template
 
-- **Pair with `create-actor-panel`.** Create reusable actors once and attach them to many interviews — the persona stays consistent across rounds, and you can compare results over time.
-- **Keep the guide short.** 3–5 questions per section, 2–3 sections. Long guides produce noisy reports.
-- **Tasks beat questions for journey research.** A `task` puts the participant in the browser; the transcript captures what they actually did. Use `question` items for reactions and "why" after a task.
-- **Mix segments.** One first-time user, one power user, one accessibility-focused participant exposes friction faster than five clones of the same persona.
-- **Retry failed participants individually** (via the dashboard) before regenerating the report — the synthesis is only as good as the transcripts it summarises.
+```
+Interview: Pricing page comprehension (4 participants, all completed)
+
+Summary: <one or two sentences from the report>
+
+Themes
+1. Pro vs Team is unclear (3 of 4): "I can't tell what Team adds beyond seats." (first-time visitor)
+2. ...
+
+Recommendations
+1. ...
+```
