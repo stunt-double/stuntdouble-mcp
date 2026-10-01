@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - `check-agent-readiness` skill: read a site's Stunt Double Index report, explain weak categories and providers from the agent sessions behind them, compare against the sector, and re-score after fixes ship.
 - `maintain-automations` skill: change existing automations and checklists without losing run history, covering trigger changes, step edits, reordering, condition branches, in-place check updates, and pausing rather than deleting.
 - A Skills section in the README with `npx skills add stunt-double/stuntdouble-mcp` install steps and a table of every skill.
+- An MCP Registry section in the README, and a link to the MCP server reference on stuntdouble.io.
 
 ### Changed
 
