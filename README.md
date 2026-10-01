@@ -25,6 +25,32 @@ claude plugin marketplace add stunt-double/stuntdouble-mcp
 claude plugin install stuntdouble@stuntdouble
 ```
 
+### Skills (any agent)
+
+The skills in `skills/` install into Claude Code, Cursor, Codex, OpenCode and other agents that read `SKILL.md` files, using the [skills CLI](https://skills.sh). They drive the MCP server above, so connect that too.
+
+```bash
+npx skills add stunt-double/stuntdouble-mcp                          # pick from the list
+npx skills add stunt-double/stuntdouble-mcp --skill verify-change     # just one
+```
+
+| Skill                   | What it does                                                                                                                                                                                                                                  |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `check-agent-readiness` | Check how well AI agents (ChatGPT, Claude, Gemini, Perplexity and others) can find, understand and act on a website using the Stunt Double Index, explain the score from real agent sessions, compare against peers, and re-score after fixes |
+| `check-brand`           | Audit a product or site against brand and tone-of-voice guidelines                                                                                                                                                                            |
+| `check-compliance`      | Check a product against legal and compliance requirements on Stunt Double (cookie consent, privacy and terms access, required disclosures, claim substantiation, unsubscribe flows) and collect evidence for counsel to review                |
+| `check-continuity`      | Check continuity across surfaces on Stunt Double                                                                                                                                                                                              |
+| `check-design-system`   | Audit a live product against its design system on Stunt Double                                                                                                                                                                                |
+| `create-actor-panel`    | Create and configure a Stunt Double actor (AI persona) with knowledge entries for realistic user simulation                                                                                                                                   |
+| `design-review`         | Run a design review session by gathering feedback from multiple Stunt Double actors on a proposed design or flow                                                                                                                              |
+| `maintain-automations`  | Change an existing Stunt Double automation or checklist without losing run history: retime triggers, edit and rewire workflow steps, build condition branches, update checks in place, and pause or retire what is no longer needed           |
+| `run-qa-suite`          | Run the full Stunt Double QA suite                                                                                                                                                                                                            |
+| `run-user-interview`    | Plan, configure, and launch a structured user interview with AI participants on Stunt Double, then read back the synthesised report                                                                                                           |
+| `run-ux-validation`     | Validate a user journey by running Stunt Double workflows or checklists and reporting the results                                                                                                                                             |
+| `setup-guardrails`      | Stand up continuous guardrails on Stunt Double                                                                                                                                                                                                |
+| `triage-feedback`       | Review, categorize, and manage Stunt Double feedback submissions across projects                                                                                                                                                              |
+| `verify-change`         | Verify a shipped or previewed code change by running a Stunt Double actor through the affected user flows, and optionally report results on the pull request                                                                                  |
+
 ### Claude (web, Desktop, mobile)
 
 Go to **Settings → Connectors → Add custom connector** and paste:

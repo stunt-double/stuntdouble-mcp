@@ -12,6 +12,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - A Releasing section in `CONTRIBUTING.md`.
 - `CLAUDE.md`: what this repository is, where the source of truth lives, and how versioning, the docs sync and registry publishing fit together.
 
+## [1.14.0] - 2026-10-01
+
+### Added
+
+- `check-agent-readiness` skill: read a site's Stunt Double Index report, explain weak categories and providers from the agent sessions behind them, compare against the sector, and re-score after fixes ship.
+- `maintain-automations` skill: change existing automations and checklists without losing run history, covering trigger changes, step edits, reordering, condition branches, in-place check updates, and pausing rather than deleting.
+- A Skills section in the README with `npx skills add stunt-double/stuntdouble-mcp` install steps and a table of every skill.
+
+### Changed
+
+- `verify-change` can start from a pull request, using `list_pull_requests` and `get_pull_request` to pick the flows to exercise.
+- Bumped `.cursor-plugin/plugin.json`, `.claude-plugin/plugin.json` and `server.json` to 1.14.0.
+
 ## [1.13.0] - 2026-09-28
 
 ### Added
