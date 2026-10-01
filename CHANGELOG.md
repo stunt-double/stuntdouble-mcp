@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - `.github/workflows/publish.yml`: publishes `server.json` to the MCP Registry and creates a GitHub release whenever a new version lands on `main`, after checking that the plugin manifests and `CHANGELOG.md` agree with it.
 - A Releasing section in `CONTRIBUTING.md`.
+- `CLAUDE.md`: what this repository is, where the source of truth lives, and how versioning, the docs sync and registry publishing fit together.
 
 ## [1.13.0] - 2026-09-28
 
