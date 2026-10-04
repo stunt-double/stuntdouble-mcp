@@ -2,7 +2,7 @@
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "stuntdouble",
   "version": "1.14.0",
-  "description": "Find where users get stuck, before they do. AI users run your product in a real browser and bring back evidence.",
+  "description": "Authentic user insights from autonomous AI agents, backed by evidence.",
   "author": {
     "name": "Stunt Double",
     "email": "support@stuntdouble.io",
@@ -22,8 +22,8 @@
     "com.openai": {
       "interface": {
         "displayName": "Stunt Double",
-        "shortDescription": "Find where users get stuck",
-        "longDescription": "Stunt Double sends AI users (actors) through your product in a real browser and brings back what they did: each step, a screenshot, and a pass or fail for every check you asked about.\n\nUse it to:\n- Read a checklist run, with every check, the evidence the actor captured, and what changed since the last run. The run shows as a card that refreshes while it is still going.\n- Start a checklist or automation against production, staging or a preview link, and follow it to a result.\n- Plan and launch a user interview with AI participants, then read the synthesized report.\n- Summarize the feedback stakeholders left on a project and triage it.\n- Check how well AI agents can find, understand and act on a website, using the public Stunt Double Index, shown as a score card.\n- Search a workspace for the projects, actors, checklists and interviews that already exist.\n\nWho it is for: product designers, engineers and QA leads who want to see a flow tried before real users try it.\n\nLimitations: you need a Stunt Double account, and the plugin only reaches the workspaces that account belongs to. Runs take minutes, not seconds, and use your plan's allowance. Actors reach any public URL, and they handle email sign-in through their own inboxes, but they cannot pass a login that needs a real person's phone or a hardware key. Workspaces, billing and account deletion are managed in the Stunt Double dashboard, not from this plugin.",
+        "shortDescription": "See where people get stuck",
+        "longDescription": "Stunt Double gives product teams authentic user insights from autonomous AI agents, backed by evidence. Teams cast AI users, called actors, to match their own audience: each has a background, a goal, a device, a locale and a personal inbox. Given a task, an actor drives a real browser through a product, prototype or Figma design on its own, signing up, verifying its email and choosing every click itself. Every finding comes back with its evidence: the screenshot, the step and what the actor said.\n\nFrom here you can:\n- Read a checklist run as a card: the verdict, each check with the screenshot behind it, and what changed since the last run. The card updates while the run is still going.\n- Run a checklist or automation against production, staging or a preview link.\n- Plan and launch an interview with AI participants, then read the synthesized report.\n- See the themes in what stakeholders said about a project, and triage the feedback.\n- Check how well AI agents can find, understand and act on a website, from the public Stunt Double Index.\n- Search a workspace for the projects, actors, checklists and interviews that already exist.\n\nBuilt for product designers, engineers and QA leads who want to see a flow tried before real people try it.\n\nLimits: the plugin needs a Stunt Double account and reaches only that account's workspaces. Runs take minutes and count toward your plan. Actors reach any public URL and handle email sign-in through their own inboxes; they ask a person only for what a person holds, such as a code sent to a phone. Workspaces, billing and account deletion stay in the Stunt Double dashboard.",
         "developerName": "Stunt Double",
         "category": "Developer Tools",
         "capabilities": [
