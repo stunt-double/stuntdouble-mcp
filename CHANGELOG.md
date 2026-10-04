@@ -4,6 +4,14 @@ All notable changes to the Stunt Double MCP server configuration are documented 
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- `.openai-plugin/plugin.json`: the ChatGPT and Codex plugin manifest (Agent Plugins format), with the directory listing, five positive and three negative review test cases, and release notes.
+- `scripts/build-openai-plugin.mjs`: validates that manifest against OpenAI's submission limits and builds the package ZIP for the submission portal; CI runs it in check mode.
+- A ChatGPT and Codex section in the README.
+
 ## [1.14.0] - 2026-10-01
 
 ### Added

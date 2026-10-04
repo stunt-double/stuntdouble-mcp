@@ -50,7 +50,7 @@ jobs:
         env:
           VERSION: ${{ steps.server.outputs.version }}
         run: |
-          for f in .cursor-plugin/plugin.json .claude-plugin/plugin.json; do
+          for f in .cursor-plugin/plugin.json .claude-plugin/plugin.json .openai-plugin/plugin.json; do
             v=$(jq -r .version "$f")
             if [ "$v" != "$VERSION" ]; then
               echo "::error file=$f::$f is $v but server.json is $VERSION. Bump them together."

@@ -59,6 +59,18 @@ Go to **Settings → Connectors → Add custom connector** and paste:
 https://app.stuntdouble.io/api/mcp
 ```
 
+### ChatGPT and Codex
+
+The repository also carries an OpenAI plugin manifest (`.openai-plugin/plugin.json`, in the [Agent Plugins](https://agent-plugins.org) format) with the directory listing, review test cases and release notes. `node scripts/build-openai-plugin.mjs` checks it against OpenAI's limits and writes `dist/stuntdouble-openai-plugin.zip` (the manifest as `plugin.json`, an `mcp.json` for the hosted server, the skills and the logos), which is what goes into the [plugin submission portal](https://developers.openai.com/plugins/deploy/submission).
+
+Until it is published in the directory, connect it in ChatGPT developer mode (**Settings → Apps → Advanced**) as a custom connector with:
+
+```
+https://app.stuntdouble.io/api/mcp
+```
+
+The checklist run and Index report tools render as cards in ChatGPT (and in other MCP Apps hosts, Claude among them).
+
 ### Cursor / Windsurf
 
 Add the `mcpServers` block below to an MCP config file:
