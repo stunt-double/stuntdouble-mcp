@@ -178,6 +178,23 @@ if (!review.demo_recording_url) {
   );
 }
 
+// Review rejects a listing whose name or description names another AI
+// assistant, model or platform.
+const OTHER_AI =
+  /\b(chatgpt|claude|anthropic|gemini|perplexity|copilot|gpt-?\d|llama|mistral|grok)\b/i;
+const listingText = [
+  manifest.description,
+  ui.displayName,
+  ui.shortDescription,
+  ui.longDescription,
+  ...capabilities,
+]
+  .filter(Boolean)
+  .join("\n");
+const named = listingText.match(OTHER_AI);
+if (named)
+  fail(`the listing names another AI assistant or platform ("${named[0]}")`);
+
 // House rule: no em dashes anywhere, and this copy is public.
 if (JSON.stringify(manifest).includes("\u2014"))
   fail("the manifest contains an em dash");
