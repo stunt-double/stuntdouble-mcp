@@ -21,11 +21,19 @@ npx --yes prettier@3.4.2 --check README.md CONTRIBUTING.md SECURITY.md CHANGELOG
 
 Optional: format Markdown and JSON in `agents/`, `skills/`, and `rules/` with Prettier if you have it installed (some `.mdc` files may need a project-level Prettier override).
 
-CI runs the same JSON validation and Prettier check on the core manifests.
+CI runs the same JSON validation and Prettier check on the core manifests, and `node scripts/build-openai-plugin.mjs --check` on the OpenAI plugin manifest.
+
+## The OpenAI plugin package
+
+`.openai-plugin/plugin.json` is the source for the ChatGPT and Codex plugin. Run `node scripts/build-openai-plugin.mjs` to validate it and build `dist/stuntdouble-openai-plugin.zip` for the submission portal (`dist/` is ignored). The script fails on anything OpenAI would reject (field lengths, URLs, missing assets, the five positive and three negative test cases) and warns about material only a person can supply: screenshots of the cards and the demo video URL.
+
+The test cases run against a dedicated review account and its seeded workspace (a Demo Shop project with a Checkout checklist that has a finished run, and stakeholder feedback). Reviewers sign in at `https://app.stuntdouble.io/login/review`, the password sign-in the main repository keeps for review accounts only. Credentials go into the portal, never into this repository.
+
+After publication OpenAI rescans the live server for tool changes, so a new tool or schema change needs no new package. A new package version is only for listing, skill or test case changes.
 
 ## Releasing
 
-Bump `version` in `server.json`, `.cursor-plugin/plugin.json` and `.claude-plugin/plugin.json` together and add a matching `CHANGELOG.md` entry. When that merges to `main`, `.github/workflows/publish.yml` publishes `server.json` to the [MCP Registry](https://registry.modelcontextprotocol.io) as `io.stuntdouble/mcp-server` and creates a `v<version>` GitHub release from the changelog entry. A version the registry already has is skipped.
+Bump `version` in `server.json`, `.cursor-plugin/plugin.json`, `.claude-plugin/plugin.json` and `.openai-plugin/plugin.json` together and add a matching `CHANGELOG.md` entry. When that merges to `main`, `.github/workflows/publish.yml` publishes `server.json` to the [MCP Registry](https://registry.modelcontextprotocol.io) as `io.stuntdouble/mcp-server` and creates a `v<version>` GitHub release from the changelog entry. A version the registry already has is skipped.
 
 Publishing signs in with DNS auth for `stuntdouble.io`, using the `MCP_REGISTRY_PRIVATE_KEY` repository secret. The workflow file explains how to rotate it.
 

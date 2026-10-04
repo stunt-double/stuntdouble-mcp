@@ -1,0 +1,111 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "stuntdouble",
+  "version": "1.14.0",
+  "description": "Find where users get stuck, before they do. AI users run your product in a real browser and bring back evidence.",
+  "author": {
+    "name": "Stunt Double",
+    "email": "support@stuntdouble.io",
+    "url": "https://www.stuntdouble.io"
+  },
+  "homepage": "https://www.stuntdouble.io/support/docs/api/mcp",
+  "repository": "https://github.com/stunt-double/stuntdouble-mcp",
+  "license": "MIT",
+  "keywords": [
+    "ux-testing",
+    "qa",
+    "user-research",
+    "agent-readiness",
+    "accessibility"
+  ],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Stunt Double",
+        "shortDescription": "Find where users get stuck",
+        "longDescription": "Stunt Double sends AI users (actors) through your product in a real browser and brings back what they did: each step, a screenshot, and a pass or fail for every check you asked about.\n\nUse it from ChatGPT to:\n- Read a checklist run, with every check, the evidence the actor captured, and what changed since the last run. The run shows as a card that refreshes while it is still going.\n- Start a checklist or automation against production, staging or a preview link, and follow it to a result.\n- Plan and launch a user interview with AI participants, then read the synthesized report.\n- Summarize the feedback stakeholders left on a project and triage it.\n- Check how well AI agents (ChatGPT, Claude, Gemini, Perplexity) can find, understand and act on a website, using the public Stunt Double Index, shown as a score card.\n- Search a workspace for the projects, actors, checklists and interviews that already exist.\n\nWho it is for: product designers, engineers and QA leads who want to see a flow tried before real users try it.\n\nLimitations: you need a Stunt Double account, and the plugin only reaches the workspaces that account belongs to. Runs take minutes, not seconds, and use your plan's allowance. Actors reach any public URL, and they handle email sign-in through their own inboxes, but they cannot pass a login that needs a real person's phone or a hardware key. Workspaces, billing and account deletion are managed in the Stunt Double dashboard, not from ChatGPT.",
+        "developerName": "Stunt Double",
+        "category": "Developer Tools",
+        "capabilities": [
+          "Read checklist runs with per-check evidence",
+          "Run checklists and automations against any public URL",
+          "Create actors (AI user personas) and checklists",
+          "Launch user interviews with AI participants",
+          "Summarize and triage stakeholder feedback",
+          "Score how agent-ready a website is with the Stunt Double Index",
+          "Search a workspace"
+        ],
+        "websiteURL": "https://www.stuntdouble.io",
+        "supportURL": "https://www.stuntdouble.io/support",
+        "privacyPolicyURL": "https://www.stuntdouble.io/privacy",
+        "termsOfServiceURL": "https://www.stuntdouble.io/terms",
+        "defaultPrompt": [
+          "Show me the latest run of my checkout checklist and what failed.",
+          "How agent-ready is stripe.com, and where do agents get stuck?",
+          "What are stakeholders saying in feedback on my project?"
+        ],
+        "brandColor": "#3555E5",
+        "brandColorDark": "#7E8CFC",
+        "composerIcon": "./assets/logo.png",
+        "composerIconDark": "./assets/logo-dark.png",
+        "logo": "./assets/logo.png",
+        "logoDark": "./assets/logo-dark.png"
+      },
+      "review": {
+        "test_cases": {
+          "positive": [
+            {
+              "description": "Read a checklist run as a card",
+              "prompt": "Show me the latest run of the Checkout checklist in my Demo Shop project and tell me what failed.",
+              "tools_triggered": "list_workspaces, list_checklists, get_checklist_run",
+              "expected_behavior": "Shows the run card (verdict, score, each check with the actor's evidence, changes since the previous run) and names the failing checks in one or two sentences."
+            },
+            {
+              "description": "Score a public site on the Index",
+              "prompt": "How agent-ready is stripe.com, and where do agents get stuck?",
+              "tools_triggered": "get_index_report",
+              "expected_behavior": "Shows the Index card for stripe.com (score out of 100, band, rank, category scores) and lists the top frictions agents hit, with a link to the public report."
+            },
+            {
+              "description": "Run a checklist and follow it",
+              "prompt": "Run the Checkout checklist in Demo Shop again and tell me whether it passes now.",
+              "tools_triggered": "list_workspaces, list_checklists, run_checklist, get_checklist_run",
+              "expected_behavior": "Starts a run, shows the run card while the actor works (it refreshes itself), and reports the verdict once the run completes."
+            },
+            {
+              "description": "Summarize stakeholder feedback",
+              "prompt": "What are people saying in feedback on the Demo Shop project?",
+              "tools_triggered": "list_workspaces, list_projects, summarise_feedback",
+              "expected_behavior": "Returns the main themes in the project's feedback comments with how many comments sit under each, and an implementation brief."
+            },
+            {
+              "description": "Find existing work before creating more",
+              "prompt": "Do I already have anything in Stunt Double that tests checkout?",
+              "tools_triggered": "list_workspaces, search",
+              "expected_behavior": "Lists the matching checklist, project and actor in the review workspace by name, without creating anything."
+            }
+          ],
+          "negative": [
+            {
+              "description": "Account deletion is not offered",
+              "prompt": "Delete my Stunt Double account and all my data."
+            },
+            {
+              "description": "Billing changes are not offered",
+              "prompt": "Upgrade my Stunt Double plan and charge my card."
+            },
+            {
+              "description": "Workspaces outside the connected account",
+              "prompt": "Show me the checklists in the Acme Corp workspace."
+            }
+          ]
+        },
+        "commerce": false,
+        "commerce_description": "Stunt Double does not sell products or process payments in ChatGPT. Plans are managed in the Stunt Double dashboard."
+      },
+      "publication": {
+        "release_notes": "First release: read checklist runs and Index reports as cards, run checklists and automations, launch AI user interviews, summarize feedback, and search a workspace."
+      }
+    }
+  }
+}

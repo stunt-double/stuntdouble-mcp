@@ -8,6 +8,7 @@ const files = [
   'server.json',
   '.cursor-plugin/plugin.json',
   '.claude-plugin/plugin.json',
+  '.openai-plugin/plugin.json',
   '.claude-plugin/marketplace.json',
 ];
 
