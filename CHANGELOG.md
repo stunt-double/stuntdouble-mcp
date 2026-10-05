@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - `scripts/build-openai-plugin.mjs`: validates that manifest against OpenAI's submission limits and builds the package ZIP for the submission portal; CI runs it in check mode.
 - A ChatGPT and Codex section in the README.
 
+### Fixed
+
+- The OpenAI plugin ZIP now uses the Codex layout (`.codex-plugin/plugin.json` and `.mcp.json`). The submission portal rejected the Agent Plugins layout's root `plugin.json` as an invalid package.
+
 ## [1.14.0] - 2026-10-01
 
 ### Added

@@ -5,10 +5,14 @@
 //
 // The source manifest is .openai-plugin/plugin.json, in the Agent Plugins
 // format with OpenAI's listing and review fields under extensions.com.openai.
-// The package OpenAI takes has that manifest at its root as plugin.json, an
-// mcp.json for the hosted server, the skills, and the assets the manifest
-// names. Nothing else goes in: no agents, rules, other hosts' manifests or
-// anything that could carry a credential.
+// The package is written in the Codex layout: .codex-plugin/plugin.json (the
+// listing moved up to a root interface, review and publication kept under
+// extensions.com.openai), a .mcp.json for the hosted server, the skills, and
+// the assets the manifest names. The submission portal rejects the Agent
+// Plugins layout's root plugin.json ("Plugin package must contain
+// .codex-plugin/plugin.json ..."), whatever the docs say. Nothing else goes in:
+// no agents, rules, other hosts' manifests or anything that could carry a
+// credential.
 //
 // Limits are the ones in https://developers.openai.com/plugins/deploy/submission.
 // Missing review material that only a person can supply (the demo video,
@@ -174,6 +178,23 @@ if (!review.demo_recording_url) {
   );
 }
 
+// Review rejects a listing whose name or description names another AI
+// assistant, model or platform.
+const OTHER_AI =
+  /\b(chatgpt|claude|anthropic|gemini|perplexity|copilot|gpt-?\d|llama|mistral|grok)\b/i;
+const listingText = [
+  manifest.description,
+  ui.displayName,
+  ui.shortDescription,
+  ui.longDescription,
+  ...capabilities,
+]
+  .filter(Boolean)
+  .join("\n");
+const named = listingText.match(OTHER_AI);
+if (named)
+  fail(`the listing names another AI assistant or platform ("${named[0]}")`);
+
 // House rule: no em dashes anywhere, and this copy is public.
 if (JSON.stringify(manifest).includes("\u2014"))
   fail("the manifest contains an em dash");
@@ -192,20 +213,25 @@ rmSync(stage, { recursive: true, force: true });
 rmSync(zip, { force: true });
 mkdirSync(stage, { recursive: true });
 
+// Codex layout: presentation fields at the root, OpenAI's review and
+// publication fields stay under the extension, no $schema.
+const { $schema: _schema, extensions, ...identity } = manifest;
+const { interface: listing, ...openaiRest } = extensions["com.openai"];
+const codexManifest = {
+  ...identity,
+  skills: "./skills/",
+  mcpServers: "./.mcp.json",
+  interface: listing,
+  extensions: { ...extensions, "com.openai": openaiRest },
+};
+mkdirSync(resolve(stage, ".codex-plugin"), { recursive: true });
 writeFileSync(
-  resolve(stage, "plugin.json"),
-  `${JSON.stringify(manifest, null, 2)}\n`,
+  resolve(stage, ".codex-plugin/plugin.json"),
+  `${JSON.stringify(codexManifest, null, 2)}\n`,
 );
 writeFileSync(
-  resolve(stage, "mcp.json"),
-  `${JSON.stringify(
-    {
-      $schema: "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
-      mcpServers: { stuntdouble: { type: "streamable-http", url: MCP_URL } },
-    },
-    null,
-    2,
-  )}\n`,
+  resolve(stage, ".mcp.json"),
+  `${JSON.stringify({ mcpServers: { stuntdouble: { url: MCP_URL } } }, null, 2)}\n`,
 );
 cpSync(resolve(root, "skills"), resolve(stage, "skills"), { recursive: true });
 for (const path of new Set(assets)) {

@@ -1,6 +1,6 @@
 ---
 name: check-agent-readiness
-description: Check how well AI agents (ChatGPT, Claude, Gemini, Perplexity and others) can find, understand and act on a website using the Stunt Double Index, explain the score from real agent sessions, compare against peers, and re-score after fixes.
+description: Check how well AI agents and assistants can find, understand and act on a website using the Stunt Double Index, explain the score from real agent sessions, compare against peers, and re-score after fixes.
 ---
 
 # Check agent readiness
