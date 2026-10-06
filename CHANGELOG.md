@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
-- `assets/hero.png` and the README header: the brand banner (midnight terrain, lockup, a real checklist run), plus the existing `assets/demo.gif` recording of the server in Claude.
+- `assets/hero.png` and the README header: the brand banner, with a real Claude Code exchange with the server beside the line. `assets/demo.gif` is re-recorded as that session in Claude Code, and the README gains a table of contents.
 - `.cursor-plugin/marketplace.json`: team marketplace entry for the single-plugin repo (same pattern as the Claude marketplace), so Cursor can install `stuntdouble` from this repository.
 - `scripts/validate-cursor-plugin.mjs`: checks the Cursor manifest, MCP URL, and frontmatter on skills, rules and agents; CI runs it alongside the JSON and OpenAI checks.
 - `.openai-plugin/plugin.json`: the ChatGPT and Codex plugin manifest (Agent Plugins format), with the directory listing, five positive and three negative review test cases, and release notes.

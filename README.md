@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://stuntdouble.io"><img src="./assets/hero.png" alt="Stunt Double MCP server. Know where your users will get stuck, before they do. Beside it, a checklist run for a Friday booking flow scoring 72%, with one failed check." width="100%"></a>
+  <a href="https://stuntdouble.io"><img src="./assets/hero.png" alt="Stunt Double MCP server. Know where your users will get stuck, before they do. Beside it, Claude Code asks why the Parlour booking checklist failed and Stunt Double reports that the agent stopped at the card number field because the page gives no test card." width="100%"></a>
 </p>
 
 # Stunt Double MCP Server
@@ -8,8 +8,23 @@ Deploy AI user personas to validate user journeys at scale. Find UX friction bef
 
 [Stunt Double](https://stuntdouble.io) deploys AI agents with realistic user personas to validate user journeys at scale. Create actors, run automated workflows and checklists against any web app, and surface friction points before real users encounter them. Integrates with Claude, Linear, GitHub, and Slack.
 
+## Contents
+
+- [This repository](#this-repository)
+- [Quick Start](#quick-start): [Claude Code](#claude-code), [Claude Code plugin](#claude-code-plugin), [Skills](#skills-any-agent), [Claude](#claude-web-desktop-mobile), [ChatGPT and Codex](#chatgpt-and-codex), [Codex CLI](#codex-cli), [Gemini CLI](#gemini-cli), [VS Code](#vs-code-github-copilot), [OpenCode](#opencode), [Windsurf](#windsurf), [Other clients](#other-clients), [Cursor](#cursor)
+- [Authentication](#authentication): [What a connection can reach](#what-a-connection-can-reach)
+- [Available Tools](#available-tools): [Account](#account), [Workspaces](#workspaces), [Search](#search), [Projects](#projects), [Guidelines](#guidelines), [Actors](#actors), [Knowledge](#knowledge), [Conversations](#conversations), [Checklists](#checklists), [Workflows](#workflows), [Feedback](#feedback), [GitHub](#github), [Interviews](#interviews), [Prompts](#prompts), [Resources](#resources), [Stunt Double Index](#stunt-double-index)
+- [Example prompts](#example-prompts)
+- [Privacy Policy](#privacy-policy)
+- [Support](#support)
+- [Transport](#transport)
+- [MCP Registry](#mcp-registry)
+- [Links](#links)
+- [Verifying changes](#verifying-changes)
+- [License](#license)
+
 <p align="center">
-  <img src="./assets/demo.gif" alt="Asking Claude for the latest activity in a Stunt Double workspace, and Claude listing its checklists through the MCP server" width="100%">
+  <img src="./assets/demo.gif" alt="A Claude Code session asking why the Parlour booking checklist failed on 28 September. Claude calls Stunt Double, fetches both runs and explains that the agent stopped at the payment step because the page gives no test card." width="100%">
 </p>
 
 ## This repository
