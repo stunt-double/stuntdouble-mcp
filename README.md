@@ -71,6 +71,106 @@ https://app.stuntdouble.io/api/mcp
 
 The checklist run and Index report tools render as cards in ChatGPT (and in other MCP Apps hosts, Claude among them).
 
+### Codex CLI
+
+```bash
+codex mcp add stuntdouble --url https://app.stuntdouble.io/api/mcp
+codex mcp login stuntdouble
+```
+
+Or add it to `~/.codex/config.toml` by hand and then run `codex mcp login stuntdouble`:
+
+```toml
+[mcp_servers.stuntdouble]
+url = "https://app.stuntdouble.io/api/mcp"
+```
+
+### Gemini CLI
+
+```bash
+gemini mcp add --transport http stuntdouble https://app.stuntdouble.io/api/mcp
+```
+
+Or add it to `~/.gemini/settings.json` (or `.gemini/settings.json` in a project):
+
+```json
+{
+  "mcpServers": {
+    "stuntdouble": {
+      "httpUrl": "https://app.stuntdouble.io/api/mcp"
+    }
+  }
+}
+```
+
+Run `/mcp auth stuntdouble` inside Gemini CLI to sign in.
+
+### VS Code (GitHub Copilot)
+
+```bash
+code --add-mcp '{"name":"stuntdouble","type":"http","url":"https://app.stuntdouble.io/api/mcp"}'
+```
+
+Or add it to `.vscode/mcp.json` in a workspace (or run **MCP: Open User Configuration** for every workspace):
+
+```json
+{
+  "servers": {
+    "stuntdouble": {
+      "type": "http",
+      "url": "https://app.stuntdouble.io/api/mcp"
+    }
+  }
+}
+```
+
+The tools appear in Copilot Chat's agent mode.
+
+### OpenCode
+
+Add it to `opencode.json` in a project (or `~/.config/opencode/opencode.json`), then run `opencode mcp auth stuntdouble`:
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "stuntdouble": {
+      "type": "remote",
+      "url": "https://app.stuntdouble.io/api/mcp"
+    }
+  }
+}
+```
+
+### Windsurf
+
+Add it to `~/.codeium/windsurf/mcp_config.json` (or **Windsurf Settings → Cascade → MCP Servers → View raw config**):
+
+```json
+{
+  "mcpServers": {
+    "stuntdouble": {
+      "serverUrl": "https://app.stuntdouble.io/api/mcp"
+    }
+  }
+}
+```
+
+### Other clients
+
+Any client that speaks Streamable HTTP and OAuth can connect to `https://app.stuntdouble.io/api/mcp` directly. For a client that only runs local (stdio) servers, bridge it with [`mcp-remote`](https://www.npmjs.com/package/mcp-remote), which handles the OAuth sign-in:
+
+```json
+{
+  "mcpServers": {
+    "stuntdouble": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://app.stuntdouble.io/api/mcp"]
+    }
+  }
+}
+```
+
 ### Cursor
 
 This repository is a [Cursor plugin](https://cursor.com/docs/reference/plugins.md): `.cursor-plugin/plugin.json` and `.cursor-plugin/marketplace.json`, root `mcp.json` (the hosted MCP server), plus the skills in `skills/`, rules in `rules/`, and agents in `agents/`. The plugin `logo` is `assets/logo.png`. Auth is OAuth 2.1 with PKCE; no API keys.
@@ -95,10 +195,6 @@ This repository is a [Cursor plugin](https://cursor.com/docs/reference/plugins.m
 Use only `url` for remote servers (Streamable HTTP is negotiated automatically). Extra keys such as `"type": "streamable-http"` are not part of [Cursor's documented `mcp.json` shape](https://cursor.com/docs/mcp.md) and can break plugin validation.
 
 The `server.json` file is the separate [MCP registry](https://modelcontextprotocol.io/registry/about) manifest for `mcp-publisher` and directory listings; Cursor's installer does not use it.
-
-### Windsurf
-
-Add the same `mcpServers` block as under Cursor (MCP only) to Windsurf's MCP config.
 
 ## Authentication
 

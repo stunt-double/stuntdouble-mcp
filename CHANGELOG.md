@@ -13,11 +13,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - `.openai-plugin/plugin.json`: the ChatGPT and Codex plugin manifest (Agent Plugins format), with the directory listing, five positive and three negative review test cases, and release notes.
 - `scripts/build-openai-plugin.mjs`: validates that manifest against OpenAI's submission limits and builds the package ZIP for the submission portal; CI runs it in check mode.
 - A ChatGPT and Codex section in the README.
+- README setup steps for Codex CLI, Gemini CLI, VS Code (GitHub Copilot), OpenCode and Windsurf, plus an `mcp-remote` bridge for clients that only run local servers.
 
 ### Changed
 
 - `.cursor-plugin/plugin.json`: added `displayName`, `publisher`, `category` and `tags` for marketplace listing, matching the Claude and OpenAI plugin metadata.
-- README Cursor section: install as a Cursor plugin (MCP plus skills, rules and agents) first; MCP-only config remains as a fallback. Windsurf stays on the MCP-only path.
+- README Cursor section: install as a Cursor plugin (MCP plus skills, rules and agents) first; MCP-only config remains as a fallback.
+- Windsurf has its own README section using its `serverUrl` key, instead of sharing Cursor's `url` config.
 
 ### Fixed
 
