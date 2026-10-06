@@ -8,9 +8,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- `.cursor-plugin/marketplace.json`: team marketplace entry for the single-plugin repo (same pattern as the Claude marketplace), so Cursor can install `stuntdouble` from this repository.
+- `scripts/validate-cursor-plugin.mjs`: checks the Cursor manifest, MCP URL, and frontmatter on skills, rules and agents; CI runs it alongside the JSON and OpenAI checks.
 - `.openai-plugin/plugin.json`: the ChatGPT and Codex plugin manifest (Agent Plugins format), with the directory listing, five positive and three negative review test cases, and release notes.
 - `scripts/build-openai-plugin.mjs`: validates that manifest against OpenAI's submission limits and builds the package ZIP for the submission portal; CI runs it in check mode.
 - A ChatGPT and Codex section in the README.
+
+### Changed
+
+- `.cursor-plugin/plugin.json`: added `displayName`, `publisher`, `category` and `tags` for marketplace listing, matching the Claude and OpenAI plugin metadata.
+- README Cursor section: install as a Cursor plugin (MCP plus skills, rules and agents) first; MCP-only config remains as a fallback. Windsurf stays on the MCP-only path.
 
 ### Fixed
 

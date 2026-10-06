@@ -8,7 +8,7 @@ The public face of Stunt Double's hosted MCP server (`https://app.stuntdouble.io
 | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
 | `server.json`                                                 | MCP Registry entry, published as `io.stuntdouble/mcp-server` (a `streamable-http` remote) |
 | `.claude-plugin/plugin.json`, `marketplace.json`, `.mcp.json` | Claude Code plugin and Claude directory listing                                           |
-| `.cursor-plugin/plugin.json`, `mcp.json`                      | Cursor plugin                                                                             |
+| `.cursor-plugin/plugin.json`, `marketplace.json`, `mcp.json`  | Cursor plugin and team marketplace listing                                                |
 | `README.md`                                                   | Install steps, the Available Tools tables, prompts, resources, scopes, example prompts    |
 | `skills/`, `agents/`, `rules/`                                | Shipped with the plugins; guidance that names tools must match what the server registers  |
 | `CHANGELOG.md`                                                | Keep a Changelog, one entry per released version                                          |
@@ -30,7 +30,8 @@ Most updates arrive automatically: when those files change on the monorepo's `ma
 
 ```bash
 node scripts/validate-json.mjs
-npx --yes prettier@3.4.2 --check README.md CONTRIBUTING.md SECURITY.md CHANGELOG.md mcp.json .mcp.json server.json .cursor-plugin/plugin.json .claude-plugin/plugin.json .claude-plugin/marketplace.json
+node scripts/validate-cursor-plugin.mjs
+npx --yes prettier@3.4.2 --check README.md CONTRIBUTING.md SECURITY.md CHANGELOG.md mcp.json .mcp.json server.json .cursor-plugin/plugin.json .cursor-plugin/marketplace.json .claude-plugin/plugin.json .claude-plugin/marketplace.json
 ```
 
 Use the pinned Prettier version; CI checks with it. Commits follow conventional prefixes (`docs:`, `ci:`, `fix:`, `feat:`). Never use emdash characters, matching the monorepo.

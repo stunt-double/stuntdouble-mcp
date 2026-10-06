@@ -2,7 +2,7 @@
 
 ## What this repository is
 
-`stuntdouble-mcp` is a **metadata and documentation** repository: Cursor plugin manifest (`.cursor-plugin/`), root `mcp.json`, MCP registry `server.json`, skills, agents, and rules. There is **no `package.json`** and **no local MCP server** in this tree — the live Streamable HTTP endpoint is implemented in the main [Stunt Double](https://github.com/stunt-double/stuntdouble) application (`https://app.stuntdouble.io/api/mcp`).
+`stuntdouble-mcp` is a **metadata and documentation** repository: Cursor plugin manifests (`.cursor-plugin/plugin.json` and `marketplace.json`), root `mcp.json`, MCP registry `server.json`, skills, agents, and rules. There is **no `package.json`** and **no local MCP server** in this tree — the live Streamable HTTP endpoint is implemented in the main [Stunt Double](https://github.com/stunt-double/stuntdouble) application (`https://app.stuntdouble.io/api/mcp`).
 
 Do **not** run `pnpm install` or `npm install` inside this directory expecting a Node app; if this folder sits inside a larger monorepo, package managers may attach to the parent workspace and behave confusingly.
 
@@ -16,12 +16,17 @@ From the repository root:
 
 ```bash
 node scripts/validate-json.mjs
-npx --yes prettier@3.4.2 --check README.md CONTRIBUTING.md SECURITY.md CHANGELOG.md mcp.json .mcp.json server.json .cursor-plugin/plugin.json .claude-plugin/plugin.json .claude-plugin/marketplace.json
+node scripts/validate-cursor-plugin.mjs
+npx --yes prettier@3.4.2 --check README.md CONTRIBUTING.md SECURITY.md CHANGELOG.md mcp.json .mcp.json server.json .cursor-plugin/plugin.json .cursor-plugin/marketplace.json .claude-plugin/plugin.json .claude-plugin/marketplace.json
 ```
 
 Optional: format Markdown and JSON in `agents/`, `skills/`, and `rules/` with Prettier if you have it installed (some `.mdc` files may need a project-level Prettier override).
 
-CI runs the same JSON validation and Prettier check on the core manifests, and `node scripts/build-openai-plugin.mjs --check` on the OpenAI plugin manifest.
+CI runs the same JSON validation, Cursor plugin layout check and Prettier check on the core manifests, and `node scripts/build-openai-plugin.mjs --check` on the OpenAI plugin manifest.
+
+## The Cursor plugin
+
+`.cursor-plugin/plugin.json` plus root `mcp.json` is the Cursor plugin package. Cursor discovers `skills/`, `rules/` and `agents/` from the default folders; auth is OAuth against the hosted MCP server (no plugin variables). `.cursor-plugin/marketplace.json` lists this repo as a single-plugin marketplace for team installs. Submit the public repo at [cursor.com/marketplace/publish](https://cursor.com/marketplace/publish) when ready for the public directory.
 
 ## The OpenAI plugin package
 
