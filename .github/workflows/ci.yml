@@ -23,8 +23,11 @@ jobs:
       - name: Validate JSON manifests
         run: node scripts/validate-json.mjs
 
+      - name: Validate the Cursor plugin layout
+        run: node scripts/validate-cursor-plugin.mjs
+
       - name: Validate the OpenAI plugin package
         run: node scripts/build-openai-plugin.mjs --check
 
       - name: Prettier (core manifests)
-        run: npx --yes prettier@3.4.2 --check README.md CONTRIBUTING.md SECURITY.md CHANGELOG.md mcp.json .mcp.json server.json .cursor-plugin/plugin.json .claude-plugin/plugin.json .claude-plugin/marketplace.json .openai-plugin/plugin.json
+        run: npx --yes prettier@3.4.2 --check README.md CONTRIBUTING.md SECURITY.md CHANGELOG.md mcp.json .mcp.json server.json .cursor-plugin/plugin.json .cursor-plugin/marketplace.json .claude-plugin/plugin.json .claude-plugin/marketplace.json .openai-plugin/plugin.json
