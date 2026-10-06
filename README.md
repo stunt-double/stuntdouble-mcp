@@ -1,8 +1,16 @@
+<p align="center">
+  <a href="https://stuntdouble.io"><img src="./assets/hero.png" alt="Stunt Double MCP server. Know where your users will get stuck, before they do. Beside it, a checklist run for a Friday booking flow scoring 72%, with one failed check." width="100%"></a>
+</p>
+
 # Stunt Double MCP Server
 
 Deploy AI user personas to validate user journeys at scale. Find UX friction before real users do.
 
 [Stunt Double](https://stuntdouble.io) deploys AI agents with realistic user personas to validate user journeys at scale. Create actors, run automated workflows and checklists against any web app, and surface friction points before real users encounter them. Integrates with Claude, Linear, GitHub, and Slack.
+
+<p align="center">
+  <img src="./assets/demo.gif" alt="Asking Claude for the latest activity in a Stunt Double workspace, and Claude listing its checklists through the MCP server" width="100%">
+</p>
 
 ## This repository
 
