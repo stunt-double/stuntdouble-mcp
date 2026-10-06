@@ -6,7 +6,7 @@ Deploy AI user personas to validate user journeys at scale. Find UX friction bef
 
 ## This repository
 
-This repo holds **plugin and MCP configuration** (`.claude-plugin/plugin.json` and `.mcp.json` for Claude, `.cursor-plugin/plugin.json` and root `mcp.json` for Cursor, `server.json` for the MCP registry), plus skills, agents, and Cursor rules. There is **no `package.json`** and **no runnable server** here: the MCP endpoint is hosted at `https://app.stuntdouble.io/api/mcp` from the main Stunt Double codebase. See [CONTRIBUTING.md](./CONTRIBUTING.md) for how to validate edits and avoid confusing this folder with a Node package.
+This repo holds **plugin and MCP configuration** (`.claude-plugin/plugin.json` and `.mcp.json` for Claude, `.cursor-plugin/plugin.json`, `marketplace.json` and root `mcp.json` for Cursor, `server.json` for the MCP registry), plus skills, agents, and Cursor rules. There is **no `package.json`** and **no runnable server** here: the MCP endpoint is hosted at `https://app.stuntdouble.io/api/mcp` from the main Stunt Double codebase. See [CONTRIBUTING.md](./CONTRIBUTING.md) for how to validate edits and avoid confusing this folder with a Node package.
 
 ## Quick Start
 
@@ -173,9 +173,13 @@ Any client that speaks Streamable HTTP and OAuth can connect to `https://app.stu
 
 ### Cursor
 
-Add the `mcpServers` block below to an MCP config file:
+This repository is a [Cursor plugin](https://cursor.com/docs/reference/plugins.md): `.cursor-plugin/plugin.json` and `.cursor-plugin/marketplace.json`, root `mcp.json` (the hosted MCP server), plus the skills in `skills/`, rules in `rules/`, and agents in `agents/`. The plugin `logo` is `assets/logo.png`. Auth is OAuth 2.1 with PKCE; no API keys.
 
-- **Project-local (recommended for this repo clone):** `.cursor/mcp.json` at the root of your project.
+**Install as a plugin (recommended):** once published, install **Stunt Double** from the [Cursor marketplace](https://cursor.com/marketplace). For a team marketplace or local clone, add this repo as a marketplace and install the `stuntdouble` plugin; Cursor discovers the MCP server, skills, rules and agents from the default folders.
+
+**MCP only (no skills, rules or agents):** add the block below to a Cursor MCP config:
+
+- **Project-local:** `.cursor/mcp.json` at the root of your project.
 - **Global (all projects):** `~/.cursor/mcp.json` on macOS/Linux (see [Cursor MCP docs](https://cursor.com/docs/mcp.md) for your OS).
 
 ```json
@@ -190,7 +194,7 @@ Add the `mcpServers` block below to an MCP config file:
 
 Use only `url` for remote servers (Streamable HTTP is negotiated automatically). Extra keys such as `"type": "streamable-http"` are not part of [Cursor's documented `mcp.json` shape](https://cursor.com/docs/mcp.md) and can break plugin validation.
 
-**Cursor marketplace (one-click install)** expects a [plugin layout](https://cursor.com/docs/reference/plugins.md): `.cursor-plugin/plugin.json` plus root `mcp.json`. Those files are in this repo. The plugin `logo` path is `assets/logo.png` (bundled in this repository). The `server.json` file is the separate [MCP registry](https://modelcontextprotocol.io/registry/about) manifest for `mcp-publisher` and directory listings; Cursor's installer does not use it.
+The `server.json` file is the separate [MCP registry](https://modelcontextprotocol.io/registry/about) manifest for `mcp-publisher` and directory listings; Cursor's installer does not use it.
 
 ## Authentication
 
@@ -491,7 +495,7 @@ From the repo root:
 
 ```bash
 node scripts/validate-json.mjs
-npx --yes prettier@3.4.2 --check README.md CONTRIBUTING.md SECURITY.md CHANGELOG.md mcp.json .mcp.json server.json .cursor-plugin/plugin.json .claude-plugin/plugin.json .claude-plugin/marketplace.json
+npx --yes prettier@3.4.2 --check README.md CONTRIBUTING.md SECURITY.md CHANGELOG.md mcp.json .mcp.json server.json .cursor-plugin/plugin.json .cursor-plugin/marketplace.json .claude-plugin/plugin.json .claude-plugin/marketplace.json
 ```
 
 More context in [CONTRIBUTING.md](./CONTRIBUTING.md). GitHub Actions runs the same checks on push and pull requests.
