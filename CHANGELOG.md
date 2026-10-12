@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- `AGENTS.md`, a `CLAUDE.md` section and a `.claude/hooks/block-session-links.mjs` PreToolUse hook that keep Claude Code session links and trailers out of commits, PRs and comments in this public repository.
+
 ## [1.14.1] - 2026-10-12
 
 ### Added
