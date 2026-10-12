@@ -443,9 +443,9 @@ The [Stunt Double Index](https://index.stuntdouble.io) is a public ranking of ho
 | `get_index_report`     | A site's score, band, rank, category and provider scores, frictions, failing probe checks and when it was last scored                            |
 | `list_index_sessions`  | The agent sessions behind a score (newest run by default), with status, score, evidence, a summary and frictions. Filter by provider or category |
 | `search_index_domains` | Find a site by domain or name, or browse the leaderboard, optionally by sector                                                                   |
-| `request_index_rerun`  | Re-score a domain you own (`mcp:run`). Fresh probes now, about 24 agent sessions over a few minutes. Once every 10 minutes                       |
+| `request_index_rerun`  | Re-score a domain you own (`mcp:run`). Fresh probes now, about 24 agent sessions over a few minutes                                              |
 
-`get_index_report`, `list_index_sessions` and `request_index_rerun` take a `domain`, or a `project_id` to use the Index domain linked to that project (which checks your membership like any project read). Only the domain's owner can re-run it: a platform admin, the person who claimed it, or, while it is unclaimed, someone signed in with a work email on that exact domain. After a re-run, poll `list_index_sessions` with the returned `run_id` until the sessions finish, then read `get_index_report`.
+`get_index_report`, `list_index_sessions` and `request_index_rerun` take a `domain`, or a `project_id` to use the Index domain linked to that project (which checks your membership like any project read). Only the domain's owner can re-run it. After a re-run, poll `list_index_sessions` with the returned `run_id` until the sessions finish, then read `get_index_report`.
 (inviting/removing members) is available in the [web dashboard](https://app.stuntdouble.io).
 
 ## Example prompts

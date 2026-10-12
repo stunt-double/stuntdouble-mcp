@@ -39,7 +39,7 @@ description: Check how well AI agents and assistants can find, understand and ac
    - Tie every recommendation to a failing check or a session friction.
 
 6. **Re-score after fixes ship:**
-   - `request_index_rerun(domain)` starts fresh probes and about 24 agent sessions. Only the domain's owner can call it (a platform admin, whoever claimed it, or, while unclaimed, someone signed in with a work email on that domain), and a domain can be re-run once every 10 minutes.
+   - `request_index_rerun(domain)` starts fresh probes and about 24 agent sessions. Only the domain's owner can call it.
    - Poll `list_index_sessions(domain, run_id)` about every 60 seconds until no session is running, then `get_index_report(domain)` and report the change per category.
 
 ## Example flow
