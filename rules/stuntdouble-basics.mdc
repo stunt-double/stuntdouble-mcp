@@ -57,7 +57,7 @@ Standards and guardrails:
 Stunt Double Index (how AI agents experience websites):
 - When someone asks how well AI agents can find, understand or act on a site (agent readiness, AI visibility, whether an agent can check out or get support there), read its Index report with `get_index_report` rather than guessing. Pass a `domain`, or a `project_id` to use the domain linked to that project.
 - `list_index_sessions` explains a score: each session is one AI provider attempting one benchmark task, with evidence, a summary and the frictions it hit. `search_index_domains` finds a site or compares it against the leaderboard and its sector.
-- Index data is public, so any tracked site can be read. `request_index_rerun` is different: it spends about 24 agent sessions, only the domain's owner can call it, and a domain can be re-run once every 10 minutes. Use it after the site has shipped changes, not to refresh a report that is already current.
+- Index data is public, so any tracked site can be read. `request_index_rerun` is different: it spends about 24 agent sessions, and only the domain's owner can call it. Use it after the site has shipped changes, not to refresh a report that is already current.
 
 Workspace and project scope:
 - `get_workspace` reports the admin-set security controls under `settings` (public sharing, feedback widget, self-hosted workers, network policy). They are ceilings: a feature switched off there cannot be switched back on for one project, so check before promising a shared report link or a widget install.

@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.14.1] - 2026-10-12
+
 ### Added
 
 - `assets/hero.png` and the README header: the brand banner (midnight terrain, lockup, a real checklist run), plus the existing `assets/demo.gif` recording of the server in Claude.
@@ -18,6 +20,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- Removed the Stunt Double Index re-run rate limit and the unclaimed-domain ownership detail from the README, the `check-agent-readiness` skill and the `stuntdouble-basics` rule. They now say only that the domain's owner can re-run it.
+- Bumped `.cursor-plugin/plugin.json`, `.claude-plugin/plugin.json`, `.openai-plugin/plugin.json` and `server.json` to 1.14.1.
 - `.cursor-plugin/plugin.json`: added `displayName`, `publisher`, `category` and `tags` for marketplace listing, matching the Claude and OpenAI plugin metadata.
 - README Cursor section: install as a Cursor plugin (MCP plus skills, rules and agents) first; MCP-only config remains as a fallback.
 - Windsurf has its own README section using its `serverUrl` key, instead of sharing Cursor's `url` config.
@@ -47,7 +51,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
-- Documented the Stunt Double Index tools: `get_index_report` (a site's score, band, rank, category and provider scores, frictions and failing checks), `list_index_sessions` (the agent sessions behind a score), `search_index_domains` (find a site or browse the leaderboard) and `request_index_rerun` (re-score a domain you own, `mcp:run`, once every 10 minutes).
+- Documented the Stunt Double Index tools: `get_index_report` (a site's score, band, rank, category and provider scores, frictions and failing checks), `list_index_sessions` (the agent sessions behind a score), `search_index_domains` (find a site or browse the leaderboard) and `request_index_rerun` (re-score a domain you own, `mcp:run`).
 - An agent-readiness example prompt, and Index guidance in `rules/stuntdouble-basics.mdc`.
 
 ### Changed
