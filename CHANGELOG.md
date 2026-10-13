@@ -14,6 +14,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - `scripts/build-openai-plugin.mjs` now checks what the OpenAI submission portal checks on upload: the category list, starter prompts (no @mentions or duplicates), brand colour contrast, square PNG logos within size limits, 706 px card screenshots, and skill front matter.
 - `.openai-plugin/plugin.json`: the listing no longer mentions plans, in line with OpenAI's rule against pricing and subscription copy.
+- README: a Demo targets table of the public demo apps (checkout, flights, parlour), and the example prompts now point at them. The old checkout URL sat behind a Vercel login.
+
+### Removed
+
+- README: a stray half-sentence about the web dashboard after the Index tools.
 
 ## [1.14.1] - 2026-10-12
 

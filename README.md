@@ -446,16 +446,25 @@ The [Stunt Double Index](https://index.stuntdouble.io) is a public ranking of ho
 | `request_index_rerun`  | Re-score a domain you own (`mcp:run`). Fresh probes now, about 24 agent sessions over a few minutes                                              |
 
 `get_index_report`, `list_index_sessions` and `request_index_rerun` take a `domain`, or a `project_id` to use the Index domain linked to that project (which checks your membership like any project read). Only the domain's owner can re-run it. After a re-run, poll `list_index_sessions` with the returned `run_id` until the sessions finish, then read `get_index_report`.
-(inviting/removing members) is available in the [web dashboard](https://app.stuntdouble.io).
 
 ## Example prompts
 
 Four prompts that exercise the core of the server once it is connected:
 
-1. **Verify a flow:** "Create a checklist that signs up for a new account on https://demo-checkout-stunt-double.vercel.app, adds an item to the basket and reaches payment, then run it and tell me which checks failed."
-2. **Run a user interview:** "Set up an interview with three personas (a first-time shopper, a returning customer and a screen reader user) about our pricing page, launch it, and summarise the report."
+1. **Verify a flow:** "Create a checklist that completes the checkout on https://checkout.demo.stuntdouble.io and reaches the confirmation page, then run it and tell me which checks failed."
+2. **Run a user interview:** "Set up an interview with three personas (a first-time diner, a regular and a screen reader user) about booking a table on https://parlour.demo.stuntdouble.dev, launch it, and summarise the report."
 3. **Check agent readiness:** "How well can AI agents use stripe.com according to the Stunt Double Index, and which categories are dragging its score down?"
 4. **Triage feedback:** "Summarise the open feedback on my main project, group it into themes, and mark anything already fixed as resolved."
+
+### Demo targets
+
+Try the server without pointing it at your own product. These public demo apps have deliberate defects for actors to find, so runs never touch real customers:
+
+| App                                                                  | What                                                                    |
+| -------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| [checkout.demo.stuntdouble.io](https://checkout.demo.stuntdouble.io) | Trailhead Outfitters: a one-page checkout                               |
+| [flights.demo.stuntdouble.io](https://flights.demo.stuntdouble.io)   | Skyline Fares: one-way flight search, results, booking and confirmation |
+| [parlour.demo.stuntdouble.dev](https://parlour.demo.stuntdouble.dev) | Ondine, on Parlour: a restaurant booking flow with a deposit            |
 
 ## Privacy Policy
 
