@@ -24,7 +24,9 @@ import {
   existsSync,
   mkdirSync,
   readFileSync,
+  readdirSync,
   rmSync,
+  statSync,
   writeFileSync,
 } from "node:fs";
 import { resolve } from "node:path";
@@ -104,11 +106,34 @@ if (manifest.version !== claude.version) {
   );
 }
 
+if (
+  typeof manifest.description !== "string" ||
+  manifest.description.length > 1024
+)
+  fail("description is required and at most 1024 characters");
+
 text("displayName", 30);
 text("shortDescription", 30);
 text("longDescription", 4000);
 text("developerName", 80);
 text("category", 80);
+const CATEGORIES = [
+  "Productivity",
+  "Creativity",
+  "Developer Tools",
+  "Business & Operations",
+  "Data & Analytics",
+  "Communication",
+  "Education & Research",
+  "Security",
+  "Finance",
+  "Healthcare",
+  "Travel",
+  "Entertainment",
+  "Other",
+];
+if (ui.category && !CATEGORIES.includes(ui.category))
+  fail(`interface.category must be one of: ${CATEGORIES.join(", ")}`);
 for (const field of [
   "websiteURL",
   "supportURL",
@@ -131,11 +156,53 @@ if (prompts.length > 3) fail("interface.defaultPrompt has more than 3 entries");
 prompts.forEach((p, i) => {
   if (typeof p !== "string" || p.length > 128)
     fail(`interface.defaultPrompt[${i}] exceeds 128 characters`);
+  if (/@\w/.test(p)) fail(`interface.defaultPrompt[${i}] has an @mention`);
 });
+const normalised = prompts.map((p) => String(p).trim().toLowerCase());
+if (new Set(normalised).size !== normalised.length)
+  fail("interface.defaultPrompt has duplicate prompts");
 
-for (const field of ["brandColor", "brandColorDark"]) {
-  if (ui[field] != null && !/^#[0-9A-Fa-f]{6}$/.test(ui[field]))
+// WCAG contrast, which is what the portal's _contrast errors measure.
+function luminance(hex) {
+  const [r, g, b] = [1, 3, 5].map((i) => {
+    const v = parseInt(hex.slice(i, i + 2), 16) / 255;
+    return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+  });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+function contrast(a, b) {
+  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+  return (hi + 0.05) / (lo + 0.05);
+}
+for (const [field, background] of [
+  ["brandColor", "#FFFFFF"],
+  ["brandColorDark", "#212121"],
+]) {
+  if (ui[field] == null) continue;
+  if (!/^#[0-9A-Fa-f]{6}$/.test(ui[field])) {
     fail(`interface.${field} must be #RRGGBB`);
+  } else if (contrast(ui[field], background) < 2) {
+    fail(
+      `interface.${field} needs at least 2:1 contrast against ${background}`,
+    );
+  }
+}
+
+// Width and height from a PNG's IHDR chunk.
+// ponytail: PNG only, add a JPEG/WebP reader if an asset ever needs another format.
+function pngSize(path) {
+  const buf = readFileSync(resolve(root, path));
+  if (buf.toString("ascii", 1, 4) !== "PNG") return null;
+  return { width: buf.readUInt32BE(16), height: buf.readUInt32BE(20) };
+}
+function image(path, check) {
+  if (!existsSync(resolve(root, path))) return;
+  if (statSync(resolve(root, path)).size > 5 * 1024 * 1024)
+    return fail(`${path} is larger than 5 MiB`);
+  const size = pngSize(path);
+  if (!size) return fail(`${path} must be a PNG`);
+  const problem = check(size);
+  if (problem) fail(`${path} is ${size.width}x${size.height}: ${problem}`);
 }
 
 const assets = [
@@ -145,10 +212,49 @@ const assets = [
   ...asset("composerIconDark", { required: false }),
   ...asset("screenshots", { required: false }),
 ];
-if (!ui.screenshots?.length) {
-  warnings.push(
-    "no screenshots yet: capture the checklist run and Index cards in ChatGPT",
+for (const field of ["logo", "logoDark", "composerIcon", "composerIconDark"]) {
+  if (typeof ui[field] !== "string") continue;
+  image(ui[field], ({ width, height }) =>
+    width !== height
+      ? "must be square"
+      : width < 48 || width > 4096
+        ? "must be 48 to 4096 px"
+        : null,
   );
+}
+// With custom UI the portal wants one screenshot per starter prompt, 706 px wide.
+const screenshots = ui.screenshots ?? [];
+for (const path of screenshots) {
+  image(path, ({ width, height }) =>
+    width !== 706 || height < 400 || height > 860
+      ? "screenshots must be 706 px wide and 400 to 860 px tall"
+      : null,
+  );
+}
+if (screenshots.length !== prompts.length) {
+  warnings.push(
+    `${screenshots.length} screenshots for ${prompts.length} starter prompts: capture one card per prompt in ChatGPT (706 px wide)`,
+  );
+}
+
+// The skill limits the portal checks on upload.
+for (const dir of readdirSync(resolve(root, "skills"))) {
+  const path = resolve(root, "skills", dir, "SKILL.md");
+  if (!existsSync(path)) {
+    fail(`skills/${dir} has no SKILL.md`);
+    continue;
+  }
+  const front = readFileSync(path, "utf8").match(/^---\n([\s\S]*?)\n---/)?.[1];
+  const field = (key) =>
+    front?.match(new RegExp(`^${key}:\\s*(.*)$`, "m"))?.[1].trim();
+  const name = field("name");
+  const description = field("description");
+  if (!name || !description)
+    fail(`skills/${dir}/SKILL.md needs name and description front matter`);
+  else if (`${manifest.name}:${name}`.length > 64)
+    fail(`skill ${name}: plugin:skill identity exceeds 64 characters`);
+  else if (description.length > 1024)
+    fail(`skill ${name}: description exceeds 1024 characters`);
 }
 
 const positive = review.test_cases?.positive ?? [];
