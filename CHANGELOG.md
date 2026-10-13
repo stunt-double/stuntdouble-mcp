@@ -10,6 +10,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - `AGENTS.md`, a `CLAUDE.md` section and a `.claude/hooks/block-session-links.mjs` PreToolUse hook that keep Claude Code session links and trailers out of commits, PRs and comments in this public repository.
 
+### Changed
+
+- `scripts/build-openai-plugin.mjs` now checks what the OpenAI submission portal checks on upload: the category list, starter prompts (no @mentions or duplicates), brand colour contrast, square PNG logos within size limits, 706 px card screenshots, and skill front matter.
+- `.openai-plugin/plugin.json`: the listing no longer mentions plans, in line with OpenAI's rule against pricing and subscription copy.
+
 ## [1.14.1] - 2026-10-12
 
 ### Added
