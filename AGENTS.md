@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Guidance for coding agents. `CLAUDE.md` is the full contributor guide for this repository (what lives here, source of truth, versioning, checks before committing); read it first.
+Guidance for coding agents. `.claude/CLAUDE.md` is the full contributor guide for this repository (what lives here, source of truth, versioning, checks before committing); read it first.
 
 ## Public repository: no session information
 

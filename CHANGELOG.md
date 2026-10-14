@@ -10,8 +10,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - `AGENTS.md`, a `CLAUDE.md` section and a `.claude/hooks/block-session-links.mjs` PreToolUse hook that keep Claude Code session links and trailers out of commits, PRs and comments in this public repository.
 
+- `privacyPolicyUrl` in `.claude-plugin/plugin.json`, so the Claude plugin directory no longer infers it from the README.
+
 ### Changed
 
+- `CLAUDE.md` moved to `.claude/CLAUDE.md`: Claude Code still loads it as project memory, and the plugin root no longer carries a file the plugin loader ignores.
+- `publish.yml` downloads `mcp-publisher` to a file and checks its SHA-256 before extracting, rather than piping `curl` into `tar`.
 - `scripts/build-openai-plugin.mjs` now checks what the OpenAI submission portal checks on upload: the category list, starter prompts (no @mentions or duplicates), brand colour contrast, square PNG logos within size limits, 706 px card screenshots, and skill front matter.
 - `.openai-plugin/plugin.json`: the listing no longer mentions plans, in line with OpenAI's rule against pricing and subscription copy.
 - README: a Demo targets table of the public demo apps (checkout, flights, parlour), and the example prompts now point at them. The old checkout URL sat behind a Vercel login.

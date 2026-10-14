@@ -11,6 +11,7 @@
   "homepage": "https://www.stuntdouble.io/support/docs/api/mcp",
   "repository": "https://github.com/stunt-double/stuntdouble-mcp",
   "license": "MIT",
+  "privacyPolicyUrl": "https://www.stuntdouble.io/privacy",
   "keywords": [
     "stuntdouble",
     "ux-testing",
