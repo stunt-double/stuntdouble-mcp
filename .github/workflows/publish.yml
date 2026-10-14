@@ -30,6 +30,7 @@ concurrency:
 
 env:
   MCP_PUBLISHER_VERSION: v1.8.1
+  MCP_PUBLISHER_SHA256: a06c9096dcb9727c13555b6be26c7effa707b01f06a4c561ba7a3635443cf2cc
 
 jobs:
   publish:
@@ -76,11 +77,17 @@ jobs:
             *) echo "::error::Registry lookup returned HTTP $status"; exit 1 ;;
           esac
 
+      # Download to a file and check it against the pinned digest before
+      # extracting, never a pipe straight into tar. Bumping the version means
+      # updating the digest from that release's registry_<v>_checksums.txt.
       - name: Install mcp-publisher
         if: steps.registry.outputs.published == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          curl -fsSL "https://github.com/modelcontextprotocol/registry/releases/download/$MCP_PUBLISHER_VERSION/mcp-publisher_linux_amd64.tar.gz" \
-            | tar xz mcp-publisher
+          gh release download "$MCP_PUBLISHER_VERSION" -R modelcontextprotocol/registry -p mcp-publisher_linux_amd64.tar.gz
+          echo "$MCP_PUBLISHER_SHA256  mcp-publisher_linux_amd64.tar.gz" | sha256sum -c -
+          tar -xzf mcp-publisher_linux_amd64.tar.gz mcp-publisher
           ./mcp-publisher --version
 
       - name: Validate
