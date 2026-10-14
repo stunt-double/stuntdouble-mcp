@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "stuntdouble",
-  "version": "1.14.1",
+  "version": "1.15.0",
   "description": "Authentic user insights from autonomous AI agents, backed by evidence.",
   "author": {
     "name": "Stunt Double",
