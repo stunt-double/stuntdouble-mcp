@@ -6,8 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.15.0] - 2026-10-14
+
 ### Added
 
+- Claude plugin directory listing fields in `.claude-plugin/plugin.json`: `documentationUrl`, `supportUrl`, `termsOfServiceUrl` and `icon`. `homepage` now points at the website, with the MCP docs under `documentationUrl`.
 - `AGENTS.md`, a `CLAUDE.md` section and a `.claude/hooks/block-session-links.mjs` PreToolUse hook that keep Claude Code session links and trailers out of commits, PRs and comments in this public repository.
 
 - `privacyPolicyUrl` in `.claude-plugin/plugin.json`, so the Claude plugin directory no longer infers it from the README.
