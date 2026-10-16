@@ -7,17 +7,6 @@ globs:
 
 review-checklist:
 
-Before merging:
-- Run relevant Stunt Double checklists against staging before merging UX changes.
-- Verify that existing workflows still pass after modifying user-facing flows.
-- Check Stunt Double feedback (`list_feedback`) for regressions related to the changed area.
-
-Coverage:
-- Ensure new user journeys have corresponding workflows or checklist items for ongoing validation.
-- If a new user-facing feature is added, check that at least one actor persona covers the target user type.
-- If no actor exists for the affected user segment, recommend creating one via `create_actor`.
-
-After merging:
-- Re-run affected workflows against the deployed environment to confirm the fix.
-- Update feedback status to "resolved" for any issues addressed by the change.
-- Review workflow run history (`get_workflow`, which returns `recent_runs`) to confirm no regressions.
+- Before merging a UX change, run the relevant checklists against staging, confirm existing workflows still pass, and check `list_feedback` for regressions in the area.
+- New journeys need a workflow or checklist items, and a persona covering the target user type (`create_actor` if none).
+- After merging, re-run affected workflows on the deployed environment, mark addressed feedback "resolved", and compare `recent_runs` from `get_workflow`.

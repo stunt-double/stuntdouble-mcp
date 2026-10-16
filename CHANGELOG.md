@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Changed
+
+- Trimmed the plugin skills, agents and rules to roughly a third of their size, so they cost fewer tokens when loaded: dropped restated "when to use" lists, long example outputs and tips that repeat the steps. Tool names, arguments and non-obvious gotchas are kept.
+
 ## [1.15.0] - 2026-10-14
 
 ### Added
