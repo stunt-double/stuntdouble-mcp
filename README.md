@@ -229,11 +229,11 @@ connection asked for, and a token granted `mcp:read` is not shown the write or
 run tools at all: they are absent from `tools/list` rather than present and
 failing.
 
-| Scope       | What it allows                                                                                                                                            |
-| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `mcp:read`  | Read your workspaces and their contents                                                                                                                   |
-| `mcp:write` | Create and edit content in your workspaces                                                                                                                |
-| `mcp:run`   | Start checklist runs, automation runs and interviews, which consume the workspace run allowance, and re-run Stunt Double Index scores for domains you own |
+| Scope       | What it allows                                                                                                                                                                                    |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `mcp:read`  | Read your workspaces and their contents                                                                                                                                                           |
+| `mcp:write` | Create and edit content in your workspaces                                                                                                                                                        |
+| `mcp:run`   | Start checklist runs, automation runs and interviews, which consume the workspace run allowance, re-run Stunt Double Index scores for domains you own, and add sites the Index does not track yet |
 
 ## Available Tools
 
@@ -438,14 +438,21 @@ Read-only context a client can attach without calling a tool. The guide and the 
 
 The [Stunt Double Index](https://index.stuntdouble.io) is a public ranking of how AI agents experience websites: each tracked domain is scored out of 100 from HTTP probes plus live agent sessions, one per AI provider and benchmark task. Index data is public rather than workspace data, so the read tools reach any tracked site.
 
-| Tool                   | Description                                                                                                                                      |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `get_index_report`     | A site's score, band, rank, category and provider scores, frictions, failing probe checks and when it was last scored                            |
-| `list_index_sessions`  | The agent sessions behind a score (newest run by default), with status, score, evidence, a summary and frictions. Filter by provider or category |
-| `search_index_domains` | Find a site by domain or name, or browse the leaderboard, optionally by sector                                                                   |
-| `request_index_rerun`  | Re-score a domain you own (`mcp:run`). Fresh probes now, about 24 agent sessions over a few minutes                                              |
+| Tool                   | Description                                                                                                                                                            |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `get_index_report`     | A site's score, band, rank, category and provider scores, frictions, failing probe checks and when it was last scored. An unscored site says why                       |
+| `list_index_sessions`  | The agent sessions behind a score (newest run by default, or pass `run_id`), with status, score, evidence, a summary and frictions. Filter by `provider` or `category` |
+| `search_index_domains` | Find a site by domain or name (`query`), or browse the leaderboard, optionally by `sector`                                                                             |
+| `request_index_rerun`  | Re-score a domain you own (`mcp:run`). Fresh probes now, about 24 agent sessions over a few minutes                                                                    |
+| `request_index_score`  | Add a site the Index does not track yet and give it a first score (`mcp:run`). Light HTTP probes by default; `include_agent_sessions` also starts live agent sessions  |
 
-`get_index_report`, `list_index_sessions` and `request_index_rerun` take a `domain`, or a `project_id` to use the Index domain linked to that project (which checks your membership like any project read). Only the domain's owner can re-run it. After a re-run, poll `list_index_sessions` with the returned `run_id` until the sessions finish, then read `get_index_report`.
+`get_index_report`, `list_index_sessions` and `request_index_rerun` take a `domain`, or a `project_id` to use the Index domain linked to that project (which checks your membership like any project read). A full URL is fine as a `domain`: the protocol, path and a leading `www.` are dropped.
+
+Only the domain's owner can re-run it: whoever claimed it or, while it is unclaimed, an account with a work email on that domain. A domain can be re-run once every 10 minutes. After a re-run, poll `list_index_sessions` with the returned `run_id` about every 60 seconds until the sessions finish, then read `get_index_report`.
+
+`request_index_score` is open to any signed-in account. It scores public web domains only, respects robots.txt and `X-Robots-Tag` opt-outs, and never rescores a site the Index already tracks (it answers `already_tracked`; use `request_index_rerun` for that). The site becomes public on the leaderboard. The probes finish in under a minute; agent sessions asked for with `include_agent_sessions` draw on a shared daily budget, so they may be queued to run later that day (`agent_sessions` is then `deferred` or `retrying`). Read `get_index_report` for the probe score straight away, and poll `list_index_sessions` with the `run_id` if sessions started.
+
+**No account needed for the read tools:** `search_index_domains`, `get_index_report` and `list_index_sessions` are also served, read-only and with no sign-in, at `https://app.stuntdouble.io/api/mcp/index`. Connect any MCP client to that URL and leave the OAuth fields empty. It carries only those three tools, and `project_id` does not resolve there, so pass a `domain`. `request_index_rerun` and `request_index_score` need the signed-in server.
 
 ## Example prompts
 

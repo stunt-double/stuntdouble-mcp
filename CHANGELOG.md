@@ -6,8 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- Documented `request_index_score` (add a site the Stunt Double Index does not track yet and give it a first score, `mcp:run`) in the README, the `check-agent-readiness` skill and the `stuntdouble-basics` rule.
+- README: the no-account, read-only Index endpoint at `https://app.stuntdouble.io/api/mcp/index`, which serves `search_index_domains`, `get_index_report` and `list_index_sessions`.
+
 ### Changed
 
+- The README, the `check-agent-readiness` skill and the `stuntdouble-basics` rule now match the `request_index_rerun` tool description: owner only (the account that claimed the domain or, while it is unclaimed, a work email on it) and once every 10 minutes.
 - Trimmed the plugin skills, agents and rules to roughly a third of their size, so they cost fewer tokens when loaded: dropped restated "when to use" lists, long example outputs and tips that repeat the steps. Tool names, arguments and non-obvious gotchas are kept.
 
 ## [1.15.0] - 2026-10-14
