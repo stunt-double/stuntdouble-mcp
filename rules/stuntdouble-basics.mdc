@@ -32,7 +32,8 @@ Guidelines (workspace standards):
 
 Stunt Double Index (how AI agents experience websites):
 - For agent readiness or AI visibility questions use `get_index_report` (a `domain`, or a `project_id`), `list_index_sessions` to explain a score, and `search_index_domains` to compare. Index data is public.
-- `request_index_rerun` spends about 24 agent sessions and is owner-only: use it after shipping changes, not to refresh a current report.
+- For a site the Index does not track yet, `request_index_score` adds it with a first score (light probes; `include_agent_sessions` for live sessions). It never rescores a tracked site.
+- `request_index_rerun` spends about 24 agent sessions, is owner-only and allowed once every 10 minutes: use it after shipping changes, not to refresh a current report.
 
 Scope:
 - `get_workspace` `settings` (public sharing, widget, workers, network policy) are admin ceilings a project cannot override.
