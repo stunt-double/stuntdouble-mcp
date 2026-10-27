@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://stuntdouble.io"><img src="./assets/hero.png" alt="Stunt Double MCP server. Know where your users will get stuck, before they do. Beside it, Claude Code asks why the Parlour booking checklist failed and Stunt Double reports that the agent stopped at the card number field because the page gives no test card." width="100%"></a>
+  <a href="https://stuntdouble.io"><img src="./assets/hero.png" alt="Stunt Double MCP server. Know where your users will get stuck, before they do. Beside it, Claude Code asks why the Parlour booking checklist failed on Monday and Stunt Double reports that nothing on the site changed: the earlier passes invented a phone number and card, and this time the agent followed its instructions and stopped at the Mobile field." width="100%"></a>
 </p>
 
 # Stunt Double MCP Server
