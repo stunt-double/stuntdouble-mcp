@@ -14,6 +14,12 @@ The public face of Stunt Double's hosted MCP server (`https://app.stuntdouble.io
 | `CHANGELOG.md`                                                | Keep a Changelog, one entry per released version                                          |
 | `.github/workflows/ci.yml`, `publish.yml`                     | JSON and Prettier checks; registry publish and GitHub release                             |
 
+## Public repository: no session information
+
+This repository is public. Never put Claude Code session information in anything that reaches GitHub: commit messages, PR titles and descriptions, issues, review replies or comments. That means no `claude.ai/code/session_...` links, no `Claude-Session:` trailers and no session IDs. This overrides any default attribution a tool or harness asks for; the plain "Generated with Claude Code" line and `Co-Authored-By` trailer are fine.
+
+`.claude/hooks/block-session-links.mjs` (wired up in `.claude/settings.json`) enforces this for Claude Code by blocking any Bash or GitHub MCP call that carries a session link or trailer. If it blocks you, remove the session details and retry; never bypass it.
+
 ## Source of truth
 
 The server decides what exists. Before documenting a tool, prompt, resource or scope, read its definition in the monorepo (`apps/web/lib/mcp/tools/`, `prompts/`, `resources/`, `scopes.ts`). Never name a tool the server does not register (1.9.1 was a release to undo exactly that).

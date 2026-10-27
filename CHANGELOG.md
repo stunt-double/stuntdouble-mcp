@@ -8,7 +8,41 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
-- `assets/hero.png` and the README header: the brand banner, with a real Claude Code exchange with the server beside the line. `assets/demo.gif` is re-recorded as that session in Claude Code, and the README gains a table of contents.
+- Documented `request_index_score` (add a site the Stunt Double Index does not track yet and give it a first score, `mcp:run`) in the README, the `check-agent-readiness` skill and the `stuntdouble-basics` rule.
+- README: the no-account, read-only Index endpoint at `https://app.stuntdouble.io/api/mcp/index`, which serves `search_index_domains`, `get_index_report` and `list_index_sessions`.
+
+### Changed
+
+- The README, the `check-agent-readiness` skill and the `stuntdouble-basics` rule now match the `request_index_rerun` tool description: owner only (the account that claimed the domain or, while it is unclaimed, a work email on it) and once every 10 minutes.
+- README header: `assets/hero.png` now shows a real Claude Code exchange with the server beside the line, `assets/demo.gif` is re-recorded as that session in Claude Code (asking why the Parlour booking checklist failed), and the README gains a contents list.
+- Trimmed the plugin skills, agents and rules to roughly a third of their size, so they cost fewer tokens when loaded: dropped restated "when to use" lists, long example outputs and tips that repeat the steps. Tool names, arguments and non-obvious gotchas are kept.
+
+## [1.15.0] - 2026-10-14
+
+### Added
+
+- Claude plugin directory listing fields in `.claude-plugin/plugin.json`: `documentationUrl`, `supportUrl`, `termsOfServiceUrl` and `icon`. `homepage` now points at the website, with the MCP docs under `documentationUrl`.
+- `AGENTS.md`, a `CLAUDE.md` section and a `.claude/hooks/block-session-links.mjs` PreToolUse hook that keep Claude Code session links and trailers out of commits, PRs and comments in this public repository.
+
+- `privacyPolicyUrl` in `.claude-plugin/plugin.json`, so the Claude plugin directory no longer infers it from the README.
+
+### Changed
+
+- `CLAUDE.md` moved to `.claude/CLAUDE.md`: Claude Code still loads it as project memory, and the plugin root no longer carries a file the plugin loader ignores.
+- `publish.yml` downloads `mcp-publisher` to a file and checks its SHA-256 before extracting, rather than piping `curl` into `tar`.
+- `scripts/build-openai-plugin.mjs` now checks what the OpenAI submission portal checks on upload: the category list, starter prompts (no @mentions or duplicates), brand colour contrast, square PNG logos within size limits, 706 px card screenshots, and skill front matter.
+- `.openai-plugin/plugin.json`: the listing no longer mentions plans, in line with OpenAI's rule against pricing and subscription copy.
+- README: a Demo targets table of the public demo apps (checkout, flights, parlour), and the example prompts now point at them. The old checkout URL sat behind a Vercel login.
+
+### Removed
+
+- README: a stray half-sentence about the web dashboard after the Index tools.
+
+## [1.14.1] - 2026-10-12
+
+### Added
+
+- `assets/hero.png` and the README header: the brand banner (midnight terrain, lockup, a real checklist run), plus the existing `assets/demo.gif` recording of the server in Claude.
 - `.cursor-plugin/marketplace.json`: team marketplace entry for the single-plugin repo (same pattern as the Claude marketplace), so Cursor can install `stuntdouble` from this repository.
 - `scripts/validate-cursor-plugin.mjs`: checks the Cursor manifest, MCP URL, and frontmatter on skills, rules and agents; CI runs it alongside the JSON and OpenAI checks.
 - `.openai-plugin/plugin.json`: the ChatGPT and Codex plugin manifest (Agent Plugins format), with the directory listing, five positive and three negative review test cases, and release notes.
@@ -18,6 +52,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- Removed the Stunt Double Index re-run rate limit and the unclaimed-domain ownership detail from the README, the `check-agent-readiness` skill and the `stuntdouble-basics` rule. They now say only that the domain's owner can re-run it.
+- Bumped `.cursor-plugin/plugin.json`, `.claude-plugin/plugin.json`, `.openai-plugin/plugin.json` and `server.json` to 1.14.1.
 - `.cursor-plugin/plugin.json`: added `displayName`, `publisher`, `category` and `tags` for marketplace listing, matching the Claude and OpenAI plugin metadata.
 - README Cursor section: install as a Cursor plugin (MCP plus skills, rules and agents) first; MCP-only config remains as a fallback.
 - Windsurf has its own README section using its `serverUrl` key, instead of sharing Cursor's `url` config.
@@ -47,7 +83,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
-- Documented the Stunt Double Index tools: `get_index_report` (a site's score, band, rank, category and provider scores, frictions and failing checks), `list_index_sessions` (the agent sessions behind a score), `search_index_domains` (find a site or browse the leaderboard) and `request_index_rerun` (re-score a domain you own, `mcp:run`, once every 10 minutes).
+- Documented the Stunt Double Index tools: `get_index_report` (a site's score, band, rank, category and provider scores, frictions and failing checks), `list_index_sessions` (the agent sessions behind a score), `search_index_domains` (find a site or browse the leaderboard) and `request_index_rerun` (re-score a domain you own, `mcp:run`).
 - An agent-readiness example prompt, and Index guidance in `rules/stuntdouble-basics.mdc`.
 
 ### Changed
