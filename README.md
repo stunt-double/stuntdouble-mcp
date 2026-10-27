@@ -24,7 +24,7 @@ Deploy AI user personas to validate user journeys at scale. Find UX friction bef
 - [License](#license)
 
 <p align="center">
-  <img src="./assets/demo.gif" alt="A Claude Code session asking why the Parlour booking checklist failed on 28 September. Claude calls Stunt Double, fetches both runs and explains that the agent stopped at the payment step because the page gives no test card." width="100%">
+  <img src="./assets/demo.gif" alt="A Claude Code session asking why the Parlour booking checklist failed on Monday. Claude calls Stunt Double, compares the failing run with the two passing runs before it and explains that the agent stopped at the required Mobile field, and that the earlier passes only got through by inventing a phone number and card." width="100%">
 </p>
 
 ## This repository

@@ -14,7 +14,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Changed
 
 - The README, the `check-agent-readiness` skill and the `stuntdouble-basics` rule now match the `request_index_rerun` tool description: owner only (the account that claimed the domain or, while it is unclaimed, a work email on it) and once every 10 minutes.
-- README header: `assets/hero.png` now shows a real Claude Code exchange with the server beside the line, `assets/demo.gif` is re-recorded as that session in Claude Code (asking why the Parlour booking checklist failed), and the README gains a contents list.
+- README header: `assets/hero.png` now shows a real Claude Code exchange with the server beside the line, and the README gains a contents list.
+- `assets/demo.gif` is re-recorded as a new Claude Code session against the Demo workspace: why the Parlour booking checklist failed on 26 October after three passing weeks (the earlier passes invented a phone number and card).
 - Trimmed the plugin skills, agents and rules to roughly a third of their size, so they cost fewer tokens when loaded: dropped restated "when to use" lists, long example outputs and tips that repeat the steps. Tool names, arguments and non-obvious gotchas are kept.
 
 ## [1.15.0] - 2026-10-14
