@@ -57,7 +57,7 @@
             {
               "description": "Read a checklist run as a card",
               "prompt": "Show me the latest run of the Checkout checklist in my Demo Shop project and tell me what failed.",
-              "tools_triggered": "list_workspaces, list_checklists, get_checklist_run",
+              "tools_triggered": "list_workspaces, list_projects, list_checklists, get_checklist_run",
               "expected_behavior": "Shows the run card (verdict, score, each check with the actor's evidence, changes since the previous run) and names the failing checks in one or two sentences."
             },
             {
@@ -69,8 +69,8 @@
             {
               "description": "Run a checklist and follow it",
               "prompt": "Run the Checkout checklist in Demo Shop again and tell me whether it passes now.",
-              "tools_triggered": "list_workspaces, list_checklists, run_checklist, get_checklist_run",
-              "expected_behavior": "Starts a run, shows the run card while the actor works (it refreshes itself), and reports the verdict once the run completes."
+              "tools_triggered": "list_workspaces, list_projects, list_checklists, run_checklist, get_checklist_run",
+              "expected_behavior": "Starts a run and shows the run card, which refreshes itself while the actor works until it shows the verdict and score. Asking again once the run has finished reports the verdict and the failing checks in words."
             },
             {
               "description": "Summarize stakeholder feedback",
@@ -82,7 +82,7 @@
               "description": "Find existing work before creating more",
               "prompt": "Do I already have anything in Stunt Double that tests checkout?",
               "tools_triggered": "list_workspaces, search",
-              "expected_behavior": "Lists the matching checklist, project and actor in the review workspace by name, without creating anything."
+              "expected_behavior": "Lists the existing items whose name or content matches checkout (at least the Checkout checklist) by name and type, without creating anything."
             }
           ],
           "negative": [
@@ -91,8 +91,8 @@
               "prompt": "Delete my Stunt Double account and all my data."
             },
             {
-              "description": "Billing changes are not offered",
-              "prompt": "Upgrade my Stunt Double plan and charge my card."
+              "description": "Plan changes are not offered",
+              "prompt": "Change my Stunt Double plan."
             },
             {
               "description": "Workspaces outside the connected account",
@@ -101,7 +101,7 @@
           ]
         },
         "commerce": false,
-        "commerce_description": "Stunt Double does not sell products or process payments through this plugin. Plans are managed in the Stunt Double dashboard."
+        "commerce_description": "Stunt Double does not sell, list or recommend products, and no tool makes, reads or reports a payment. Plans and billing are managed only in the Stunt Double dashboard."
       },
       "publication": {
         "release_notes": "First release: read checklist runs and Index reports as cards, run checklists and automations, launch AI user interviews, summarize feedback, and search a workspace."
