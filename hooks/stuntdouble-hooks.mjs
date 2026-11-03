@@ -5,15 +5,37 @@
 //                 checklists that cover it, once per checklist per session.
 //
 // Both are off unless the project has .stuntdouble/hooks.json (written by
-// /stuntdouble setup) with the hook switched on. Off, the script exits 0 with
-// no output. Neither hook starts a run or writes outside .stuntdouble/.live/.
+// /stuntdouble setup) with the hook switched on, and off for one person with
+// STUNTDOUBLE_HOOKS=off in their environment. Off, the script exits 0 with no
+// output. Neither hook starts a run or writes outside .stuntdouble/.live/.
 // Node built-ins only: the plugin ships no node_modules.
 
-import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import {
+  existsSync,
+  lstatSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  writeFileSync,
+} from "node:fs";
 import { isAbsolute, join, relative, sep } from "node:path";
 import { pathToFileURL } from "node:url";
 
 const FORMAT = "stuntdouble.hooks/1";
+// Repo-controlled names reach the model's context, so only plain slugs and
+// known outcomes go in.
+const SLUG = /^[a-z0-9][a-z0-9._-]{0,63}$/i;
+const OUTCOMES = new Set([
+  "passed",
+  "failed",
+  "inconclusive",
+  "running",
+  "completed",
+  "stopped",
+]);
+const MAX_LISTED = 8;
+// Marker for "every checklist was offered for an unmapped edit"; not a slug.
+const ANY = "_any";
 
 const escape = (s) => s.replace(/[.+^$(){}|[\]\\]/g, "\\$&");
 
@@ -70,6 +92,7 @@ const listChecklists = (project) => {
     return readdirSync(join(project, ".stuntdouble", "checklists"))
       .filter((f) => f.endsWith(".json"))
       .map((f) => f.slice(0, -5))
+      .filter((slug) => SLUG.test(slug))
       .sort();
   } catch {
     return [];
@@ -108,28 +131,80 @@ export function sessionStart(project, config) {
   if (config.session_summary !== true) return null;
   const checklists = listChecklists(project);
   if (!checklists.length) return null;
+  const more = checklists.length - MAX_LISTED;
+  const listed = checklists.slice(0, MAX_LISTED).join(", ");
   const lines = [
-    `Stunt Double Studio is set up in this project. Checklists: ${checklists.join(", ")}.`,
+    `Stunt Double Studio is set up in this project. Checklists: ${listed}${more > 0 ? `, +${more} more` : ""}.`,
   ];
   const run = latestRun(project);
-  if (run) {
+  const outcome =
+    run?.status === "running"
+      ? "running"
+      : (run?.score?.outcome ?? run?.status);
+  if (
+    run &&
+    SLUG.test(run.checklist) &&
+    SLUG.test(run.id) &&
+    OUTCOMES.has(outcome)
+  ) {
     const { passed, total } = tally(run);
-    const outcome =
-      run.status === "running"
-        ? "still running"
-        : (run.score?.outcome ?? run.status);
     lines.push(
-      `Latest run: ${run.checklist}, ${outcome}, ${passed} of ${total} checks passed (${run.id}).`,
+      `Latest run: ${run.checklist}, ${outcome === "running" ? "still running" : outcome}, ${passed} of ${total} checks passed (${run.id}).`,
     );
-  } else lines.push("No runs yet.");
+  } else if (!run) lines.push("No runs yet.");
   lines.push(
     "`/stuntdouble run <checklist>` runs one in a local Chrome. Offer it after UI changes; never start one unasked.",
   );
   return lines.join("\n");
 }
 
+/**
+ * The session's marker folder under .stuntdouble/.live/hooks/, or null when
+ * any part of that path is a symlink or not a folder, so a crafted repo
+ * cannot point the hook's writes outside the project.
+ */
+function markerDir(project, sessionId) {
+  const session =
+    String(sessionId ?? "")
+      .replace(/[^A-Za-z0-9-]/g, "")
+      .slice(0, 64) || "none";
+  let dir = project;
+  for (const part of [".stuntdouble", ".live", "hooks", session]) {
+    dir = join(dir, part);
+    try {
+      const stat = lstatSync(dir);
+      if (stat.isSymbolicLink() || !stat.isDirectory()) return null;
+    } catch {
+      try {
+        mkdirSync(dir);
+      } catch {
+        return null;
+      }
+    }
+  }
+  return dir;
+}
+
+/**
+ * Records that `name` was offered this session. True the first time; false
+ * once it exists, or when it cannot be written. One empty file per name,
+ * created with O_EXCL: parallel edits cannot both win, and it never follows
+ * a symlink.
+ */
+function claim(dir, name) {
+  try {
+    writeFileSync(join(dir, name), "", { flag: "wx" });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export function postToolUse(project, config, input) {
   if (config.suggest_after_edit !== true) return null;
+  // A subagent has no one to offer a run to, and claiming here would hide
+  // the suggestion from the main thread.
+  if (input.agent_id) return null;
   const file = input.tool_input?.file_path;
   if (typeof file !== "string") return null;
   const rel = relative(project, isAbsolute(file) ? file : join(project, file))
@@ -139,38 +214,32 @@ export function postToolUse(project, config, input) {
   if (!matchesAny(rel, config.ui_globs)) return null;
 
   const checklists = listChecklists(project);
+  if (!checklists.length) return null;
   const mapped = Object.entries(config.checklists_for ?? {})
     .filter(
       ([slug, globs]) => checklists.includes(slug) && matchesAny(rel, globs),
     )
     .map(([slug]) => slug);
-  const candidates = mapped.length ? mapped : checklists;
 
-  // ponytail: one state file for the latest session, so two sessions open on
-  // one project reset each other and may repeat a suggestion. Key the file by
-  // session if that ever matters.
-  const live = join(project, ".stuntdouble", ".live");
-  const statePath = join(live, "hooks-state.json");
-  const session = String(input.session_id ?? "");
-  const state = readJson(statePath);
-  const shown = state?.session_id === session ? (state.suggested ?? []) : [];
-  const fresh = candidates.filter((slug) => !shown.includes(slug));
+  // ponytail: one marker folder per session, never cleaned up; .live/ is
+  // ignored scratch. Prune old sessions if anyone ever notices the folders.
+  const dir = markerDir(project, input.session_id);
+  if (!dir) return null;
+  let fresh;
+  if (mapped.length) fresh = mapped.filter((slug) => claim(dir, slug));
+  else if (claim(dir, ANY))
+    // Unmapped: offer what is not yet offered, but claim only the generic
+    // marker, so a later edit to a mapped area still names its checklist.
+    fresh = checklists.filter((slug) => !existsSync(join(dir, slug)));
+  else fresh = [];
   if (!fresh.length) return null;
-  try {
-    mkdirSync(live, { recursive: true });
-    writeFileSync(
-      statePath,
-      `${JSON.stringify({ session_id: session, suggested: [...shown, ...fresh] })}\n`,
-    );
-  } catch {
-    // A read-only checkout still gets the suggestion, just not the dedupe.
-  }
   const list = fresh.map((s) => `\`/stuntdouble run ${s}\``).join(" or ");
   return `${rel} is covered by Stunt Double Studio. Before you finish, offer ${list} to check the change in a local Chrome. Do not start a run unless the person agrees.`;
 }
 
 /** The hook's stdout for one input, or "" for none. */
 export function handle(input, env = process.env) {
+  if (env.STUNTDOUBLE_HOOKS === "off") return "";
   const project = env.CLAUDE_PROJECT_DIR || input.cwd;
   if (!project) return "";
   const config = readConfig(project);
@@ -191,7 +260,8 @@ export function handle(input, env = process.env) {
 if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {
   // Most projects have no hooks config: leave before reading stdin.
   const dir = process.env.CLAUDE_PROJECT_DIR;
-  if (dir && !readConfig(dir)) process.exit(0);
+  if (process.env.STUNTDOUBLE_HOOKS === "off" || (dir && !readConfig(dir)))
+    process.exit(0);
   let raw = "";
   process.stdin.setEncoding("utf8");
   process.stdin.on("data", (chunk) => (raw += chunk));

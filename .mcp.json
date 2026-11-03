@@ -6,7 +6,7 @@
     },
     "local": {
       "command": "npx",
-      "args": ["-y", "stuntdouble@0.1.2", "mcp"],
+      "args": ["-y", "stuntdouble@0.1.3", "mcp"],
       "env": {
         "STUNTDOUBLE_PROJECT_DIR": "${CLAUDE_PROJECT_DIR}"
       }

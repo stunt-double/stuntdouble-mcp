@@ -6,7 +6,7 @@ argument-hint: "setup | run <checklist> [resume] | open | cloud <checklist> | do
 
 # Stunt Double Studio
 
-`/stuntdouble <verb>`. Local runs use the person's own Claude plan: this session is the actor, and the plugin's `local` MCP server (`npx stuntdouble@0.1.2 mcp`) only drives a local Chrome, writes files and serves the viewer. Nothing else calls a model, and no account is needed. Say so before the first run in a session.
+`/stuntdouble <verb>`. Local runs use the person's own Claude plan: this session is the actor, and the plugin's `local` MCP server (`npx stuntdouble@0.1.3 mcp`) only drives a local Chrome, writes files and serves the viewer. Nothing else calls a model, and no account is needed. Say so before the first run in a session.
 
 The `local` server ships only in the Claude Code plugin. Where its tools are missing, use the cloud skills. Schedules, deploy and PR triggers, teams, interviews and several actors at once are cloud work too: hand them to `setup-guardrails`, `maintain-automations`, `run-user-interview`, `design-review`, `create-actor-panel` or `run-qa-suite`.
 
@@ -56,7 +56,7 @@ Setup is the whole onboarding: it leaves the project ready to run and future ses
    - Runs are kept in `.stuntdouble/runs/`; never edit them. `/stuntdouble open` shows them all.
    ```
 
-8. **Skip the prompt on every browser action.** Add `"mcp__plugin_stuntdouble_local"` to `permissions.allow` in the project's `.claude/settings.json`: read the file, add the entry to the list (create `permissions` or `allow` only if missing) and write it back with every other key as it was. Create the file with just that rule if there is none.
+8. **Skip the prompt on every browser action.** Add `"mcp__plugin_stuntdouble_local"` to `permissions.allow` in the project's `.claude/settings.json`: read the file, add the entry to the list (create `permissions` or `allow` only if missing) and write it back with every other key as it was. Create the file with just that rule if there is none. That file is shared with the team; offer `.claude/settings.local.json` to someone who wants the rule for themselves only. If the file does not parse as plain JSON (comments, trailing commas, a merge conflict), never rewrite it: show the line and where it goes, and let the person add it. If the write is refused, show the same line, or point them to `/permissions` (Allow, add `mcp__plugin_stuntdouble_local`).
 9. **Enable the hooks** the person wants (both by default) by writing `.stuntdouble/hooks.json`, with `ui_globs` covering the UI files found in step 5 and `checklists_for` mapping each checklist to the files of its routes:
 
    ```json
@@ -90,16 +90,16 @@ If the actor ends without `finish_run` (or was interrupted), `start_run(checklis
 
 ## doctor
 
-Call `doctor()` from the `local` server and relay its lines. Only if this session has no `doctor` tool, run `npx -y stuntdouble@0.1.2 doctor` with Bash, or ask the person to run it in a terminal where Bash is not allowed. If the local tools are missing altogether, the `local` server did not start: check Node 22.18 or later and `npx`, then `/mcp`. A slow first tool listing is `npx` starting up (about 1.5 seconds), not the server.
+Call `doctor()` from the `local` server and relay its lines. Only if this session has no `doctor` tool, run `npx -y stuntdouble@0.1.3 doctor` with Bash, or ask the person to run it in a terminal where Bash is not allowed. If the local tools are missing altogether, the `local` server did not start: check Node 22.18 or later and `npx`, then `/mcp`. A slow first tool listing is `npx` starting up (about 1.5 seconds), not the server.
 
 ## hooks
 
 The plugin ships two Claude Code hooks (`hooks/hooks.json`), off in every project until `.stuntdouble/hooks.json` switches them on. Without that file, or with a hook set to `false`, they exit at once with no output.
 
 - `session_summary`: at session start, adds a few lines naming the checklists, the latest run's outcome and pass count, and that `/stuntdouble run <checklist>` is there. Read-only.
-- `suggest_after_edit`: after an Edit, Write or MultiEdit to a file matching `ui_globs`, adds a note to offer the checklists whose `checklists_for` globs match (else every checklist), once per checklist per session (state in `.stuntdouble/.live/hooks-state.json`). It never starts a run: offer it, and run only if the person agrees.
+- `suggest_after_edit`: after an Edit, Write or MultiEdit to a file matching `ui_globs`, adds a note to offer the checklists whose `checklists_for` globs match (else every checklist), once per checklist per session (markers in `.stuntdouble/.live/hooks/`). An edit no `checklists_for` entry matches offers the rest once per session. Edits made inside a subagent are skipped. It never starts a run: offer it, and run only if the person agrees.
 
-Globs are relative to the project root and take `**`, `*`, `?` and `{a,b}`; `*.tsx` matches only the top level, so write `**/*.tsx`. To switch a hook off, set it to `false`; to switch both off, delete `.stuntdouble/hooks.json`.
+Globs are relative to the project root and take `**`, `*`, `?` and `{a,b}`; `*.tsx` matches only the top level, so write `**/*.tsx`. To switch a hook off for the project, set it to `false`; to switch both off, delete `.stuntdouble/hooks.json`. The file is committed, so for one person only, set `STUNTDOUBLE_HOOKS=off` in their shell or in the `env` of `.claude/settings.local.json`.
 
 ## cloud <checklist>
 
