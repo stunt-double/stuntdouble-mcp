@@ -34,7 +34,7 @@ CI runs the same JSON validation, Cursor plugin layout check and Prettier check 
 
 `.openai-plugin/plugin.json` is the source for the ChatGPT and Codex plugin. Run `node scripts/build-openai-plugin.mjs` to validate it and build `dist/stuntdouble-openai-plugin.zip` for the submission portal (`dist/` is ignored). The script fails on anything OpenAI would reject (field lengths, URLs, categories, starter prompts, brand colour contrast, image sizes, skill front matter, the five positive and three negative test cases) and warns about material only a person can supply: screenshots of the cards and the demo video URL.
 
-The test cases run against a dedicated review account and its seeded workspace (a Demo Shop project with a Checkout checklist that has a finished run, and stakeholder feedback). Reviewers sign in at `https://app.stuntdouble.io/login/review`, the password sign-in the main repository keeps for review accounts only. Credentials go into the portal, never into this repository.
+The test cases run against a dedicated review account and its seeded workspace (a Demo App project with a Sign-up checklist that has two finished runs, the newer one failing a check, and stakeholder feedback; the full seed list is in the main repository's reviewer docs). Reviewers sign in at `https://app.stuntdouble.io/login/review`, the password sign-in the main repository keeps for review accounts only. Credentials go into the portal, never into this repository.
 
 After publication OpenAI rescans the live server for tool changes, so a new tool or schema change needs no new package. A new package version is only for listing, skill or test case changes.
 

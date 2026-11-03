@@ -5,7 +5,7 @@
     "email": "support@stuntdouble.io"
   },
   "metadata": {
-    "description": "The Stunt Double plugin for Claude Code: free local checklist runs on your own Claude plan, the hosted MCP server, and skills and agents that put actors through your product and bring back the evidence."
+    "description": "The Stunt Double plugin for Claude Code: local checklist runs with no account, on your own Claude plan, the hosted MCP server, and skills and agents that put actors through your product and bring back the evidence."
   },
   "plugins": [
     {
