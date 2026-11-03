@@ -11,7 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Added
 
 - The local suite, in the Claude Code plugin: run checklists against localhost, staging or production in a local Chrome, free and with no account. The person's own Claude Code session is the actor and local runs count against their Claude plan; Stunt Double makes no model calls. Runs, checklists and actors are files in the project's `.stuntdouble/` folder, with a local viewer.
-- `.mcp.json`: a `local` stdio server, `npx -y stuntdouble@0.1.0 mcp`, beside the hosted server. It runs the published `stuntdouble` npm package from StuntKit, pinned to an exact version per plugin release, with `STUNTDOUBLE_PROJECT_DIR` set to the project.
+- `.mcp.json`: a `local` stdio server, `npx -y stuntdouble@0.1.1 mcp`, beside the hosted server. It runs the published `stuntdouble` npm package from StuntKit, pinned to an exact version per plugin release, with `STUNTDOUBLE_PROJECT_DIR` set to the project.
 - `stuntdouble` skill: `/stuntdouble setup`, `run <checklist> [resume]`, `open`, `cloud <checklist>` and `doctor`. `cloud` pushes the same actor and checklist to a workspace, writes the cloud ids back so a retry updates rather than duplicates, runs it and pulls the run back beside local ones.
 - `stuntdouble-actor` agent: the subagent that carries out a local run, limited to the local browser and run tools, returning the outcome, score and failed checks.
 - README: a Local suite section, with the commands, the files and how local compares with the cloud.
