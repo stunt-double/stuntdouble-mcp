@@ -12,7 +12,7 @@ The `local` server ships only in the Claude Code plugin. Where its tools are mis
 
 ## The files
 
-Everything lives in `.stuntdouble/` at the project root, committed except `.live/`. Actors and checklists are the hosted `create_actor` and `create_checklist` inputs with slugs in place of ids, so `cloud` pushes them unchanged. They are strict: `start_run` names each field to fix.
+Everything lives in `.stuntdouble/` at the project root, committed except `.live/`. Actors and checklists are the hosted `create_actor` and `create_checklist` inputs with slugs in place of ids, so `cloud` pushes them unchanged, except `browser_config`, which the hosted inputs do not take yet. They are strict and carry the hosted limits: `start_run` names each field to fix.
 
 ```jsonc
 // stuntdouble.json
@@ -50,7 +50,7 @@ A local run swaps the checklist URL's origin for `local_base_url` when it is set
 3. Dispatch the `stuntdouble:stuntdouble-actor` agent with the full `start_run` output as its prompt. Never drive the browser from this thread: page text and screenshots stay in the actor's context.
 4. Report its result: outcome, score, each failed check with its evidence, and the viewer link. Say the verdicts are self-judged; a cloud run adds an independent judge. Offer to fix what failed and run again.
 
-If the actor ends without `finish_run`, dispatch it again with the same brief and a note that recorded verdicts stand. If the session closed mid-run, `/stuntdouble run <checklist> resume` judges only the checks left.
+If the actor ends without `finish_run` (or was interrupted), `start_run(checklist, resume: true)` carries on with the run still open, and its output is the brief for a fresh dispatch: recorded verdicts stand. If the session closed mid-run, `/stuntdouble run <checklist> resume` judges only the checks left.
 
 ## open
 
@@ -68,7 +68,8 @@ Run `npx -y stuntdouble@0.1.0 doctor` with Bash and relay it. If the local tools
 4. **Push the definitions,** reusing cloud ids already in the files, else `search(workspace_id, query)` first:
    - Project: `create_project(workspace_id, name, url)`.
    - Actor: `create_actor(workspace_id, name, description)`, `update_actor(actor_id, system_prompt)`, then `add_actor_knowledge(actor_id, title, content, kind)` per entry. With an `actor_id`, `update_actor` instead and add only the entries `list_actor_knowledge` lacks by title.
-   - Checklist: `create_checklist(workspace_id, project_id, name, actor_id, instructions, url, checks, pass_threshold, score_type)`, sending the checks in file order without `key` or `cloud`. With a `checklist_id`, `update_checklist(checklist_id, ..., checks)` with each check's `id` from `check_ids`.
+   - Checklist: `create_checklist(workspace_id, project_id, name, actor_id, instructions, url, checks, pass_threshold, score_type)`, plus each of `score_unit`, `score_bands`, `run_mode` and `record_session` the file sets, sending the checks in file order without `key` or `cloud`. With a `checklist_id`, `update_checklist(checklist_id, ...)` with the same fields and each check's `id` from `check_ids`.
+   - If the checklist sets `browser_config`, say so before the run: no hosted input or dashboard setting takes it yet, so the cloud run uses the default 1280 x 720 desktop browser, and a check about a phone layout, touch or a locale can pass there and fail locally.
 5. **Write ids back after every call:** `project_id`, `actor_id` and `checklist_id` into their files, then `get_checklist(checklist_id)` to fill `check_ids` as `{key: id}` in order. A retry or a teammate then updates rather than duplicating.
 6. **Run:** `run_checklist(checklist_id)`, then poll `get_checklist_run(run_id)` every 30 to 60 seconds until `status` is `completed` or `failed`. Write `runs/<YYYYMMDD-HHMMSS>-<checklist>-cloud/run.json` in the local run's shape, so the viewer lists it beside local runs: `format: "stuntdouble.run/1"`, `id` (the folder name), `runner: {kind: "cloud", run_id, judged: true, url}` with `url` the dashboard link `https://app.stuntdouble.io/w/<workspace_slug>/checklists/<checklist_id>/runs/<run_id>`, `status`, the checklist `url`, `started_at`, `finished_at` (its `completed_at`), the `checklist` and `actor` slugs, `checklist_snapshot` (the checklist file without `cloud`), `results` as `{check: <key from check_ids>, status, evidence, at: <evaluated_at>}`, `score: {score, unit: <score_unit>, outcome, pass_threshold: <the file's, else 100>, grade: null}` (or `null` with no outcome), `summary` and `cloud: null`. Report as for a local run, with the dashboard link.
 7. **Relay refusals:** a plan limit (the Free plan's 2 actors or 60 compute minutes) comes back as text. Relay it as written with `https://app.stuntdouble.io/w/<workspace_slug>/settings/billing`, never work around it, and offer the local run.
