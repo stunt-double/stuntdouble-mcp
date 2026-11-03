@@ -86,7 +86,7 @@ The Free plan includes 60 compute minutes a month and 2 actors at no cost; paid 
 | Team     | Git, with the cloud ids in the files                                | Seats, shared reports, Slack, Linear and GitHub PR comments                              |
 | Research | Checklists                                                          | Interviews, design reviews, feedback triage, synthesis and Index scoring                 |
 
-The local server runs only in Claude Code for now: the Cursor `mcp.json` and the ChatGPT and Codex package carry the hosted server alone.
+The Cursor `mcp.json` and the OpenAI web/mobile package carry the hosted server alone. A separate OpenAI desktop package bundles the local command suite and its npm runtime; it is a preparation draft pending desktop review and local MCP submission eligibility.
 
 ## Connect your AI client
 
@@ -146,7 +146,11 @@ https://app.stuntdouble.io/api/mcp
 
 ### ChatGPT and Codex
 
-The repository also carries an OpenAI plugin manifest (`.openai-plugin/plugin.json`, in the [Agent Plugins](https://agent-plugins.org) format) with the directory listing, review test cases and release notes. `node scripts/build-openai-plugin.mjs` checks it against OpenAI's limits and writes `dist/stuntdouble-openai-plugin.zip` (in the Codex layout the portal accepts: the manifest as `.codex-plugin/plugin.json`, a `.mcp.json` for the hosted server, the skills and the logos), which is what goes into the [plugin submission portal](https://developers.openai.com/plugins/deploy/submission).
+Stunt Double Cloud is the hosted web/mobile package. Its OpenAI plugin manifest (`.openai-plugin/plugin.json`, in the [Agent Plugins](https://agent-plugins.org) format) carries the directory listing, review test cases and release notes. `node scripts/build-openai-plugin.mjs` checks it against OpenAI's limits and writes `dist/stuntdouble-cloud-plugin.zip` (in the Codex layout the portal accepts: the manifest as `.codex-plugin/plugin.json`, a `.mcp.json` for the hosted server, the skills and the logos), which is what goes into the [plugin submission portal](https://developers.openai.com/plugins/deploy/submission). Its existing `stuntdouble` package identity is preserved.
+
+The local commands are packaged separately for desktop: `/stuntdouble setup`, `run <checklist> [resume]`, `open`, `doctor` and, with explicit upload consent, `cloud <checklist>`. Install the locked build dependencies with `pnpm --dir .openai-plugin/desktop/runtime install --prod --ignore-scripts --frozen-lockfile`, then run `node scripts/build-openai-desktop-plugin.ts`. This writes `dist/stuntdouble-studio-plugin.zip`, a distinct `stuntdouble-studio` package (Stunt Double Studio) with the `stuntdouble@0.1.2` runtime and production dependencies bundled. It needs Node 22.18 or later, Chrome and a selected local project directory. The instructions use the current host's tools rather than assuming a named Claude Code agent or permissions file.
+
+The desktop archive is not a replacement for the hosted web/mobile archive. It remains a preparation draft: see [.openai-plugin/desktop/DESKTOP-REVIEW.md](./.openai-plugin/desktop/DESKTOP-REVIEW.md) for the prepared cases, local fixtures and outstanding runtime safety annotations, demo, clean-install and review checks. OpenAI requires [local MCP submission eligibility](https://developers.openai.com/plugins/deploy/desktop-only) for the desktop package. Neither build uploads or submits a plugin.
 
 Until it is published in the directory, connect it in ChatGPT developer mode (**Settings → Apps → Advanced**) as a custom connector with:
 

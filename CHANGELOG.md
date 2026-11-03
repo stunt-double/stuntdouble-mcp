@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- Separate Stunt Double Studio desktop preparation package for `/stuntdouble setup`, `run`, `open`, `cloud` and `doctor`, with host-neutral instructions, the pinned npm runtime and dependencies, per-server review cases and a disposable local fixture. The hosted web/mobile package is named Stunt Double Cloud and keeps its existing package identity. Desktop review, runtime safety annotations and local MCP submission eligibility remain outstanding.
+
 ### Changed
 
 - README: a benefit-led opening for product engineers, designers and QA leads, then "Start free in two minutes" (the local suite in Claude Code, on the person's own plan, no account) and "When you want more" (the cloud, and `/stuntdouble cloud` moving a checklist over unchanged) ahead of the client install matrix. Authentication, the Index section and the privacy policy now say the Index read tools work on the hosted server without signing in, and the contents list matches the headings.

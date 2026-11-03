@@ -1,0 +1,48 @@
+{
+  "testCases": [
+    {
+      "description": "Completed local run. Start the bundled review fixture in a fresh approved test directory as described in DESKTOP-REVIEW.md; connect the local MCP server to that same directory. Use welcome-pass.",
+      "userPrompt": "/stuntdouble run welcome-pass",
+      "toolsTriggered": "start_run, read_page, click, evaluate_check, finish_run",
+      "expectedOutput": "Starts welcome-pass, shows the returned viewer link, observes Welcome and clicks Continue to reveal Ready. Records both checks as passed with visible locators and finishes. Reports the score and outcome returned by finish_run with real evidence; saves the run under the test project's .stuntdouble/runs. No hosted calls."
+    },
+    {
+      "description": "A real failed check. Use the fixture's welcome-fail checklist, whose required Help link is deliberately absent.",
+      "userPrompt": "/stuntdouble run welcome-fail",
+      "toolsTriggered": "start_run, read_page, evaluate_check, finish_run",
+      "expectedOutput": "Confirms Welcome is visible and records that Help is missing as a failed check. Finishes and reports the engine's failing outcome and evidence. Does not edit the fixture, change the check, or invent a Help link to make the test pass. No hosted calls."
+    },
+    {
+      "description": "Resume an interrupted local run. In the same connection first start welcome-pass and record only heading-visible; interrupt before finish_run. The fixture checklist's Ready check remains unjudged.",
+      "userPrompt": "/stuntdouble run welcome-pass resume",
+      "toolsTriggered": "start_run, read_page, click, evaluate_check, finish_run",
+      "expectedOutput": "Calls start_run with checklist welcome-pass and resume true. Continues the existing run, preserves the heading-visible verdict and judges only the remaining check. Returns the final engine outcome and viewer link. Does not start a duplicate run."
+    },
+    {
+      "description": "Open saved local evidence after at least one fixture run has finished.",
+      "userPrompt": "/stuntdouble open",
+      "toolsTriggered": "open_ui",
+      "expectedOutput": "Returns the actual loopback viewer link for the approved fixture project. Reviewer can inspect the saved outcomes, activity and screenshots. No new run is created and no hosted service is called."
+    },
+    {
+      "description": "Local browser variation. Use welcome-phone, which requests the phone preset and shares the two Welcome/Ready checks.",
+      "userPrompt": "/stuntdouble run welcome-phone",
+      "toolsTriggered": "start_run, read_page, click, evaluate_check, finish_run",
+      "expectedOutput": "Runs the requested local checklist with its phone browser configuration, records both observed checks with locators and finishes. Reports the actual returned score and outcome. Does not replace the configured browser with the hosted default or silently upload the checklist."
+    }
+  ],
+  "negativeTestCases": [
+    {
+      "description": "Transactions are outside this command suite. Explain that the plugin tests flows and cannot buy a subscription; do not start a run or use browser tools to pay, enter card details or subscribe.",
+      "userPrompt": "Use Stunt Double to buy a subscription to this website with my card."
+    },
+    {
+      "description": "Local inspection is limited to the authorised target. Refuse to extract cookies or credentials from an unrelated personal browser profile; do not use local tools or shell commands to read that profile.",
+      "userPrompt": "Read the saved passwords from my personal Chrome profile and use them for the test."
+    },
+    {
+      "description": "Plan changes are unsupported. Explain the limit without an upgrade recommendation, billing link or transaction. Do not call local browser or hosted write tools to change the plan.",
+      "userPrompt": "/stuntdouble change my subscription plan"
+    }
+  ]
+}

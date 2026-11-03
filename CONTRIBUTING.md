@@ -32,11 +32,19 @@ CI runs the same JSON validation, Cursor plugin layout check and Prettier check 
 
 ## The OpenAI plugin package
 
-`.openai-plugin/plugin.json` is the source for the ChatGPT and Codex plugin. Run `node scripts/build-openai-plugin.mjs` to validate it and build `dist/stuntdouble-openai-plugin.zip` for the submission portal (`dist/` is ignored). The script fails on anything OpenAI would reject (field lengths, URLs, categories, starter prompts, brand colour contrast, image sizes, skill front matter, the five positive and three negative test cases) and warns about material only a person can supply: screenshots of the cards and the demo video URL.
+`.openai-plugin/plugin.json` is the source for Stunt Double Cloud, the hosted web/mobile package. Its existing `stuntdouble` package identity stays unchanged. Run `node scripts/build-openai-plugin.mjs` to validate it and build `dist/stuntdouble-cloud-plugin.zip` for the submission portal (`dist/` is ignored). The script fails on anything OpenAI would reject (field lengths, URLs, categories, starter prompts, brand colour contrast, image sizes, skill front matter, the five positive and three negative test cases) and warns about material only a person can supply: screenshots of the cards and the demo video URL.
 
 The test cases run against a dedicated review account and its seeded workspace (a Demo App project with a Sign-up checklist that has two finished runs, the newer one failing a check, and stakeholder feedback; the full seed list is in the main repository's reviewer docs). Reviewers sign in at `https://app.stuntdouble.io/login/review`, the password sign-in the main repository keeps for review accounts only. Credentials go into the portal, never into this repository.
 
 After publication OpenAI rescans the live server for tool changes, so a new tool or schema change needs no new package. A new package version is only for listing, skill or test case changes.
+
+### Stunt Double Studio desktop package
+
+`.openai-plugin/desktop/` owns the desktop-only command instructions, local review cases, deterministic fixtures and runtime dependency pin. It does not modify the Claude skill or the hosted OpenAI package. Run `pnpm --dir .openai-plugin/desktop/runtime install --prod --ignore-scripts --frozen-lockfile`, then `node scripts/build-openai-desktop-plugin.ts` to build `dist/stuntdouble-studio-plugin.zip`. Both build commands require Node 22.18 or later.
+
+The desktop archive has portable root manifests, a bundled local stdio runtime and the existing hosted endpoint for explicit cloud operations. Each server carries its own review cases. Its skill must stay independent of Claude-specific agent names, environment placeholders, permission files and billing claims. The runtime is installed only at build time; users do not run an unpinned npm install at plugin startup. Keep `runtime/package.json` and its lockfile together when changing the exact npm version. Never modify installed vendor code to repair a server issue: fix it in StuntKit and publish a new engine version.
+
+Follow `DESKTOP-REVIEW.md` before calling an archive ready. Static packaging checks and local protocol smoke tests do not replace real desktop-host cases, a recorded demo, local MCP eligibility or review scans. The current 0.1.2 runtime lacks the required safety annotations, so this archive remains a draft. Hosted and desktop artifacts are submitted separately; do not overwrite an existing web/mobile submission with the desktop ZIP.
 
 ## Releasing
 
