@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Changed
+
+- The `local` server is pinned to `stuntdouble@0.1.2`: the Continuity viewer, and a pass tally ("3 of 4 passed") for checklists without weights.
+
 ## [1.16.0] - 2026-11-03
 
 ### Added
