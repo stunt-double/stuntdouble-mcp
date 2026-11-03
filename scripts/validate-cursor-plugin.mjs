@@ -78,6 +78,11 @@ if (plugin) {
   if (plugin.logo && !existsSync(resolve(root, plugin.logo))) {
     fail(`.cursor-plugin/plugin.json logo not found: ${plugin.logo}`);
   }
+  // hooks/hooks.json is Claude Code's (Stunt Double Studio). Cursor would
+  // discover it by default, so the manifest replaces it with an empty config.
+  if (JSON.stringify(plugin.hooks ?? null) !== JSON.stringify({ version: 1, hooks: {} })) {
+    fail('.cursor-plugin/plugin.json must set "hooks": {"version": 1, "hooks": {}} so Cursor skips the Claude Code hooks');
+  }
   ok('.cursor-plugin/plugin.json');
 }
 

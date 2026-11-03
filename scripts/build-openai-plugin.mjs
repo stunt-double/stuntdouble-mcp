@@ -11,8 +11,8 @@
 // the assets the manifest names. The submission portal rejects the Agent
 // Plugins layout's root plugin.json ("Plugin package must contain
 // .codex-plugin/plugin.json ..."), whatever the docs say. Nothing else goes in:
-// no agents, rules, other hosts' manifests or anything that could carry a
-// credential.
+// no agents, rules, Claude Code hooks, other hosts' manifests or anything that
+// could carry a credential.
 //
 // Limits are the ones in https://developers.openai.com/plugins/deploy/submission.
 // Missing review material that only a person can supply (the demo video,

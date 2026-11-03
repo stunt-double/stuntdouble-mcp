@@ -13,6 +13,7 @@ The one runnable piece is the Claude plugin's `local` stdio server in `.mcp.json
 | `.cursor-plugin/plugin.json`, `marketplace.json`, `mcp.json`  | Cursor plugin and team marketplace listing                                                |
 | `README.md`                                                   | Install steps, the Available Tools tables, prompts, resources, scopes, example prompts    |
 | `skills/`, `agents/`, `rules/`                                | Shipped with the plugins; guidance that names tools must match what the server registers  |
+| `hooks/`                                                      | Claude Code plugin hooks for Stunt Double Studio, dependency-free Node with `node --test` |
 | `CHANGELOG.md`                                                | Keep a Changelog, one entry per released version                                          |
 | `.github/workflows/ci.yml`, `publish.yml`                     | JSON and Prettier checks; registry publish and GitHub release                             |
 
@@ -39,6 +40,7 @@ Most updates arrive automatically: when those files change on the monorepo's `ma
 ```bash
 node scripts/validate-json.mjs
 node scripts/validate-cursor-plugin.mjs
+node --test hooks/*.test.mjs
 npx --yes prettier@3.4.2 --check README.md CONTRIBUTING.md SECURITY.md CHANGELOG.md mcp.json .mcp.json server.json .cursor-plugin/plugin.json .cursor-plugin/marketplace.json .claude-plugin/plugin.json .claude-plugin/marketplace.json
 ```
 

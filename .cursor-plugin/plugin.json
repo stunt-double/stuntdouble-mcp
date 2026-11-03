@@ -23,5 +23,6 @@
   ],
   "category": "Developer Tools",
   "tags": ["ux-testing", "qa", "user-research", "agent-readiness", "mcp"],
-  "logo": "assets/logo.png"
+  "logo": "assets/logo.png",
+  "hooks": { "version": 1, "hooks": {} }
 }

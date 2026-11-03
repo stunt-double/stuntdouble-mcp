@@ -12,7 +12,7 @@ Deploy AI user personas to validate user journeys at scale. Find UX friction bef
 
 - [This repository](#this-repository)
 - [Quick Start](#quick-start): [Claude Code](#claude-code), [Claude Code plugin](#claude-code-plugin), [Skills](#skills-any-agent), [Claude](#claude-web-desktop-mobile), [ChatGPT and Codex](#chatgpt-and-codex), [Codex CLI](#codex-cli), [Gemini CLI](#gemini-cli), [VS Code](#vs-code-github-copilot), [OpenCode](#opencode), [Windsurf](#windsurf), [Other clients](#other-clients), [Cursor](#cursor)
-- [Local suite](#local-suite): [Local or cloud](#local-or-cloud)
+- [Stunt Double Studio](#stunt-double-studio): [Hooks](#hooks), [Local or cloud](#local-or-cloud)
 - [Authentication](#authentication): [What a connection can reach](#what-a-connection-can-reach)
 - [Available Tools](#available-tools): [Account](#account), [Workspaces](#workspaces), [Search](#search), [Projects](#projects), [Guidelines](#guidelines), [Actors](#actors), [Knowledge](#knowledge), [Conversations](#conversations), [Checklists](#checklists), [Workflows](#workflows), [Feedback](#feedback), [GitHub](#github), [Interviews](#interviews), [Prompts](#prompts), [Resources](#resources), [Stunt Double Index](#stunt-double-index)
 - [Example prompts](#example-prompts): [Demo targets](#demo-targets)
@@ -46,7 +46,7 @@ claude mcp add --transport http stuntdouble https://app.stuntdouble.io/api/mcp
 
 ### Claude Code plugin
 
-The repository is also a Claude plugin: it bundles the hosted MCP server and the [local suite](#local-suite)'s server (`.mcp.json`) with the skills in `skills/` and the agents in `agents/`.
+The repository is also a Claude plugin: it bundles the hosted MCP server and the [Stunt Double Studio](#stunt-double-studio) server (`.mcp.json`) with the skills in `skills/`, the agents in `agents/` and the Studio hooks in `hooks/`.
 
 ```bash
 claude plugin marketplace add stunt-double/stuntdouble-mcp
@@ -76,7 +76,7 @@ npx skills add stunt-double/stuntdouble-mcp --skill verify-change     # just one
 | `run-user-interview`    | Plan, configure, and launch a structured user interview with AI participants on Stunt Double, then read back the synthesised report                                                                                                           |
 | `run-ux-validation`     | Validate a user journey by running Stunt Double workflows or checklists and reporting the results                                                                                                                                             |
 | `setup-guardrails`      | Stand up continuous guardrails on Stunt Double                                                                                                                                                                                                |
-| `stuntdouble`           | The `/stuntdouble` commands of the [local suite](#local-suite): run checklists in a local Chrome from Claude Code, and push them to the cloud. Needs the Claude Code plugin                                                                   |
+| `stuntdouble`           | The `/stuntdouble` commands of [Stunt Double Studio](#stunt-double-studio): run checklists in a local Chrome from Claude Code, and push them to the cloud. Needs the Claude Code plugin                                                       |
 | `triage-feedback`       | Review, categorize, and manage Stunt Double feedback submissions across projects                                                                                                                                                              |
 | `verify-change`         | Verify a shipped or previewed code change by running a Stunt Double actor through the affected user flows, and optionally report results on the pull request                                                                                  |
 
@@ -225,23 +225,44 @@ Use only `url` for remote servers (Streamable HTTP is negotiated automatically).
 
 The `server.json` file is the separate [MCP registry](https://modelcontextprotocol.io/registry/about) manifest for `mcp-publisher` and directory listings; Cursor's installer does not use it.
 
-## Local suite
+## Stunt Double Studio
 
 Run checklists against localhost, staging or production from Claude Code, free and with no account. Your own Claude Code session is the actor: the plugin's `local` server drives a local Chrome, keeps each run as files in your project and serves a viewer where you watch a run live or stop it. Local runs count against your Claude plan, or your API key when Claude Code uses one; Stunt Double makes no model calls.
 
 Install the [Claude Code plugin](#claude-code-plugin), then:
 
-| Command                                 | What it does                                                                                     |
-| --------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| `/stuntdouble setup`                    | Checks Node and Chrome, then writes your first actor and checklist to `.stuntdouble/`            |
-| `/stuntdouble run <checklist> [resume]` | Runs the checklist in a local Chrome and reports each failed check with its evidence             |
-| `/stuntdouble open`                     | Opens the viewer: every run with its verdicts, screenshots and activity                          |
-| `/stuntdouble cloud <checklist>`        | Pushes the same actor and checklist to a Stunt Double workspace, runs it there and pulls it back |
-| `/stuntdouble doctor`                   | Checks Node, Chrome, the viewer port and how local runs are billed                               |
+| Command                                 | What it does                                                                                                                                                                                |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/stuntdouble setup`                    | Readies the project: finds the dev server, drafts an actor and checklists from your routes, and adds the CLAUDE.md notes, tool permission and hooks, each change shown before it is written |
+| `/stuntdouble run <checklist> [resume]` | Runs the checklist in a local Chrome and reports each failed check with its evidence                                                                                                        |
+| `/stuntdouble open`                     | Opens the viewer: every run with its verdicts, screenshots and activity                                                                                                                     |
+| `/stuntdouble cloud <checklist>`        | Pushes the same actor and checklist to a Stunt Double workspace, runs it there and pulls it back                                                                                            |
+| `/stuntdouble doctor`                   | Checks Node, Chrome, the viewer port and how local runs are billed                                                                                                                          |
 
-A run is carried out by the `stuntdouble:stuntdouble-actor` subagent, whose only tools are the local browser and run tools, so page text and screenshots stay out of your main conversation. Those tools are `navigate`, `read_page`, `find`, `get_page_text`, `click`, `type`, `form_input`, `key`, `scroll`, `screenshot`, `start_run`, `evaluate_check` and `finish_run`; the server's `open_ui` returns the viewer link. The `local` server is `npx stuntdouble@0.1.2 mcp` ([source](https://github.com/stunt-double/stuntkit/tree/main/packages/local)), pinned to an exact version in each plugin release. Claude Code starts it with each session (`npx` adds about 1.5 seconds), and the browser and viewer start only on the first run. It needs Node 22.18 or later and Google Chrome (or Playwright's Chromium). On native Windows the server does not start yet, since Claude Code needs `cmd /c npx` there: use WSL.
+A run is carried out by the `stuntdouble:stuntdouble-actor` subagent, whose only tools are the local browser and run tools, so page text and screenshots stay out of your main conversation. Those tools are `navigate`, `read_page`, `find`, `get_page_text`, `click`, `type`, `form_input`, `key`, `scroll`, `screenshot`, `start_run`, `evaluate_check` and `finish_run`; the server's `open_ui` returns the viewer link. The `local` server is `npx stuntdouble@0.1.3 mcp` ([source](https://github.com/stunt-double/stuntkit/tree/main/packages/local)), pinned to an exact version in each plugin release. Claude Code starts it with each session (`npx` adds about 1.5 seconds), and the browser and viewer start only on the first run. It needs Node 22.18 or later and Google Chrome (or Playwright's Chromium). On native Windows the server does not start yet, since Claude Code needs `cmd /c npx` there: use WSL.
 
-Everything lives in `.stuntdouble/`: `stuntdouble.json`, `actors/`, `checklists/` and `runs/`, each run with its `run.json`, an `activity.jsonl` of every action and a screenshot per verdict. Actors and checklists are the hosted `create_actor` and `create_checklist` inputs, so `/stuntdouble cloud` pushes them unchanged (except `browser_config`, which the cloud does not take yet, so cloud runs use the default desktop browser) and writes the cloud ids back. Commit the folder (its `.gitignore` leaves out `.live/`) and your team gets the same checklists and run history; `npx stuntdouble view` opens the viewer over it without Claude Code.
+Everything lives in `.stuntdouble/`: `stuntdouble.json`, `hooks.json`, `actors/`, `checklists/` and `runs/`, each run with its `run.json`, an `activity.jsonl` of every action and a screenshot per verdict. Actors and checklists are the hosted `create_actor` and `create_checklist` inputs, so `/stuntdouble cloud` pushes them unchanged (except `browser_config`, which the cloud does not take yet, so cloud runs use the default desktop browser) and writes the cloud ids back. Commit the folder (its `.gitignore` leaves out `.live/`) and your team gets the same checklists and run history; `npx stuntdouble view` opens the viewer over it without Claude Code.
+
+### Hooks
+
+`/stuntdouble setup` also writes `.stuntdouble/hooks.json`, which switches on two Claude Code hooks that ship in the plugin (`hooks/hooks.json`). Without that file they do nothing, in well under 100 ms.
+
+| Hook                 | When                                           | What it adds to the session                                                                                             |
+| -------------------- | ---------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `session_summary`    | Session start                                  | The project's checklists, the latest run's outcome and pass count, and that `/stuntdouble run` is there                 |
+| `suggest_after_edit` | After an Edit, Write or MultiEdit to a UI file | A note to offer the checklists that cover the file before finishing, once per checklist per session. Never starts a run |
+
+```json
+{
+  "format": "stuntdouble.hooks/1",
+  "session_summary": true,
+  "suggest_after_edit": true,
+  "ui_globs": ["app/**/*.{tsx,jsx,css}", "components/**/*.{tsx,jsx}"],
+  "checklists_for": { "checkout": ["app/checkout/**", "components/cart/**"] }
+}
+```
+
+`ui_globs` decides which edits count as UI changes; `checklists_for` maps a checklist to the files it covers, and an edit no entry matches suggests the rest once per session. Edits made inside a subagent are skipped. Globs are relative to the project root and take `**`, `*`, `?` and `{a,b}`. To switch a hook off for the project, set it to `false`; to switch both off, delete the file. The file is committed with the rest of `.stuntdouble/`, so to switch the hooks off for yourself only, set `STUNTDOUBLE_HOOKS=off` in your shell or under `env` in `.claude/settings.local.json`. The hooks are Claude Code only: the Cursor plugin and the ChatGPT and Codex package leave them out.
 
 ### Local or cloud
 
