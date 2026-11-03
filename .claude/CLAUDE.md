@@ -4,6 +4,8 @@
 
 The public face of Stunt Double's hosted MCP server (`https://app.stuntdouble.io/api/mcp`): plugin manifests, docs, rules, skills and agents, plus the MCP Registry entry. It is **metadata and documentation only**. There is no `package.json` and no server code here; the server is `apps/web/lib/mcp` in [stunt-double/stuntdouble](https://github.com/stunt-double/stuntdouble). Never run `pnpm install` or `npm install` here.
 
+The one runnable piece is the Claude plugin's `local` stdio server in `.mcp.json`: it runs the published `stuntdouble` npm package (source: `packages/local` in [stunt-double/stuntkit](https://github.com/stunt-double/stuntkit)) at an exact pin. Each engine release moves the pin in a plugin release: change every `stuntdouble@x.y.z` (`.mcp.json`, `skills/stuntdouble`, `README.md`) together, only once that version is on npm, never to a range or `latest`. The `stuntdouble` skill and `stuntdouble-actor` agent name the tools that package registers, not the hosted server's.
+
 | Path                                                          | What                                                                                      |
 | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
 | `server.json`                                                 | MCP Registry entry, published as `io.stuntdouble/mcp-server` (a `streamable-http` remote) |

@@ -2,7 +2,9 @@
 
 ## What this repository is
 
-`stuntdouble-mcp` is a **metadata and documentation** repository: Cursor plugin manifests (`.cursor-plugin/plugin.json` and `marketplace.json`), root `mcp.json`, MCP registry `server.json`, skills, agents, and rules. There is **no `package.json`** and **no local MCP server** in this tree — the live Streamable HTTP endpoint is implemented in the main [Stunt Double](https://github.com/stunt-double/stuntdouble) application (`https://app.stuntdouble.io/api/mcp`).
+`stuntdouble-mcp` is a **metadata and documentation** repository: Cursor plugin manifests (`.cursor-plugin/plugin.json` and `marketplace.json`), root `mcp.json`, MCP registry `server.json`, skills, agents, and rules. There is **no `package.json`** and **no local MCP server** in this tree: the live Streamable HTTP endpoint is implemented in the main [Stunt Double](https://github.com/stunt-double/stuntdouble) application (`https://app.stuntdouble.io/api/mcp`).
+
+One entry does run code: the Claude plugin's `local` stdio entry in `.mcp.json` runs the published [`stuntdouble`](https://www.npmjs.com/package/stuntdouble) npm package (from `packages/local` in [stunt-double/stuntkit](https://github.com/stunt-double/stuntkit)) at an exact version. Its pin moves with each engine release: once the new version is on npm, change every `stuntdouble@x.y.z` (`.mcp.json`, `skills/stuntdouble/SKILL.md`, `README.md`) in one plugin release. Never pin a range or `latest`, since every plugin user runs it.
 
 Do **not** run `pnpm install` or `npm install` inside this directory expecting a Node app; if this folder sits inside a larger monorepo, package managers may attach to the parent workspace and behave confusingly.
 
