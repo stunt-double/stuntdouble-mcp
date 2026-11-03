@@ -6,13 +6,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.16.0] - 2026-11-03
+
 ### Added
 
+- The local suite, in the Claude Code plugin: run checklists against localhost, staging or production in a local Chrome, free and with no account. The person's own Claude Code session is the actor and local runs count against their Claude plan; Stunt Double makes no model calls. Runs, checklists and actors are files in the project's `.stuntdouble/` folder, with a local viewer.
+- `.mcp.json`: a `local` stdio server, `npx -y stuntdouble@0.1.0 mcp`, beside the hosted server. It runs the published `stuntdouble` npm package from StuntKit, pinned to an exact version per plugin release, with `STUNTDOUBLE_PROJECT_DIR` set to the project.
+- `stuntdouble` skill: `/stuntdouble setup`, `run <checklist> [resume]`, `open`, `cloud <checklist>` and `doctor`. `cloud` pushes the same actor and checklist to a workspace, writes the cloud ids back so a retry updates rather than duplicates, runs it and pulls the run back beside local ones.
+- `stuntdouble-actor` agent: the subagent that carries out a local run, limited to the local browser and run tools, returning the outcome, score and failed checks.
+- README: a Local suite section, with the commands, the files and how local compares with the cloud.
 - Documented `request_index_score` (add a site the Stunt Double Index does not track yet and give it a first score, `mcp:run`) in the README, the `check-agent-readiness` skill and the `stuntdouble-basics` rule.
 - README: the no-account, read-only Index endpoint at `https://app.stuntdouble.io/api/mcp/index`, which serves `search_index_domains`, `get_index_report` and `list_index_sessions`.
 
 ### Changed
 
+- Bumped `.cursor-plugin/plugin.json`, `.claude-plugin/plugin.json`, `.openai-plugin/plugin.json` and `server.json` to 1.16.0.
+- `scripts/build-openai-plugin.mjs` leaves the `stuntdouble` skill out of the ChatGPT and Codex package, which carries only the hosted server. The Cursor `mcp.json` stays hosted only too.
+- `.claude/CLAUDE.md` and `CONTRIBUTING.md`: the `local` server runs a published npm package, and its pin moves with each engine release.
 - The README, the `check-agent-readiness` skill and the `stuntdouble-basics` rule now match the `request_index_rerun` tool description: owner only (the account that claimed the domain or, while it is unclaimed, a work email on it) and once every 10 minutes.
 - README header: `assets/demo.gif` is re-recorded as a new Claude Code session against the Demo workspace (why the Parlour booking checklist failed on 26 October after three passing weeks: the earlier passes invented a phone number and card), `assets/hero.png` shows the same exchange beside the line, and the README gains a contents list.
 - Trimmed the plugin skills, agents and rules to roughly a third of their size, so they cost fewer tokens when loaded: dropped restated "when to use" lists, long example outputs and tips that repeat the steps. Tool names, arguments and non-obvious gotchas are kept.
