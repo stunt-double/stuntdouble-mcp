@@ -1,6 +1,6 @@
 // Builds and checks the OpenAI plugin package (ChatGPT and Codex).
 //
-//   node scripts/build-openai-plugin.mjs           validate, then write dist/stuntdouble-openai-plugin.zip
+//   node scripts/build-openai-plugin.mjs           validate, then write dist/stuntdouble-cloud-plugin.zip
 //   node scripts/build-openai-plugin.mjs --check   validate only (CI)
 //
 // The source manifest is .openai-plugin/plugin.json, in the Agent Plugins
@@ -314,7 +314,7 @@ console.log("ok .openai-plugin/plugin.json");
 if (checkOnly) process.exit(0);
 
 const stage = resolve(root, "dist/openai-plugin");
-const zip = resolve(root, "dist/stuntdouble-openai-plugin.zip");
+const zip = resolve(root, "dist/stuntdouble-cloud-plugin.zip");
 rmSync(stage, { recursive: true, force: true });
 rmSync(zip, { force: true });
 mkdirSync(stage, { recursive: true });
@@ -339,8 +339,8 @@ writeFileSync(
   resolve(stage, ".mcp.json"),
   `${JSON.stringify({ mcpServers: { stuntdouble: { url: MCP_URL } } }, null, 2)}\n`,
 );
-// The stuntdouble skill drives the Claude Code plugin's local server, which
-// this package does not carry.
+// The stuntdouble skill drives a local server, which the Cloud package does
+// not carry. Studio has its own host-neutral command skill and runtime.
 cpSync(resolve(root, "skills"), resolve(stage, "skills"), {
   recursive: true,
   filter: (src) => src !== resolve(root, "skills/stuntdouble"),

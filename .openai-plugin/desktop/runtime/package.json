@@ -1,0 +1,9 @@
+{
+  "name": "stuntdouble-studio-runtime",
+  "private": true,
+  "version": "1.0.0",
+  "packageManager": "pnpm@11.21.0",
+  "dependencies": {
+    "stuntdouble": "0.1.2"
+  }
+}
