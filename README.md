@@ -45,24 +45,24 @@ claude plugin install stuntdouble@stuntdouble
 Then, in Claude Code:
 
 1. `/stuntdouble setup` checks Node and Chrome, asks what to test, who the user is and what must be true, then writes your first actor and checklist.
-2. `/stuntdouble run <checklist>` runs the checklist in a local Chrome and reports each failed check with its evidence.
+2. `/stuntdouble run <checklist>` runs the checklist in a local Chrome and reports the pass tally, score when checks are weighted, and each failed check with its evidence.
 3. `/stuntdouble open` opens the viewer: every run with its verdicts, screenshots and activity.
 
-Local runs count against your own Claude plan (or your API key, when `ANTHROPIC_API_KEY` is set). The local server makes no model calls of its own, starts no agent, never reads your Claude credentials and sends nothing to Stunt Double: your actors, checklists and runs stay in your project until you run `/stuntdouble cloud`. The plugin's hosted connector also starts with each session, and reaches a workspace only once you sign in.
+Local runs count against your own Claude plan, or your API key when Claude Code uses one. The local server makes no model calls of its own, starts no agent, never reads your Claude credentials and sends nothing to Stunt Double: your actors, checklists and runs stay in your project until you run `/stuntdouble cloud`. The plugin's hosted connector also starts with each session, and reaches a workspace only once you sign in.
 
 ### Local commands
 
-| Command                                 | What it does                                                                                     |
-| --------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| `/stuntdouble setup`                    | Checks Node and Chrome, then writes your first actor and checklist to `.stuntdouble/`            |
-| `/stuntdouble run <checklist> [resume]` | Runs the checklist in a local Chrome and reports each failed check with its evidence             |
-| `/stuntdouble open`                     | Opens the viewer: every run with its verdicts, screenshots and activity                          |
-| `/stuntdouble cloud <checklist>`        | Pushes the same actor and checklist to a Stunt Double workspace, runs it there and pulls it back |
-| `/stuntdouble doctor`                   | Checks Node, Chrome, the viewer port and how local runs are billed                               |
+| Command                                 | What it does                                                                                         |
+| --------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `/stuntdouble setup`                    | Checks Node and Chrome, then writes your first actor and checklist to `.stuntdouble/`                |
+| `/stuntdouble run <checklist> [resume]` | Runs the checklist in a local Chrome and reports the tally, weighted score and failed-check evidence |
+| `/stuntdouble open`                     | Opens the viewer: every run with its verdicts, screenshots and activity                              |
+| `/stuntdouble cloud <checklist>`        | Pushes the same actor and checklist to a Stunt Double workspace, runs it there and pulls it back     |
+| `/stuntdouble doctor`                   | Checks Node, Chrome, the viewer port and how local runs are billed                                   |
 
 ### How a local run works
 
-A run is carried out by the `stuntdouble:stuntdouble-actor` subagent, whose only tools are the local browser and run tools, so page text and screenshots stay out of your main conversation. Those tools are `navigate`, `read_page`, `find`, `get_page_text`, `click`, `type`, `form_input`, `key`, `scroll`, `screenshot`, `start_run`, `evaluate_check` and `finish_run`; the server's `open_ui` returns the viewer link. A pass must cite text or a selector that is on the page, and the run is scored with the same code as the cloud. The `local` server is `npx stuntdouble@0.1.1 mcp` ([source](https://github.com/stunt-double/stuntkit/tree/main/packages/local)), pinned to an exact version in each plugin release. Claude Code starts it with each session, and the browser and viewer start only on the first run. The server needs Node 22.18 or later and Google Chrome (or Playwright's Chromium).
+A run is carried out by the `stuntdouble:stuntdouble-actor` subagent, whose only tools are the local browser and run tools, so page text and screenshots stay out of your main conversation. Those tools are `navigate`, `read_page`, `find`, `get_page_text`, `click`, `type`, `form_input`, `key`, `scroll`, `screenshot`, `start_run`, `evaluate_check` and `finish_run`; the server's `open_ui` returns the viewer link. A pass must cite text or a selector that is on the page, and the run is scored with the same code as the cloud. The `local` server is `npx stuntdouble@0.1.2 mcp` ([source](https://github.com/stunt-double/stuntkit/tree/main/packages/local)), pinned to an exact version in each plugin release. Claude Code starts it with each session (`npx` adds about 1.5 seconds), and the browser and viewer start only on the first run. The server needs Node 22.18 or later and Google Chrome (or Playwright's Chromium); on native Windows it needs WSL.
 
 Everything lives in `.stuntdouble/`: `stuntdouble.json`, `actors/`, `checklists/` and `runs/`, each run with its `run.json`, an `activity.jsonl` of every action and a screenshot per verdict. Commit the folder (its `.gitignore` leaves out `.live/`) and your team gets the same checklists and run history; `npx stuntdouble view` opens the viewer over it without Claude Code.
 
