@@ -3,6 +3,13 @@
     "stuntdouble": {
       "type": "http",
       "url": "https://app.stuntdouble.io/api/mcp"
+    },
+    "local": {
+      "command": "npx",
+      "args": ["-y", "stuntdouble@0.1.0", "mcp"],
+      "env": {
+        "STUNTDOUBLE_PROJECT_DIR": "${CLAUDE_PROJECT_DIR}"
+      }
     }
   }
 }

@@ -339,7 +339,12 @@ writeFileSync(
   resolve(stage, ".mcp.json"),
   `${JSON.stringify({ mcpServers: { stuntdouble: { url: MCP_URL } } }, null, 2)}\n`,
 );
-cpSync(resolve(root, "skills"), resolve(stage, "skills"), { recursive: true });
+// The stuntdouble skill drives the Claude Code plugin's local server, which
+// this package does not carry.
+cpSync(resolve(root, "skills"), resolve(stage, "skills"), {
+  recursive: true,
+  filter: (src) => src !== resolve(root, "skills/stuntdouble"),
+});
 for (const path of new Set(assets)) {
   const dest = resolve(stage, path);
   mkdirSync(resolve(dest, ".."), { recursive: true });
