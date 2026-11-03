@@ -5,13 +5,13 @@
     "email": "support@stuntdouble.io"
   },
   "metadata": {
-    "description": "The Stunt Double Cursor plugin: the hosted MCP server plus skills, rules and agents for running AI user personas through real products."
+    "description": "The Stunt Double Cursor plugin: the hosted MCP server plus skills, rules and agents that put actors through your product and bring back the evidence."
   },
   "plugins": [
     {
       "name": "stuntdouble",
       "source": "./",
-      "description": "Deploy AI user personas to validate user journeys at scale. Find UX friction before real users do."
+      "description": "Find where people get stuck, before they do. Actors drive a real browser through your product and bring back the evidence: the screenshot, the step and what the actor said."
     }
   ]
 }

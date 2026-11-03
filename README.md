@@ -2,17 +2,23 @@
   <a href="https://stuntdouble.io"><img src="./assets/hero.png" alt="Stunt Double MCP server. Know where your users will get stuck, before they do. Beside it, Claude Code asks why the Parlour booking checklist failed on Monday and Stunt Double reports that nothing on the site changed: the earlier passes invented a phone number and card, and this time the agent followed its instructions and stopped at the Mobile field." width="100%"></a>
 </p>
 
-# Stunt Double MCP Server
+# Stunt Double
 
-Deploy AI user personas to validate user journeys at scale. Find UX friction before real users do.
+**Find where people get stuck in your product, before they do.**
 
-[Stunt Double](https://stuntdouble.io) deploys AI agents with realistic user personas to validate user journeys at scale. Create actors, run automated workflows and checklists against any web app, and surface friction points before real users encounter them. Integrates with Claude, Linear, GitHub, and Slack.
+Ask from Claude Code, Claude, ChatGPT, Cursor or Codex, and an actor (an AI user with a background, a goal and a device) drives a real browser through your product, prototype or preview. Every result comes back with its evidence: the screenshot, the step and what the actor said.
+
+Stunt Double is built for product engineers, designers and QA leads who want a flow tried before the people they built it for try it.
+
+<p align="center">
+  <img src="./assets/demo.gif" alt="A Claude Code session asking why the Parlour booking checklist failed on Monday. Claude calls Stunt Double, compares the failing run with the two passing runs before it and explains that the agent stopped at the required Mobile field, and that the earlier passes only got through by inventing a phone number and card." width="100%">
+</p>
 
 ## Contents
 
-- [This repository](#this-repository)
-- [Quick Start](#quick-start): [Claude Code](#claude-code), [Claude Code plugin](#claude-code-plugin), [Skills](#skills-any-agent), [Claude](#claude-web-desktop-mobile), [ChatGPT and Codex](#chatgpt-and-codex), [Codex CLI](#codex-cli), [Gemini CLI](#gemini-cli), [VS Code](#vs-code-github-copilot), [OpenCode](#opencode), [Windsurf](#windsurf), [Other clients](#other-clients), [Cursor](#cursor)
-- [Local suite](#local-suite): [Local or cloud](#local-or-cloud)
+- [Start free in two minutes](#start-free-in-two-minutes): [Local commands](#local-commands), [How a local run works](#how-a-local-run-works)
+- [When you want more](#when-you-want-more): [Local or cloud](#local-or-cloud)
+- [Connect your AI client](#connect-your-ai-client): [Claude Code plugin](#claude-code-plugin), [Claude Code](#claude-code), [Skills](#skills-any-agent), [Claude](#claude-web-desktop-mobile), [ChatGPT and Codex](#chatgpt-and-codex), [Codex CLI](#codex-cli), [Gemini CLI](#gemini-cli), [VS Code](#vs-code-github-copilot), [OpenCode](#opencode), [Windsurf](#windsurf), [Other clients](#other-clients), [Cursor](#cursor)
 - [Authentication](#authentication): [What a connection can reach](#what-a-connection-can-reach)
 - [Available Tools](#available-tools): [Account](#account), [Workspaces](#workspaces), [Search](#search), [Projects](#projects), [Guidelines](#guidelines), [Actors](#actors), [Knowledge](#knowledge), [Conversations](#conversations), [Checklists](#checklists), [Workflows](#workflows), [Feedback](#feedback), [GitHub](#github), [Interviews](#interviews), [Prompts](#prompts), [Resources](#resources), [Stunt Double Index](#stunt-double-index)
 - [Example prompts](#example-prompts): [Demo targets](#demo-targets)
@@ -21,41 +27,93 @@ Deploy AI user personas to validate user journeys at scale. Find UX friction bef
 - [Transport](#transport)
 - [MCP Registry](#mcp-registry)
 - [Links](#links)
+- [This repository](#this-repository)
 - [Verifying changes](#verifying-changes)
 - [License](#license)
 
-<p align="center">
-  <img src="./assets/demo.gif" alt="A Claude Code session asking why the Parlour booking checklist failed on Monday. Claude calls Stunt Double, compares the failing run with the two passing runs before it and explains that the agent stopped at the required Mobile field, and that the earlier passes only got through by inventing a phone number and card." width="100%">
-</p>
+## Start free in two minutes
 
-## This repository
-
-This repo holds **plugin and MCP configuration** (`.claude-plugin/plugin.json` and `.mcp.json` for Claude, `.cursor-plugin/plugin.json`, `marketplace.json` and root `mcp.json` for Cursor, `server.json` for the MCP registry), plus skills, agents, and Cursor rules. There is **no `package.json`** and **no server code** here: the MCP endpoint is hosted at `https://app.stuntdouble.io/api/mcp` from the main Stunt Double codebase, and the Claude plugin's `local` server is the published [`stuntdouble`](https://www.npmjs.com/package/stuntdouble) npm package from [StuntKit](https://github.com/stunt-double/stuntkit). See [CONTRIBUTING.md](./CONTRIBUTING.md) for how to validate edits and avoid confusing this folder with a Node package.
-
-## Quick Start
-
-### Claude Code
-
-```bash
-claude mcp add --transport http stuntdouble https://app.stuntdouble.io/api/mcp
-```
-
-### Claude Code plugin
-
-The repository is also a Claude plugin: it bundles the hosted MCP server and the [local suite](#local-suite)'s server (`.mcp.json`) with the skills in `skills/` and the agents in `agents/`.
+Run your first checklist from Claude Code with no Stunt Double account. Your own Claude Code session is the actor: the plugin's local server drives a Chrome on your machine, keeps each run as files in your project and serves a viewer where you watch a run live or stop it. Point it at localhost, staging or production.
 
 ```bash
 claude plugin marketplace add stunt-double/stuntdouble-mcp
 claude plugin install stuntdouble@stuntdouble
 ```
 
+Then, in Claude Code:
+
+1. `/stuntdouble setup` checks Node and Chrome, asks what to test, who the user is and what must be true, then writes your first actor and checklist.
+2. `/stuntdouble run <checklist>` runs the checklist in a local Chrome and reports each failed check with its evidence.
+3. `/stuntdouble open` opens the viewer: every run with its verdicts, screenshots and activity.
+
+Local runs count against your own Claude plan (or your API key, when `ANTHROPIC_API_KEY` is set). The local server makes no model calls of its own, starts no agent and never reads your credentials, and nothing reaches Stunt Double until you run `/stuntdouble cloud`.
+
+### Local commands
+
+| Command                                 | What it does                                                                                     |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `/stuntdouble setup`                    | Checks Node and Chrome, then writes your first actor and checklist to `.stuntdouble/`            |
+| `/stuntdouble run <checklist> [resume]` | Runs the checklist in a local Chrome and reports each failed check with its evidence             |
+| `/stuntdouble open`                     | Opens the viewer: every run with its verdicts, screenshots and activity                          |
+| `/stuntdouble cloud <checklist>`        | Pushes the same actor and checklist to a Stunt Double workspace, runs it there and pulls it back |
+| `/stuntdouble doctor`                   | Checks Node, Chrome, the viewer port and how local runs are billed                               |
+
+### How a local run works
+
+A run is carried out by the `stuntdouble:stuntdouble-actor` subagent, whose only tools are the local browser and run tools, so page text and screenshots stay out of your main conversation. Those tools are `navigate`, `read_page`, `find`, `get_page_text`, `click`, `type`, `form_input`, `key`, `scroll`, `screenshot`, `start_run`, `evaluate_check` and `finish_run`; the server's `open_ui` returns the viewer link. A pass must cite text or a selector that is on the page, and the run is scored with the same code as the cloud. The `local` server is `npx stuntdouble@0.1.1 mcp` ([source](https://github.com/stunt-double/stuntkit/tree/main/packages/local)), pinned to an exact version in each plugin release. Claude Code starts it with each session, and the browser and viewer start only on the first run. The server needs Node 22.18 or later and Google Chrome (or Playwright's Chromium).
+
+Everything lives in `.stuntdouble/`: `stuntdouble.json`, `actors/`, `checklists/` and `runs/`, each run with its `run.json`, an `activity.jsonl` of every action and a screenshot per verdict. Commit the folder (its `.gitignore` leaves out `.live/`) and your team gets the same checklists and run history; `npx stuntdouble view` opens the viewer over it without Claude Code.
+
+## When you want more
+
+A Stunt Double workspace takes over when one run at a time in your own session stops being enough. The cloud runs actors in parallel, unattended and on a schedule, starts them on a deploy, a pull request or a Figma change, and has an independent judge check every verdict. The same workspace runs interviews with AI participants, design reviews and feedback triage, scores sites on the [Stunt Double Index](#stunt-double-index), and shares results with your team in Slack, Linear and GitHub.
+
+`/stuntdouble cloud <checklist>` moves a local checklist over unchanged: actors and checklists are the hosted `create_actor` and `create_checklist` inputs, so the command pushes them as they are, runs the checklist in your workspace, pulls the run back beside your local ones and writes the cloud ids into the files. The one exception is `browser_config` (a preset, viewport, touch or locale), which the cloud does not take yet, so cloud runs use the default desktop browser. The cloud also cannot reach localhost: the command asks for a public or preview URL and keeps your local origin in `local_base_url`.
+
+The Free plan includes 60 compute minutes and 2 actors at no cost; Hobby, Startup, Pro and Enterprise add more. See [pricing](https://www.stuntdouble.io/pricing).
+
+### Local or cloud
+
+|          | Local (free, no account)                                            | Cloud                                                                                    |
+| -------- | ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Model    | Your Claude Code session and plan                                   | Stunt Double's managed models; your plan untouched                                       |
+| Browser  | Local Chrome, a fresh profile per run, logins kept only if opted in | Hosted browsers with proxies, locations, recording, live view and person-steered assists |
+| Targets  | Localhost, intranet, staging, production                            | Public URLs; private ones through devices on Startup                                     |
+| When     | One run at a time while your session is open                        | Parallel, unattended and scheduled; deploy, PR and Figma triggers; workflows             |
+| Verdicts | Self-judged by the actor, citation-checked, scored as in the cloud  | An independent result judge, carry-over notes, corrections, comparison and alerts        |
+| Team     | Git, with the cloud ids in the files                                | Seats, shared reports, Slack, Linear and GitHub PR comments                              |
+| Research | Checklists                                                          | Interviews, design reviews, feedback triage, synthesis and Index scoring                 |
+
+The local server runs only in Claude Code for now: the Cursor `mcp.json` and the ChatGPT and Codex package carry the hosted server alone.
+
+## Connect your AI client
+
+Every client below connects to the hosted server at `https://app.stuntdouble.io/api/mcp`, which reaches your Stunt Double workspaces. The Claude Code plugin is the one package that also carries the local suite.
+
+### Claude Code plugin
+
+The install in [Start free in two minutes](#start-free-in-two-minutes) bundles the hosted MCP server and the local server (`.mcp.json`) with the skills in `skills/` and the agents in `agents/`.
+
+```bash
+claude plugin marketplace add stunt-double/stuntdouble-mcp
+claude plugin install stuntdouble@stuntdouble
+```
+
+### Claude Code
+
+For the hosted server alone, without the plugin's skills, agents or local suite:
+
+```bash
+claude mcp add --transport http stuntdouble https://app.stuntdouble.io/api/mcp
+```
+
 ### Skills (any agent)
 
-The skills in `skills/` install into Claude Code, Cursor, Codex, OpenCode and other agents that read `SKILL.md` files, using the [skills CLI](https://skills.sh). They drive the MCP server above, so connect that too.
+The skills in `skills/` install into Claude Code, Cursor, Codex, OpenCode and other agents that read `SKILL.md` files, using the [skills CLI](https://skills.sh). They drive the hosted MCP server, so connect that too.
 
 ```bash
 npx skills add stunt-double/stuntdouble-mcp                          # pick from the list
-npx skills add stunt-double/stuntdouble-mcp --skill verify-change     # just one
+npx skills add stunt-double/stuntdouble-mcp --skill verify-change     # one skill
 ```
 
 | Skill                   | What it does                                                                                                                                                                                                                                  |
@@ -72,7 +130,7 @@ npx skills add stunt-double/stuntdouble-mcp --skill verify-change     # just one
 | `run-user-interview`    | Plan, configure, and launch a structured user interview with AI participants on Stunt Double, then read back the synthesised report                                                                                                           |
 | `run-ux-validation`     | Validate a user journey by running Stunt Double workflows or checklists and reporting the results                                                                                                                                             |
 | `setup-guardrails`      | Stand up continuous guardrails on Stunt Double                                                                                                                                                                                                |
-| `stuntdouble`           | The `/stuntdouble` commands of the [local suite](#local-suite): run checklists in a local Chrome from Claude Code, and push them to the cloud. Needs the Claude Code plugin                                                                   |
+| `stuntdouble`           | The `/stuntdouble` commands of the [local suite](#start-free-in-two-minutes): run checklists in a local Chrome from Claude Code, and push them to the cloud. Needs the Claude Code plugin                                                     |
 | `triage-feedback`       | Review, categorize, and manage Stunt Double feedback submissions across projects                                                                                                                                                              |
 | `verify-change`         | Verify a shipped or previewed code change by running a Stunt Double actor through the affected user flows, and optionally report results on the pull request                                                                                  |
 
@@ -221,41 +279,9 @@ Use only `url` for remote servers (Streamable HTTP is negotiated automatically).
 
 The `server.json` file is the separate [MCP registry](https://modelcontextprotocol.io/registry/about) manifest for `mcp-publisher` and directory listings; Cursor's installer does not use it.
 
-## Local suite
-
-Run checklists against localhost, staging or production from Claude Code, free and with no account. Your own Claude Code session is the actor: the plugin's `local` server drives a local Chrome, keeps each run as files in your project and serves a viewer where you watch a run live or stop it. Local runs count against your Claude plan (or your API key, when `ANTHROPIC_API_KEY` is set); Stunt Double makes no model calls.
-
-Install the [Claude Code plugin](#claude-code-plugin), then:
-
-| Command                                 | What it does                                                                                     |
-| --------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| `/stuntdouble setup`                    | Checks Node and Chrome, then writes your first actor and checklist to `.stuntdouble/`            |
-| `/stuntdouble run <checklist> [resume]` | Runs the checklist in a local Chrome and reports each failed check with its evidence             |
-| `/stuntdouble open`                     | Opens the viewer: every run with its verdicts, screenshots and activity                          |
-| `/stuntdouble cloud <checklist>`        | Pushes the same actor and checklist to a Stunt Double workspace, runs it there and pulls it back |
-| `/stuntdouble doctor`                   | Checks Node, Chrome, the viewer port and how local runs are billed                               |
-
-A run is carried out by the `stuntdouble:stuntdouble-actor` subagent, whose only tools are the local browser and run tools, so page text and screenshots stay out of your main conversation. Those tools are `navigate`, `read_page`, `find`, `get_page_text`, `click`, `type`, `form_input`, `key`, `scroll`, `screenshot`, `start_run`, `evaluate_check` and `finish_run`; the server's `open_ui` returns the viewer link. The `local` server is `npx stuntdouble@0.1.1 mcp` ([source](https://github.com/stunt-double/stuntkit/tree/main/packages/local)), pinned to an exact version in each plugin release. Claude Code starts it with each session, and the browser and viewer start only on the first run. It needs Node 22.18 or later and Google Chrome (or Playwright's Chromium).
-
-Everything lives in `.stuntdouble/`: `stuntdouble.json`, `actors/`, `checklists/` and `runs/`, each run with its `run.json`, an `activity.jsonl` of every action and a screenshot per verdict. Actors and checklists are the hosted `create_actor` and `create_checklist` inputs, so `/stuntdouble cloud` pushes them unchanged (except `browser_config`, which the cloud does not take yet, so cloud runs use the default desktop browser) and writes the cloud ids back. Commit the folder (its `.gitignore` leaves out `.live/`) and your team gets the same checklists and run history; `npx stuntdouble view` opens the viewer over it without Claude Code.
-
-### Local or cloud
-
-|          | Local (free, no account)                                            | Cloud                                                                                    |
-| -------- | ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| Model    | Your Claude Code session and plan                                   | Stunt Double's managed models; your plan untouched                                       |
-| Browser  | Local Chrome, a fresh profile per run, logins kept only if opted in | Hosted browsers with proxies, locations, recording, live view and person-steered assists |
-| Targets  | Localhost, intranet, staging, production                            | Public URLs; private ones through devices on Startup                                     |
-| When     | One run at a time while your session is open                        | Parallel, unattended and scheduled; deploy, PR and Figma triggers; workflows             |
-| Verdicts | Self-judged by the actor, citation-checked, scored as in the cloud  | An independent result judge, carry-over notes, corrections, comparison and alerts        |
-| Team     | Git, with the cloud ids in the files                                | Seats, shared reports, Slack, Linear and GitHub PR comments                              |
-| Research | Checklists                                                          | Interviews, design reviews, synthesis and Index scoring                                  |
-
-See [pricing](https://www.stuntdouble.io/pricing) for the cloud plans. The local server runs only in Claude Code for now: the Cursor `mcp.json` and the ChatGPT and Codex package carry the hosted server alone.
-
 ## Authentication
 
-Authentication is handled automatically via OAuth 2.1 with PKCE. The first time your AI client connects, a browser window will open for you to sign in and authorise access to your Stunt Double account. No API keys or tokens required.
+The hosted server signs you in only when a tool needs your account. Connecting, listing the tools and the Stunt Double Index reads (`search_index_domains`, `get_index_report` and `list_index_sessions`) work with no sign-in. The first time you call a tool that reads or changes a workspace, your AI client opens a browser window to sign in and authorise access to your Stunt Double account. Sign-in is OAuth 2.1 with PKCE, with an emailed code or Google: no API keys or tokens. The local suite needs no sign-in at all.
 
 For **Cursor**, the OAuth redirect URI is fixed to `cursor://anysphere.cursor-mcp/oauth/callback` ([docs](https://cursor.com/docs/mcp.md)).
 
@@ -501,7 +527,7 @@ Only the domain's owner can re-run it: whoever claimed it or, while it is unclai
 
 `request_index_score` is open to any signed-in account. It scores public web domains only, respects robots.txt and `X-Robots-Tag` opt-outs, and never rescores a site the Index already tracks (it answers `already_tracked`; use `request_index_rerun` for that). The site becomes public on the leaderboard. The probes finish in under a minute; agent sessions asked for with `include_agent_sessions` draw on a shared daily budget, so they may be queued to run later that day (`agent_sessions` is then `deferred` or `retrying`). Read `get_index_report` for the probe score straight away, and poll `list_index_sessions` with the `run_id` if sessions started.
 
-**No account needed for the read tools:** `search_index_domains`, `get_index_report` and `list_index_sessions` are also served, read-only and with no sign-in, at `https://app.stuntdouble.io/api/mcp/index`. Connect any MCP client to that URL and leave the OAuth fields empty. It carries only those three tools, and `project_id` does not resolve there, so pass a `domain`. `request_index_rerun` and `request_index_score` need the signed-in server.
+**No account needed for the read tools:** `search_index_domains`, `get_index_report` and `list_index_sessions` answer without sign-in on `https://app.stuntdouble.io/api/mcp` itself (see [Authentication](#authentication)), so a client asks you to sign in only when you reach for a tool that needs an account. For a client that should never sign in, `https://app.stuntdouble.io/api/mcp/index` serves those three tools alone, read-only: connect to that URL and leave the OAuth fields empty. `project_id` does not resolve without an account, so pass a `domain`. `request_index_rerun` and `request_index_score` need you signed in.
 
 ## Example prompts
 
@@ -524,9 +550,11 @@ Try the server without pointing it at your own product. These public demo apps h
 
 ## Privacy Policy
 
-The server is hosted by Stunt Double and acts as the signed-in user. It reads and writes only the workspaces that user belongs to, within the OAuth scopes they grant (`mcp:read`, `mcp:write`, `mcp:run`). It does not read your conversation with the AI client beyond the arguments passed to each tool call, and it does not access the client's memory, chat history or files.
+The hosted server is run by Stunt Double and acts as the signed-in user; the Index read tools answer without sign-in and touch no workspace. The server reads and writes only the workspaces that user belongs to, within the OAuth scopes they grant (`mcp:read`, `mcp:write`, `mcp:run`). It does not read your conversation with the AI client beyond the arguments passed to each tool call, and it does not access the client's memory, chat history or files.
 
 Data created through the server (projects, actors, checklists, runs, interviews, feedback) is stored in your Stunt Double workspace and handled under the [Stunt Double Privacy Policy](https://www.stuntdouble.io/privacy), which covers collection, use, storage, sub-processors, retention and your rights. Revoke a connection at any time by disconnecting it in your AI client.
+
+The local suite keeps actors, checklists, runs and screenshots in your project's `.stuntdouble/` folder. The local server sends nothing to Stunt Double, and its viewer listens on `127.0.0.1` only. Data leaves your machine for Stunt Double only when you run `/stuntdouble cloud`, which asks first.
 
 ## Support
 
@@ -562,12 +590,18 @@ Each version merged to `main` is published there automatically (see [CONTRIBUTIN
 - [Terms of Service](https://www.stuntdouble.io/terms)
 - [llms.txt](https://www.stuntdouble.io/llms.txt)
 
+## This repository
+
+This repo holds **plugin and MCP configuration** (`.claude-plugin/plugin.json` and `.mcp.json` for Claude, `.cursor-plugin/plugin.json`, `marketplace.json` and root `mcp.json` for Cursor, `server.json` for the MCP registry, `.openai-plugin/plugin.json` for ChatGPT and Codex), plus skills, agents, and Cursor rules. There is **no `package.json`** and **no server code** here: the MCP endpoint is hosted at `https://app.stuntdouble.io/api/mcp` from the main Stunt Double codebase, and the Claude plugin's `local` server is the published [`stuntdouble`](https://www.npmjs.com/package/stuntdouble) npm package from [StuntKit](https://github.com/stunt-double/stuntkit). See [CONTRIBUTING.md](./CONTRIBUTING.md) for how to validate edits and avoid confusing this folder with a Node package.
+
 ## Verifying changes
 
 From the repo root:
 
 ```bash
 node scripts/validate-json.mjs
+node scripts/validate-cursor-plugin.mjs
+node scripts/build-openai-plugin.mjs --check
 npx --yes prettier@3.4.2 --check README.md CONTRIBUTING.md SECURITY.md CHANGELOG.md mcp.json .mcp.json server.json .cursor-plugin/plugin.json .cursor-plugin/marketplace.json .claude-plugin/plugin.json .claude-plugin/marketplace.json
 ```
 

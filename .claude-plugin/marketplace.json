@@ -5,13 +5,13 @@
     "email": "support@stuntdouble.io"
   },
   "metadata": {
-    "description": "The Stunt Double plugin: the hosted MCP server plus skills and agents for running AI user personas through real products."
+    "description": "The Stunt Double plugin for Claude Code: free local checklist runs on your own Claude plan, the hosted MCP server, and skills and agents that put actors through your product and bring back the evidence."
   },
   "plugins": [
     {
       "name": "stuntdouble",
       "source": "./",
-      "description": "Deploy AI user personas to validate user journeys at scale. Find UX friction before real users do."
+      "description": "Find where people get stuck, before they do. Actors drive a real browser through your product and bring back the evidence. Start free in Claude Code with local runs on your own plan, then move a checklist to the cloud unchanged."
     }
   ]
 }

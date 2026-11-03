@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Changed
+
+- README: a benefit-led opening for product engineers, designers and QA leads, then "Start free in two minutes" (the local suite in Claude Code, on the person's own plan, no account) and "When you want more" (the cloud, and `/stuntdouble cloud` moving a checklist over unchanged) ahead of the client install matrix. Authentication, the Index section and the privacy policy now say the Index read tools work on the hosted server without signing in, and the contents list matches the headings.
+- Listing copy in `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`, `.cursor-plugin/plugin.json`, `.cursor-plugin/marketplace.json`, `server.json` and `.openai-plugin/plugin.json` replaces "Deploy AI user personas to validate user journeys at scale" with the same opening. The OpenAI listing stays hosted only, and its limits name the Index reads as the one part that needs no account.
+
 ## [1.16.0] - 2026-11-03
 
 ### Added

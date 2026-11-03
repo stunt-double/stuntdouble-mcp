@@ -2,7 +2,7 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.stuntdouble/mcp-server",
   "title": "Stunt Double",
-  "description": "Deploy AI user personas to validate user journeys at scale. Find UX friction before real users do.",
+  "description": "Actors drive a real browser through your product and show where people get stuck, with evidence.",
   "version": "1.16.0",
   "websiteUrl": "https://www.stuntdouble.io",
   "repository": {
