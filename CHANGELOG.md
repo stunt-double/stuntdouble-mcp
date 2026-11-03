@@ -6,7 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- `/stuntdouble setup` is now the whole onboarding, each change shown before it is written: it finds the dev server and port from `package.json` and the framework, sets `local_base_url`, drafts an actor and two to four checklists from the app's routes and README, checks each checklist's URL responds, appends a Stunt Double Studio section to the project's `CLAUDE.md`, merges the `mcp__plugin_stuntdouble_local` allow rule into `.claude/settings.json`, adds `.stuntdouble/.live/` to `.gitignore`, switches on the hooks and offers a first run.
+- Two Claude Code hooks in the plugin (`hooks/hooks.json`), off unless the project's `.stuntdouble/hooks.json` switches them on: `session_summary` names the checklists and the latest run's outcome and pass count at session start, and `suggest_after_edit` offers the checklists that cover an edited UI file before the agent finishes, once per checklist per session. Neither starts a run. Dependency-free Node, with `node --test hooks/*.test.mjs` in CI.
+
 ### Changed
+
+- The local app is called Stunt Double Studio in the README and the `stuntdouble` skill.
+- The Cursor manifest sets an empty `hooks` config so Cursor does not pick up the Claude Code hooks, and `validate-cursor-plugin.mjs` checks it. The ChatGPT and Codex package carries no hooks.
 
 - The `local` server is pinned to `stuntdouble@0.1.2`: the Continuity viewer, and a pass tally ("3 of 4 passed") for checklists without weights.
 - `stuntdouble-actor` hands back `passed`, `total`, `score` (or a `score_note` when the checklist has no weighted checks), each failed and not-judged check with its evidence, and the viewer link. `/stuntdouble run` leads with that result, such as "Failed: 3 of 4 checks passed", and says in one clause why a run without weights has no score.
