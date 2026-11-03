@@ -27,28 +27,28 @@ Everything lives in `.stuntdouble/` at the project root, committed except `.live
 {"name": "Checkout", "actor": "first-time-shopper", "url": "http://localhost:3000",
  "instructions": "Buy the cheapest mug as a guest. Stop at the payment step.",
  "checks": [{"key": "guest-checkout", "description": "Guest checkout needs no account", "type": "pass_fail", "on_failure": "stop"},
-            {"key": "shipping-early", "description": "Shipping cost is shown before payment", "type": "weighted", "weight": 2},
+            {"key": "shipping-early", "description": "Shipping cost is shown before payment", "type": "pass_fail"},
             {"key": "order-total", "description": "Record the order total", "type": "informational"}],
- "pass_threshold": 80, "cloud": {"checklist_id": null, "check_ids": {}}}
+ "cloud": {"checklist_id": null, "check_ids": {}}}
 ```
 
-A local run swaps the checklist URL's origin for `local_base_url` when it is set. `runs/<stamp>-<checklist>/` (`run.json`, `activity.jsonl`, `shots/`) is written by the server; never edit it.
+A local run swaps the checklist URL's origin for `local_base_url` when it is set. `runs/<stamp>-<checklist>/` (`run.json`, `activity.jsonl`, `shots/`) is written by the server; never edit it. Read and write these files with Read and Write, never Bash, so no step needs shell approval.
 
 ## setup
 
-1. Run `npx -y stuntdouble@0.1.2 doctor` with Bash and relay it. A `FAIL` line blocks local runs until fixed.
-2. Tell the person plainly: local runs count against their Claude plan (or the API key doctor names, when `ANTHROPIC_API_KEY` is set). Stunt Double makes no model calls.
+1. Run [doctor](#doctor) and relay it. A `FAIL` line blocks local runs until fixed.
+2. Tell the person plainly: local runs count against their Claude plan, or their API key when Claude Code uses one (doctor notes when `ANTHROPIC_API_KEY` is set). Stunt Double makes no model calls.
 3. Ask for the URL to test (localhost is fine), who the user is, and what must be true.
-4. Write `stuntdouble.json`, a `.gitignore` holding `.live/`, the actor and the checklist, as above. Name the actor by role, never a human name. Write 3 to 8 checks as observable behaviour, each with a lowercase, hyphenated `key` that never changes, since verdicts and cloud ids follow it. Knowledge holds test accounts only, never real credentials: the files are committed.
+4. Write `stuntdouble.json`, a `.gitignore` holding `.live/`, the actor and the checklist, as above. Name the actor by role, never a human name. Write 3 to 8 checks as observable behaviour, each with a lowercase, hyphenated `key` that never changes, since verdicts and cloud ids follow it. Default to `pass_fail` checks and no `pass_threshold`: the run then passes when every pass/fail check passes. Use `weighted` checks (with `weight` and a `pass_threshold`) only for two or more where a partial pass means something; one weighted check makes the score all or nothing. Knowledge holds test accounts only, never real credentials: the files are committed.
 5. Offer to skip the prompt on every browser action. With consent, add `"mcp__plugin_stuntdouble_local"` to `permissions.allow` in `.claude/settings.local.json`, keeping what is there.
 6. Offer `/stuntdouble run <checklist>`.
 
 ## run <checklist> [resume]
 
 1. `start_run(checklist, resume?)`, with `resume: true` when asked. Fix any field it names and call again.
-2. Print the viewer link from its output: the person can watch the run and stop it there.
+2. Print only the viewer link from its output: the person can watch the run and stop it there.
 3. Dispatch the `stuntdouble:stuntdouble-actor` agent with the full `start_run` output as its prompt. Never drive the browser from this thread: page text and screenshots stay in the actor's context.
-4. Report its result: outcome, score, each failed check with its evidence, and the viewer link. Say the verdicts are self-judged; a cloud run adds an independent judge. Offer to fix what failed and run again.
+4. Lead with the result from its reply: "Failed: 3 of 4 checks passed", then the score, or "no score" where `score` is null, explained in one clause (the checklist has no weighted checks, so it passes only when every pass/fail check passes). Then each failed and not-judged check with its evidence, and the viewer link. Say the verdicts are self-judged; a cloud run adds an independent judge. Offer to fix what failed and run again.
 
 If the actor ends without `finish_run` (or was interrupted), `start_run(checklist, resume: true)` carries on with the run still open, and its output is the brief for a fresh dispatch: recorded verdicts stand. If the session closed mid-run, `/stuntdouble run <checklist> resume` judges only the checks left.
 
@@ -58,7 +58,7 @@ If the actor ends without `finish_run` (or was interrupted), `start_run(checklis
 
 ## doctor
 
-Run `npx -y stuntdouble@0.1.2 doctor` with Bash and relay it. If the local tools are missing from this session, the `local` server did not start: check Node 22.18 or later and `npx`, then `/mcp`.
+Call `doctor()` from the `local` server and relay its lines. Only if this session has no `doctor` tool, run `npx -y stuntdouble@0.1.2 doctor` with Bash, or ask the person to run it in a terminal where Bash is not allowed. If the local tools are missing altogether, the `local` server did not start: check Node 22.18 or later and `npx`, then `/mcp`. A slow first tool listing is `npx` starting up (about 1.5 seconds), not the server.
 
 ## cloud <checklist>
 
@@ -68,8 +68,8 @@ Run `npx -y stuntdouble@0.1.2 doctor` with Bash and relay it. If the local tools
 4. **Push the definitions,** reusing cloud ids already in the files, else `search(workspace_id, query)` first:
    - Project: `create_project(workspace_id, name, url)`.
    - Actor: `create_actor(workspace_id, name, description)`, `update_actor(actor_id, system_prompt)`, then `add_actor_knowledge(actor_id, title, content, kind)` per entry. With an `actor_id`, `update_actor` instead and add only the entries `list_actor_knowledge` lacks by title.
-   - Checklist: `create_checklist(workspace_id, project_id, name, actor_id, instructions, url, checks, pass_threshold, score_type)`, plus each of `score_unit`, `score_bands`, `run_mode` and `record_session` the file sets, sending the checks in file order without `key` or `cloud`. With a `checklist_id`, `update_checklist(checklist_id, ...)` with the same fields and each check's `id` from `check_ids`.
+   - Checklist: `create_checklist(workspace_id, project_id, name, actor_id, instructions, url, checks)`, plus each of `pass_threshold`, `score_type`, `score_unit`, `score_bands`, `run_mode` and `record_session` the file sets, sending the checks in file order without `key` or `cloud`. With a `checklist_id`, `update_checklist(checklist_id, ...)` with the same fields and each check's `id` from `check_ids`.
    - If the checklist sets `browser_config`, say so before the run: no hosted input or dashboard setting takes it yet, so the cloud run uses the default 1280 x 720 desktop browser, and a check about a phone layout, touch or a locale can pass there and fail locally.
 5. **Write ids back after every call:** `project_id`, `actor_id` and `checklist_id` into their files, then `get_checklist(checklist_id)` to fill `check_ids` as `{key: id}` in order. A retry or a teammate then updates rather than duplicating.
-6. **Run:** `run_checklist(checklist_id)`, then poll `get_checklist_run(run_id)` every 30 to 60 seconds until `status` is `completed` or `failed`. Write `runs/<YYYYMMDD-HHMMSS>-<checklist>-cloud/run.json` in the local run's shape, so the viewer lists it beside local runs: `format: "stuntdouble.run/1"`, `id` (the folder name), `runner: {kind: "cloud", run_id, judged: true, url}` with `url` the dashboard link `https://app.stuntdouble.io/w/<workspace_slug>/checklists/<checklist_id>/runs/<run_id>`, `status`, the checklist `url`, `started_at`, `finished_at` (its `completed_at`), the `checklist` and `actor` slugs, `checklist_snapshot` (the checklist file without `cloud`), `results` as `{check: <key from check_ids>, status, evidence, at: <evaluated_at>}`, `score: {score, unit: <score_unit>, outcome, pass_threshold: <the file's, else 100>, grade: null}` (or `null` with no outcome), `summary` and `cloud: null`. Report as for a local run, with the dashboard link.
+6. **Run:** `run_checklist(checklist_id)`, then poll `get_checklist_run(run_id)` every 30 to 60 seconds until `status` is `completed` or `failed`. Write `runs/<YYYYMMDD-HHMMSS>-<checklist>-cloud/run.json` in the local run's shape, so the viewer lists it beside local runs: `format: "stuntdouble.run/1"`, `id` (the folder name), `runner: {kind: "cloud", run_id, judged: true, url}` with `url` the dashboard link `https://app.stuntdouble.io/w/<workspace_slug>/checklists/<checklist_id>/runs/<run_id>`, `status`, the checklist `url`, `started_at` (its `started_at`, else `created_at`), `finished_at` (its `completed_at`), the `checklist` and `actor` slugs, `checklist_snapshot` (the checklist file without `cloud`), `results` as `{check: <key from check_ids>, status, evidence, at: <evaluated_at>}`, `score: {score, unit: <score_unit>, outcome, pass_threshold: <get_checklist's pass_threshold, or null with no weighted checks>, grade: null}` (or `null` with no outcome), `summary` and `cloud: null`. Report as for a local run, with the dashboard link.
 7. **Relay refusals:** a plan limit (the Free plan's 2 actors or 60 compute minutes) comes back as text. Relay it as written with `https://app.stuntdouble.io/w/<workspace_slug>/settings/billing`, never work around it, and offer the local run.
