@@ -6,7 +6,7 @@ argument-hint: "setup | run <checklist> [resume] | open | cloud <checklist> | do
 
 # Stunt Double Local
 
-`/stuntdouble <verb>`. Local runs use the person's own Claude plan: this session is the actor, and the plugin's `local` MCP server (`npx stuntdouble@0.1.1 mcp`) only drives a local Chrome, writes files and serves the viewer. Nothing else calls a model, and no account is needed. Say so before the first run in a session.
+`/stuntdouble <verb>`. Local runs use the person's own Claude plan: this session is the actor, and the plugin's `local` MCP server (`npx stuntdouble@0.1.2 mcp`) only drives a local Chrome, writes files and serves the viewer. Nothing else calls a model, and no account is needed. Say so before the first run in a session.
 
 The `local` server ships only in the Claude Code plugin. Where its tools are missing, use the cloud skills. Schedules, deploy and PR triggers, teams, interviews and several actors at once are cloud work too: hand them to `setup-guardrails`, `maintain-automations`, `run-user-interview`, `design-review`, `create-actor-panel` or `run-qa-suite`.
 
@@ -36,7 +36,7 @@ A local run swaps the checklist URL's origin for `local_base_url` when it is set
 
 ## setup
 
-1. Run `npx -y stuntdouble@0.1.1 doctor` with Bash and relay it. A `FAIL` line blocks local runs until fixed.
+1. Run `npx -y stuntdouble@0.1.2 doctor` with Bash and relay it. A `FAIL` line blocks local runs until fixed.
 2. Tell the person plainly: local runs count against their Claude plan (or the API key doctor names, when `ANTHROPIC_API_KEY` is set). Stunt Double makes no model calls.
 3. Ask for the URL to test (localhost is fine), who the user is, and what must be true.
 4. Write `stuntdouble.json`, a `.gitignore` holding `.live/`, the actor and the checklist, as above. Name the actor by role, never a human name. Write 3 to 8 checks as observable behaviour, each with a lowercase, hyphenated `key` that never changes, since verdicts and cloud ids follow it. Knowledge holds test accounts only, never real credentials: the files are committed.
@@ -58,7 +58,7 @@ If the actor ends without `finish_run` (or was interrupted), `start_run(checklis
 
 ## doctor
 
-Run `npx -y stuntdouble@0.1.1 doctor` with Bash and relay it. If the local tools are missing from this session, the `local` server did not start: check Node 22.18 or later and `npx`, then `/mcp`.
+Run `npx -y stuntdouble@0.1.2 doctor` with Bash and relay it. If the local tools are missing from this session, the `local` server did not start: check Node 22.18 or later and `npx`, then `/mcp`.
 
 ## cloud <checklist>
 
