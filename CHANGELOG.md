@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Removed
+
+- The OpenAI plugin package (`.openai-plugin/plugin.json` and `scripts/build-openai-plugin.mjs`) and its CI check. Directory submission material is no longer kept in this repository. ChatGPT and Codex still connect to the hosted server as before.
+
 ## [1.17.0] - 2026-11-04
 
 ### Added
