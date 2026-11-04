@@ -11,6 +11,7 @@ const files = [
   '.claude-plugin/plugin.json',
   '.openai-plugin/plugin.json',
   '.claude-plugin/marketplace.json',
+  'hooks/hooks.json',
 ];
 
 let failed = false;

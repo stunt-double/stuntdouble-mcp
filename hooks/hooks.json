@@ -1,0 +1,28 @@
+{
+  "description": "Stunt Double Studio: name the project's checklists at session start, and suggest the matching checklist after a UI edit. Off unless the project's .stuntdouble/hooks.json switches them on.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/stuntdouble-hooks.mjs\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/stuntdouble-hooks.mjs\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}
