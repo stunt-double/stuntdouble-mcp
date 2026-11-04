@@ -135,7 +135,7 @@ test("SessionStart names the checklists and the latest run", () => {
     additionalContext,
     /Latest run: checkout, failed, 3 of 4 checks passed \(20261102-090000-checkout\)/,
   );
-  assert.match(additionalContext, /\/stuntdouble run <checklist>/);
+  assert.match(additionalContext, /\/stuntdouble:run <checklist>/);
 });
 
 const editIn =
@@ -158,13 +158,13 @@ test("PostToolUse suggests the mapped checklist once per session", () => {
 
   const first = parse(edit("app/checkout/page.tsx"));
   assert.equal(first.hookEventName, "PostToolUse");
-  assert.match(first.additionalContext, /`\/stuntdouble run checkout`/);
+  assert.match(first.additionalContext, /`\/stuntdouble:run checkout`/);
   assert.doesNotMatch(first.additionalContext, /sign-up/);
   assert.equal(edit("app/checkout/form.tsx"), "", "checkout already suggested");
 
   // Unmapped UI file: every checklist not yet suggested, once.
   const rest = parse(edit("app/page.tsx")).additionalContext;
-  assert.match(rest, /`\/stuntdouble run sign-up`/);
+  assert.match(rest, /`\/stuntdouble:run sign-up`/);
   assert.doesNotMatch(rest, /run checkout/);
   assert.equal(edit("app/about.tsx"), "", "generic note already given");
 

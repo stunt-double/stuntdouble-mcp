@@ -53,6 +53,8 @@ claude plugin marketplace add stunt-double/stuntdouble-mcp
 claude plugin install stuntdouble@stuntdouble
 ```
 
+Type `/stuntdouble:` to list the plugin's skills. The Studio ones are `/stuntdouble:setup`, `/stuntdouble:run`, `/stuntdouble:open`, `/stuntdouble:cloud` and `/stuntdouble:doctor`.
+
 ### Skills (any agent)
 
 The skills in `skills/` install into Claude Code, Cursor, Codex, OpenCode and other agents that read `SKILL.md` files, using the [skills CLI](https://skills.sh). They drive the MCP server above, so connect that too.
@@ -69,14 +71,18 @@ npx skills add stunt-double/stuntdouble-mcp --skill verify-change     # just one
 | `check-compliance`      | Check a product against legal and compliance requirements on Stunt Double (cookie consent, privacy and terms access, required disclosures, claim substantiation, unsubscribe flows) and collect evidence for counsel to review                |
 | `check-continuity`      | Check continuity across surfaces on Stunt Double                                                                                                                                                                                              |
 | `check-design-system`   | Audit a live product against its design system on Stunt Double                                                                                                                                                                                |
+| `cloud`                 | `/stuntdouble:cloud <checklist>`: push a Studio checklist to a workspace, run it there and pull it back. Needs the Claude Code plugin                                                                                                         |
 | `create-actor-panel`    | Create and configure a Stunt Double actor (AI persona) with knowledge entries for realistic user simulation                                                                                                                                   |
 | `design-review`         | Run a design review session by gathering feedback from multiple Stunt Double actors on a proposed design or flow                                                                                                                              |
+| `doctor`                | `/stuntdouble:doctor`: check Node, Chrome, the viewer port and how local runs are billed. Needs the Claude Code plugin                                                                                                                        |
 | `maintain-automations`  | Change an existing Stunt Double automation or checklist without losing run history: retime triggers, edit and rewire workflow steps, build condition branches, update checks in place, and pause or retire what is no longer needed           |
+| `open`                  | `/stuntdouble:open`: open the Studio viewer over every run. Needs the Claude Code plugin                                                                                                                                                      |
+| `run`                   | `/stuntdouble:run <checklist> [resume]`: run a Studio checklist in a local Chrome. Needs the Claude Code plugin                                                                                                                               |
 | `run-qa-suite`          | Run the full Stunt Double QA suite                                                                                                                                                                                                            |
 | `run-user-interview`    | Plan, configure, and launch a structured user interview with AI participants on Stunt Double, then read back the synthesised report                                                                                                           |
 | `run-ux-validation`     | Validate a user journey by running Stunt Double workflows or checklists and reporting the results                                                                                                                                             |
+| `setup`                 | `/stuntdouble:setup` for [Stunt Double Studio](#stunt-double-studio): ready the project for local runs (dev server, actor and checklists, CLAUDE.md notes, permission and hooks). Needs the Claude Code plugin                                |
 | `setup-guardrails`      | Stand up continuous guardrails on Stunt Double                                                                                                                                                                                                |
-| `stuntdouble`           | The `/stuntdouble` commands of [Stunt Double Studio](#stunt-double-studio): run checklists in a local Chrome from Claude Code, and push them to the cloud. Needs the Claude Code plugin                                                       |
 | `triage-feedback`       | Review, categorize, and manage Stunt Double feedback submissions across projects                                                                                                                                                              |
 | `verify-change`         | Verify a shipped or previewed code change by running a Stunt Double actor through the affected user flows, and optionally report results on the pull request                                                                                  |
 
@@ -233,23 +239,23 @@ Install the [Claude Code plugin](#claude-code-plugin), then:
 
 | Command                                 | What it does                                                                                                                                                                                |
 | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/stuntdouble setup`                    | Readies the project: finds the dev server, drafts an actor and checklists from your routes, and adds the CLAUDE.md notes, tool permission and hooks, each change shown before it is written |
-| `/stuntdouble run <checklist> [resume]` | Runs the checklist in a local Chrome and reports each failed check with its evidence                                                                                                        |
-| `/stuntdouble open`                     | Opens the viewer: every run with its verdicts, screenshots and activity                                                                                                                     |
-| `/stuntdouble cloud <checklist>`        | Pushes the same actor and checklist to a Stunt Double workspace, runs it there and pulls it back                                                                                            |
-| `/stuntdouble doctor`                   | Checks Node, Chrome, the viewer port and how local runs are billed                                                                                                                          |
+| `/stuntdouble:setup`                    | Readies the project: finds the dev server, drafts an actor and checklists from your routes, and adds the CLAUDE.md notes, tool permission and hooks, each change shown before it is written |
+| `/stuntdouble:run <checklist> [resume]` | Runs the checklist in a local Chrome and reports each failed check with its evidence                                                                                                        |
+| `/stuntdouble:open`                     | Opens the viewer: every run with its verdicts, screenshots and activity                                                                                                                     |
+| `/stuntdouble:cloud <checklist>`        | Pushes the same actor and checklist to a Stunt Double workspace, runs it there and pulls it back                                                                                            |
+| `/stuntdouble:doctor`                   | Checks Node, Chrome, the viewer port and how local runs are billed                                                                                                                          |
 
 A run is carried out by the `stuntdouble:stuntdouble-actor` subagent, whose only tools are the local browser and run tools, so page text and screenshots stay out of your main conversation. Those tools are `navigate`, `read_page`, `find`, `get_page_text`, `click`, `type`, `form_input`, `key`, `scroll`, `screenshot`, `start_run`, `evaluate_check` and `finish_run`; the server's `open_ui` returns the viewer link. The `local` server is `npx stuntdouble@0.1.3 mcp` ([source](https://github.com/stunt-double/stuntkit/tree/main/packages/local)), pinned to an exact version in each plugin release. Claude Code starts it with each session (`npx` adds about 1.5 seconds), and the browser and viewer start only on the first run. It needs Node 22.18 or later and Google Chrome (or Playwright's Chromium). On native Windows the server does not start yet, since Claude Code needs `cmd /c npx` there: use WSL.
 
-Everything lives in `.stuntdouble/`: `stuntdouble.json`, `hooks.json`, `actors/`, `checklists/` and `runs/`, each run with its `run.json`, an `activity.jsonl` of every action and a screenshot per verdict. Actors and checklists are the hosted `create_actor` and `create_checklist` inputs, so `/stuntdouble cloud` pushes them unchanged (except `browser_config`, which the cloud does not take yet, so cloud runs use the default desktop browser) and writes the cloud ids back. Commit the folder (its `.gitignore` leaves out `.live/`) and your team gets the same checklists and run history; `npx stuntdouble view` opens the viewer over it without Claude Code.
+Everything lives in `.stuntdouble/`: `stuntdouble.json`, `hooks.json`, `actors/`, `checklists/` and `runs/`, each run with its `run.json`, an `activity.jsonl` of every action and a screenshot per verdict. Actors and checklists are the hosted `create_actor` and `create_checklist` inputs, so `/stuntdouble:cloud` pushes them unchanged (except `browser_config`, which the cloud does not take yet, so cloud runs use the default desktop browser) and writes the cloud ids back. Commit the folder (its `.gitignore` leaves out `.live/`) and your team gets the same checklists and run history; `npx stuntdouble view` opens the viewer over it without Claude Code.
 
 ### Hooks
 
-`/stuntdouble setup` also writes `.stuntdouble/hooks.json`, which switches on two Claude Code hooks that ship in the plugin (`hooks/hooks.json`). Without that file they do nothing, in well under 100 ms.
+`/stuntdouble:setup` also writes `.stuntdouble/hooks.json`, which switches on two Claude Code hooks that ship in the plugin (`hooks/hooks.json`). Without that file they do nothing, in well under 100 ms.
 
 | Hook                 | When                                           | What it adds to the session                                                                                             |
 | -------------------- | ---------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `session_summary`    | Session start                                  | The project's checklists, the latest run's outcome and pass count, and that `/stuntdouble run` is there                 |
+| `session_summary`    | Session start                                  | The project's checklists, the latest run's outcome and pass count, and that `/stuntdouble:run` is there                 |
 | `suggest_after_edit` | After an Edit, Write or MultiEdit to a UI file | A note to offer the checklists that cover the file before finishing, once per checklist per session. Never starts a run |
 
 ```json

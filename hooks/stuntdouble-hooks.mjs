@@ -5,7 +5,7 @@
 //                 checklists that cover it, once per checklist per session.
 //
 // Both are off unless the project has .stuntdouble/hooks.json (written by
-// /stuntdouble setup) with the hook switched on, and off for one person with
+// /stuntdouble:setup) with the hook switched on, and off for one person with
 // STUNTDOUBLE_HOOKS=off in their environment. Off, the script exits 0 with no
 // output. Neither hook starts a run or writes outside .stuntdouble/.live/.
 // Node built-ins only: the plugin ships no node_modules.
@@ -153,7 +153,7 @@ export function sessionStart(project, config) {
     );
   } else if (!run) lines.push("No runs yet.");
   lines.push(
-    "`/stuntdouble run <checklist>` runs one in a local Chrome. Offer it after UI changes; never start one unasked.",
+    "`/stuntdouble:run <checklist>` runs one in a local Chrome. Offer it after UI changes; never start one unasked.",
   );
   return lines.join("\n");
 }
@@ -233,7 +233,7 @@ export function postToolUse(project, config, input) {
     fresh = checklists.filter((slug) => !existsSync(join(dir, slug)));
   else fresh = [];
   if (!fresh.length) return null;
-  const list = fresh.map((s) => `\`/stuntdouble run ${s}\``).join(" or ");
+  const list = fresh.map((s) => `\`/stuntdouble:run ${s}\``).join(" or ");
   return `${rel} is covered by Stunt Double Studio. Before you finish, offer ${list} to check the change in a local Chrome. Do not start a run unless the person agrees.`;
 }
 
