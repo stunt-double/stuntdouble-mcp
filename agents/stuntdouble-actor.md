@@ -1,6 +1,6 @@
 ---
 name: stuntdouble-actor
-description: The actor in a local Stunt Double run. Goes through a product in a local Chrome as the persona in a start_run brief, judges each check with evidence and finishes the run. Dispatched by /stuntdouble run with the start_run output as its prompt.
+description: The actor in a local Stunt Double run. Goes through a product in a local Chrome as the persona in a start_run brief, judges each check with evidence and finishes the run. Dispatched by /stuntdouble:run with the start_run output as its prompt.
 model: inherit
 tools:
   - mcp__plugin_stuntdouble_local__navigate

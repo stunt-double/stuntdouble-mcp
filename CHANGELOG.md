@@ -6,21 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.17.0] - 2026-11-04
+
 ### Added
 
-- `/stuntdouble setup` is now the whole onboarding, each change shown before it is written: it finds the dev server and port from `package.json` and the framework, sets `local_base_url`, drafts an actor and two to four checklists from the app's routes and README, checks each checklist's URL responds, appends a Stunt Double Studio section to the project's `CLAUDE.md`, merges the `mcp__plugin_stuntdouble_local` allow rule into `.claude/settings.json`, adds `.stuntdouble/.live/` to `.gitignore`, switches on the hooks and offers a first run. A settings file that is not plain JSON, or a refused write, gets the rule to add by hand or through `/permissions`.
+- `/stuntdouble:setup` is now the whole onboarding, each change shown before it is written: it finds the dev server and port from `package.json` and the framework, sets `local_base_url`, drafts an actor and two to four checklists from the app's routes and README, checks each checklist's URL responds, appends a Stunt Double Studio section to the project's `CLAUDE.md`, merges the `mcp__plugin_stuntdouble_local` allow rule into `.claude/settings.json`, adds `.stuntdouble/.live/` to `.gitignore`, switches on the hooks and offers a first run. A settings file that is not plain JSON, or a refused write, gets the rule to add by hand or through `/permissions`.
 - Two Claude Code hooks in the plugin (`hooks/hooks.json`), off unless the project's `.stuntdouble/hooks.json` switches them on: `session_summary` names the checklists and the latest run's outcome and pass count at session start, and `suggest_after_edit` offers the checklists that cover an edited UI file before the agent finishes, once per checklist per session. Neither starts a run. Subagent edits are skipped, names from the repo reach the session only as plain slugs, the dedupe markers are created atomically and never through a symlink, and `STUNTDOUBLE_HOOKS=off` switches both off for one person. Dependency-free Node, with `node --test hooks/*.test.mjs` in CI.
 
 ### Changed
 
-- The local app is called Stunt Double Studio in the README and the `stuntdouble` skill.
+- The Studio commands are one skill per verb, so they read as what they do: `/stuntdouble:setup`, `/stuntdouble:run <checklist> [resume]`, `/stuntdouble:open`, `/stuntdouble:cloud <checklist>` and `/stuntdouble:doctor`. The single `stuntdouble` skill, which Claude Code listed as `/stuntdouble:stuntdouble <verb>`, is gone. The file format and hooks notes are shared from `skills/setup/files.md`. The session hooks, the `stuntdouble-actor` agent and the README name the new commands.
+- The local app is called Stunt Double Studio in the README and the Studio skills.
 - The Cursor manifest sets an empty `hooks` config so Cursor does not pick up the Claude Code hooks, and `validate-cursor-plugin.mjs` checks it. The ChatGPT and Codex package carries no hooks.
 
 - The `local` server is pinned to `stuntdouble@0.1.3`: the Continuity viewer, a pass tally ("3 of 4 passed") for checklists without weights, a read-only `doctor` tool, and `open_ui` lists the latest runs.
-- `stuntdouble-actor` hands back `passed`, `total`, `score` (or a `score_note` when the checklist has no weighted checks), each failed and not-judged check with its evidence, and the viewer link. `/stuntdouble run` leads with that result, such as "Failed: 3 of 4 checks passed", and says in one clause why a run without weights has no score.
-- `/stuntdouble doctor` and setup call the `local` server's `doctor` tool, so they need no Bash approval, and fall back to `npx stuntdouble doctor` only on an engine without it. The skill reads and writes `.stuntdouble/` with Read and Write, never Bash.
+- `stuntdouble-actor` hands back `passed`, `total`, `score` (or a `score_note` when the checklist has no weighted checks), each failed and not-judged check with its evidence, and the viewer link. `/stuntdouble:run` leads with that result, such as "Failed: 3 of 4 checks passed", and says in one clause why a run without weights has no score.
+- `/stuntdouble:doctor` and setup call the `local` server's `doctor` tool, so they need no Bash approval, and fall back to `npx stuntdouble doctor` only on an engine without it. The skill reads and writes `.stuntdouble/` with Read and Write, never Bash.
 - Setup defaults to pass/fail checks with no `pass_threshold`, and uses weighted checks only for two or more where a partial pass means something.
-- A cloud run pulled back by `/stuntdouble cloud` takes `created_at` when `started_at` is null, and the checklist's own `pass_threshold` (null without weighted checks) in place of 100, so points checklists show the right threshold.
+- A cloud run pulled back by `/stuntdouble:cloud` takes `created_at` when `started_at` is null, and the checklist's own `pass_threshold` (null without weighted checks) in place of 100, so points checklists show the right threshold.
 - Billing copy no longer implies that a set `ANTHROPIC_API_KEY` always moves local runs off the Claude plan: that happens only when Claude Code uses the key.
 - README: native Windows needs WSL for the local server for now, and `npx` adds about 1.5 seconds to session start.
 
